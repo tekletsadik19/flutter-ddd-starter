@@ -137,15 +137,30 @@ class ProjectConfigurator:
                 content
             )
             
-            # Update flavor names
-            for flavor in self.config["flavors"]:
-                flavor_name = flavor
-                flavor_config = self.config["flavors"][flavor]
-                content = re.sub(
-                    rf'manifestPlaceholders\s*=\s*\[appName:\s*"[^"]*"\]',
-                    f'manifestPlaceholders = [appName: "{flavor_config["app_name"]}"]',
-                    content
-                )
+            # Update flavor names - we'll do this manually for each flavor
+            # Production flavor
+            content = re.sub(
+                r'production\s*{[^}]*manifestPlaceholders\s*=\s*\[appName:\s*"[^"]*"\][^}]*}',
+                f'production {{\n            dimension "default"\n            applicationIdSuffix ""\n            manifestPlaceholders = [appName: "{self.config["flavors"]["production"]["app_name"]}"]\n        }}',
+                content,
+                flags=re.DOTALL
+            )
+            
+            # Staging flavor
+            content = re.sub(
+                r'staging\s*{[^}]*manifestPlaceholders\s*=\s*\[appName:\s*"[^"]*"\][^}]*}',
+                f'staging {{\n            dimension "default"\n            applicationIdSuffix ".stg"\n            manifestPlaceholders = [appName: "{self.config["flavors"]["staging"]["app_name"]}"]\n        }}',
+                content,
+                flags=re.DOTALL
+            )
+            
+            # Development flavor
+            content = re.sub(
+                r'development\s*{[^}]*manifestPlaceholders\s*=\s*\[appName:\s*"[^"]*"\][^}]*}',
+                f'development {{\n            dimension "default"\n            applicationIdSuffix ".dev"\n            manifestPlaceholders = [appName: "{self.config["flavors"]["development"]["app_name"]}"]\n        }}',
+                content,
+                flags=re.DOTALL
+            )
             
             with open(build_gradle_path, 'w', encoding='utf-8') as file:
                 file.write(content)
@@ -271,7 +286,7 @@ This project was configured using the automated configuration system.
 - **Name**: {self.config["project"]["name"]}
 - **Version**: {self.config["project"]["version"]}
 - **Package**: {self.config["project"]["package_name"]}
-- **Company**: {self.config["company"]["name"]}
+- **Company**: {self.config["project"]["company"]["name"]}
 
 ### Build Flavors
 """
@@ -297,8 +312,8 @@ python scripts/configure_project.py
 ```
 
 ## Company Information
-- **Website**: {self.config["company"]["website"]}
-- **Email**: {self.config["company"]["email"]}
+- **Website**: {self.config["project"]["company"]["website"]}
+- **Email**: {self.config["project"]["company"]["email"]}
 """
         
         with open(readme_path, 'w', encoding='utf-8') as file:
