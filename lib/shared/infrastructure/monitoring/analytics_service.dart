@@ -1,5 +1,5 @@
-import 'package:ddd_flutter_app/core/constants/app_constants.dart';
-import 'package:ddd_flutter_app/core/utils/logger.dart';
+import 'package:shemanit/core/constants/app_constants.dart';
+import 'package:shemanit/core/utils/logger.dart';
 import 'package:injectable/injectable.dart';
 
 /// Analytics event data

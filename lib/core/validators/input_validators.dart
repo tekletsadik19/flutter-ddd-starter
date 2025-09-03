@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:ddd_flutter_app/core/errors/failures.dart';
+import 'package:shemanit/core/errors/failures.dart';
 
 /// Collection of input validation functions
 class InputValidators {

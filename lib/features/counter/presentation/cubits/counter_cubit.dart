@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
-import 'package:ddd_flutter_app/core/utils/logger.dart';
-import 'package:ddd_flutter_app/features/counter/application/use_cases/decrement_counter_use_case.dart';
-import 'package:ddd_flutter_app/features/counter/application/use_cases/get_counter_use_case.dart';
-import 'package:ddd_flutter_app/features/counter/application/use_cases/increment_counter_use_case.dart';
-import 'package:ddd_flutter_app/features/counter/application/use_cases/reset_counter_use_case.dart';
-import 'package:ddd_flutter_app/features/counter/domain/entities/counter_entity.dart';
-import 'package:ddd_flutter_app/shared/application/use_cases/base_use_case.dart';
+import 'package:shemanit/core/utils/logger.dart';
+import 'package:shemanit/features/counter/application/use_cases/decrement_counter_use_case.dart';
+import 'package:shemanit/features/counter/application/use_cases/get_counter_use_case.dart';
+import 'package:shemanit/features/counter/application/use_cases/increment_counter_use_case.dart';
+import 'package:shemanit/features/counter/application/use_cases/reset_counter_use_case.dart';
+import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
+import 'package:shemanit/shared/application/use_cases/base_use_case.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 

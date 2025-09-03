@@ -74,13 +74,8 @@ class ProjectConfigurator:
             flags=re.MULTILINE
         )
         
-        # Update Flutter SDK version
-        content = re.sub(
-            r'^\s*sdk:\s*.*$',
-            f'  sdk: {self.config["flutter"]["sdk_version"]}',
-            content,
-            flags=re.MULTILINE
-        )
+        # Note: We don't update the Flutter SDK version as it's already correct
+        # and updating it can cause issues with the sdk: flutter references
         
         with open(pubspec_path, 'w', encoding='utf-8') as file:
             file.write(content)
@@ -237,21 +232,11 @@ class ProjectConfigurator:
             print("❌ lib directory not found")
             return
         
-        # Get old package name from current pubspec.yaml
-        old_package_name = None
-        pubspec_path = self.project_root / "pubspec.yaml"
-        if pubspec_path.exists():
-            with open(pubspec_path, 'r', encoding='utf-8') as file:
-                content = file.read()
-                match = re.search(r'^name:\s*(.+)$', content, re.MULTILINE)
-                if match:
-                    old_package_name = match.group(1).strip()
-        
-        if not old_package_name:
-            print("⚠️  Could not determine old package name")
-            return
-        
+        # Since we're changing from ddd_flutter_app to shemanit, we know the old name
+        old_package_name = "ddd_flutter_app"
         new_package_name = self.config["project"]["name"].lower().replace(" ", "_")
+        
+        print(f"🔄 Updating package imports from '{old_package_name}' to '{new_package_name}'")
         
         # Update all Dart files
         for dart_file in lib_dir.rglob("*.dart"):

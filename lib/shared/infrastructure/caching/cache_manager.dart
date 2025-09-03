@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:ddd_flutter_app/core/constants/app_constants.dart';
-import 'package:ddd_flutter_app/core/errors/exceptions.dart';
-import 'package:ddd_flutter_app/core/utils/logger.dart';
+import 'package:shemanit/core/constants/app_constants.dart';
+import 'package:shemanit/core/errors/exceptions.dart';
+import 'package:shemanit/core/utils/logger.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

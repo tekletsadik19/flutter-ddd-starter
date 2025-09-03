@@ -1,5 +1,5 @@
-import 'package:ddd_flutter_app/core/errors/exceptions.dart';
-import 'package:ddd_flutter_app/core/utils/logger.dart';
+import 'package:shemanit/core/errors/exceptions.dart';
+import 'package:shemanit/core/utils/logger.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 

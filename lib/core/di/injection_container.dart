@@ -1,4 +1,4 @@
-import 'package:ddd_flutter_app/core/di/injection_container.config.dart';
+import 'package:shemanit/core/di/injection_container.config.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';

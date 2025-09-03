@@ -1,5 +1,5 @@
-import 'package:ddd_flutter_app/app/app.dart';
-import 'package:ddd_flutter_app/bootstrap.dart';
+import 'package:shemanit/app/app.dart';
+import 'package:shemanit/bootstrap.dart';
 
 void main() {
   bootstrap(() => const App());

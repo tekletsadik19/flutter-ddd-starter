@@ -1,4 +1,4 @@
-import 'package:ddd_flutter_app/core/constants/environment.dart';
+import 'package:shemanit/core/constants/environment.dart';
 
 /// Application configuration based on environment
 class AppConfig {

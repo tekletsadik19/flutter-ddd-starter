@@ -8,34 +8,34 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:ddd_flutter_app/core/di/injection_container.dart' as _i382;
-import 'package:ddd_flutter_app/features/counter/application/use_cases/decrement_counter_use_case.dart'
+import 'package:shemanit/core/di/injection_container.dart' as _i382;
+import 'package:shemanit/features/counter/application/use_cases/decrement_counter_use_case.dart'
     as _i234;
-import 'package:ddd_flutter_app/features/counter/application/use_cases/get_counter_use_case.dart'
+import 'package:shemanit/features/counter/application/use_cases/get_counter_use_case.dart'
     as _i851;
-import 'package:ddd_flutter_app/features/counter/application/use_cases/increment_counter_use_case.dart'
+import 'package:shemanit/features/counter/application/use_cases/increment_counter_use_case.dart'
     as _i654;
-import 'package:ddd_flutter_app/features/counter/application/use_cases/reset_counter_use_case.dart'
+import 'package:shemanit/features/counter/application/use_cases/reset_counter_use_case.dart'
     as _i172;
-import 'package:ddd_flutter_app/features/counter/domain/repositories/counter_repository.dart'
+import 'package:shemanit/features/counter/domain/repositories/counter_repository.dart'
     as _i547;
-import 'package:ddd_flutter_app/features/counter/domain/services/counter_domain_service.dart'
+import 'package:shemanit/features/counter/domain/services/counter_domain_service.dart'
     as _i839;
-import 'package:ddd_flutter_app/features/counter/infrastructure/datasources/counter_local_data_source.dart'
+import 'package:shemanit/features/counter/infrastructure/datasources/counter_local_data_source.dart'
     as _i820;
-import 'package:ddd_flutter_app/features/counter/infrastructure/repositories/counter_repository_impl.dart'
+import 'package:shemanit/features/counter/infrastructure/repositories/counter_repository_impl.dart'
     as _i239;
-import 'package:ddd_flutter_app/features/counter/presentation/cubits/counter_cubit.dart'
+import 'package:shemanit/features/counter/presentation/cubits/counter_cubit.dart'
     as _i722;
-import 'package:ddd_flutter_app/shared/infrastructure/caching/cache_manager.dart'
+import 'package:shemanit/shared/infrastructure/caching/cache_manager.dart'
     as _i1040;
-import 'package:ddd_flutter_app/shared/infrastructure/monitoring/analytics_service.dart'
+import 'package:shemanit/shared/infrastructure/monitoring/analytics_service.dart'
     as _i21;
-import 'package:ddd_flutter_app/shared/infrastructure/monitoring/performance_monitor.dart'
+import 'package:shemanit/shared/infrastructure/monitoring/performance_monitor.dart'
     as _i1051;
-import 'package:ddd_flutter_app/shared/infrastructure/network/api_client.dart'
+import 'package:shemanit/shared/infrastructure/network/api_client.dart'
     as _i700;
-import 'package:ddd_flutter_app/shared/infrastructure/security/secure_storage.dart'
+import 'package:shemanit/shared/infrastructure/security/secure_storage.dart'
     as _i862;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;

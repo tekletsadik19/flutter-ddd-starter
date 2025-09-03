@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
-import 'package:ddd_flutter_app/core/errors/exceptions.dart';
-import 'package:ddd_flutter_app/core/errors/failures.dart';
-import 'package:ddd_flutter_app/core/utils/logger.dart';
-import 'package:ddd_flutter_app/features/counter/domain/entities/counter_entity.dart';
-import 'package:ddd_flutter_app/features/counter/domain/repositories/counter_repository.dart';
-import 'package:ddd_flutter_app/features/counter/infrastructure/datasources/counter_local_data_source.dart';
-import 'package:ddd_flutter_app/features/counter/infrastructure/models/counter_model.dart';
+import 'package:shemanit/core/errors/exceptions.dart';
+import 'package:shemanit/core/errors/failures.dart';
+import 'package:shemanit/core/utils/logger.dart';
+import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
+import 'package:shemanit/features/counter/domain/repositories/counter_repository.dart';
+import 'package:shemanit/features/counter/infrastructure/datasources/counter_local_data_source.dart';
+import 'package:shemanit/features/counter/infrastructure/models/counter_model.dart';
 import 'package:injectable/injectable.dart';
 
 @Singleton(as: CounterRepository)

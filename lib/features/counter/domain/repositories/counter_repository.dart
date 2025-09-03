@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:ddd_flutter_app/core/errors/failures.dart';
-import 'package:ddd_flutter_app/features/counter/domain/entities/counter_entity.dart';
-import 'package:ddd_flutter_app/shared/domain/repositories/base_repository.dart';
+import 'package:shemanit/core/errors/failures.dart';
+import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
+import 'package:shemanit/shared/domain/repositories/base_repository.dart';
 
 /// Counter repository interface
 abstract class CounterRepository extends BaseRepository<CounterEntity, String> {

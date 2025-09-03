@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:ddd_flutter_app/core/utils/logger.dart';
-import 'package:ddd_flutter_app/shared/infrastructure/monitoring/analytics_service.dart';
+import 'package:shemanit/core/utils/logger.dart';
+import 'package:shemanit/shared/infrastructure/monitoring/analytics_service.dart';
 import 'package:injectable/injectable.dart';
 
 /// Performance metrics

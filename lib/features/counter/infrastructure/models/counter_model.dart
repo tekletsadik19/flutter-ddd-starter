@@ -1,4 +1,4 @@
-import 'package:ddd_flutter_app/features/counter/domain/entities/counter_entity.dart';
+import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'counter_model.freezed.dart';

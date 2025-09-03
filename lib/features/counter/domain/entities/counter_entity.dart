@@ -1,4 +1,4 @@
-import 'package:ddd_flutter_app/shared/domain/entities/base_entity.dart';
+import 'package:shemanit/shared/domain/entities/base_entity.dart';
 
 /// Counter domain entity
 class CounterEntity extends BaseEntity {

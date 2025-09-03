@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:ddd_flutter_app/core/errors/failures.dart';
+import 'package:shemanit/core/errors/failures.dart';
 import 'package:equatable/equatable.dart';
 
 /// Base class for all value objects
