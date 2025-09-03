@@ -1,4 +1,4 @@
-name: shemanit
+name: ddd_flutter_app
 description: DDD compliant Flutter app with BLoC/Cubit state management
 version: 1.0.0+1
 publish_to: none
