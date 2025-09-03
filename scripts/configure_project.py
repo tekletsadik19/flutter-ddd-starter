@@ -1,0 +1,337 @@
+#!/usr/bin/env python3
+"""
+Project Configuration Script
+This script reads the project_config.yaml file and applies all configuration changes
+to the Flutter project files.
+"""
+
+import os
+import re
+import yaml
+import shutil
+from pathlib import Path
+from typing import Dict, Any
+
+class ProjectConfigurator:
+    def __init__(self, config_path: str = "config/project_config.yaml"):
+        self.config_path = config_path
+        self.config = self.load_config()
+        self.project_root = Path(".")
+        
+    def load_config(self) -> Dict[str, Any]:
+        """Load configuration from YAML file"""
+        try:
+            with open(self.config_path, 'r', encoding='utf-8') as file:
+                return yaml.safe_load(file)
+        except FileNotFoundError:
+            print(f"❌ Configuration file not found: {self.config_path}")
+            exit(1)
+        except yaml.YAMLError as e:
+            print(f"❌ Error parsing configuration file: {e}")
+            exit(1)
+    
+    def backup_file(self, file_path: Path) -> Path:
+        """Create a backup of the original file"""
+        backup_path = file_path.with_suffix(file_path.suffix + ".backup")
+        if not backup_path.exists():
+            shutil.copy2(file_path, backup_path)
+            print(f"📋 Created backup: {backup_path}")
+        return backup_path
+    
+    def update_pubspec_yaml(self):
+        """Update pubspec.yaml with new project details"""
+        pubspec_path = self.project_root / "pubspec.yaml"
+        if not pubspec_path.exists():
+            print("❌ pubspec.yaml not found")
+            return
+            
+        self.backup_file(pubspec_path)
+        
+        with open(pubspec_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+        
+        # Update project name
+        content = re.sub(
+            r'^name:\s*.*$',
+            f'name: {self.config["project"]["name"].lower().replace(" ", "_")}',
+            content,
+            flags=re.MULTILINE
+        )
+        
+        # Update description
+        content = re.sub(
+            r'^description:\s*.*$',
+            f'description: {self.config["project"]["description"]}',
+            content,
+            flags=re.MULTILINE
+        )
+        
+        # Update version
+        content = re.sub(
+            r'^version:\s*.*$',
+            f'version: {self.config["project"]["version"]}+{self.config["project"]["build_number"]}',
+            content,
+            flags=re.MULTILINE
+        )
+        
+        # Update Flutter SDK version
+        content = re.sub(
+            r'^\s*sdk:\s*.*$',
+            f'  sdk: {self.config["flutter"]["sdk_version"]}',
+            content,
+            flags=re.MULTILINE
+        )
+        
+        with open(pubspec_path, 'w', encoding='utf-8') as file:
+            file.write(content)
+        
+        print(f"✅ Updated pubspec.yaml")
+    
+    def update_android_config(self):
+        """Update Android configuration files"""
+        android_dir = self.project_root / "android"
+        if not android_dir.exists():
+            print("❌ Android directory not found")
+            return
+        
+        # Update build.gradle
+        build_gradle_path = android_dir / "app" / "build.gradle"
+        if build_gradle_path.exists():
+            self.backup_file(build_gradle_path)
+            
+            with open(build_gradle_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Update namespace
+            content = re.sub(
+                r'namespace\s+".*"',
+                f'namespace "{self.config["project"]["package_name"]}"',
+                content
+            )
+            
+            # Update applicationId
+            content = re.sub(
+                r'applicationId\s+".*"',
+                f'applicationId "{self.config["project"]["package_name"]}"',
+                content
+            )
+            
+            # Update minSdkVersion
+            content = re.sub(
+                r'minSdkVersion\s+flutter\.minSdkVersion',
+                f'minSdkVersion {self.config["android"]["min_sdk_version"]}',
+                content
+            )
+            
+            # Update targetSdkVersion
+            content = re.sub(
+                r'targetSdkVersion\s+flutter\.targetSdkVersion',
+                f'targetSdkVersion {self.config["android"]["target_sdk_version"]}',
+                content
+            )
+            
+            # Update compileSdkVersion
+            content = re.sub(
+                r'compileSdkVersion\s+flutter\.compileSdkVersion',
+                f'compileSdkVersion {self.config["android"]["compile_sdk_version"]}',
+                content
+            )
+            
+            # Update flavor names
+            for flavor in self.config["flavors"]:
+                flavor_name = flavor
+                flavor_config = self.config["flavors"][flavor]
+                content = re.sub(
+                    rf'manifestPlaceholders\s*=\s*\[appName:\s*"[^"]*"\]',
+                    f'manifestPlaceholders = [appName: "{flavor_config["app_name"]}"]',
+                    content
+                )
+            
+            with open(build_gradle_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+            
+            print(f"✅ Updated Android build.gradle")
+    
+    def update_ios_config(self):
+        """Update iOS configuration files"""
+        ios_dir = self.project_root / "ios"
+        if not ios_dir.exists():
+            print("❌ iOS directory not found")
+            return
+        
+        # Update Info.plist
+        info_plist_path = ios_dir / "Runner" / "Info.plist"
+        if info_plist_path.exists():
+            self.backup_file(info_plist_path)
+            
+            with open(info_plist_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Update CFBundleDisplayName
+            content = re.sub(
+                r'<key>CFBundleDisplayName</key>\s*<string>.*?</string>',
+                f'<key>CFBundleDisplayName</key>\n\t<string>{self.config["project"]["display_name"]}</string>',
+                content,
+                flags=re.DOTALL
+            )
+            
+            # Update CFBundleName
+            content = re.sub(
+                r'<key>CFBundleName</key>\s*<string>.*?</string>',
+                f'<key>CFBundleName</key>\n\t<string>{self.config["project"]["display_name"]}</string>',
+                content,
+                flags=re.DOTALL
+            )
+            
+            with open(info_plist_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+            
+            print(f"✅ Updated iOS Info.plist")
+        
+        # Update project.pbxproj
+        project_path = ios_dir / "Runner.xcodeproj" / "project.pbxproj"
+        if project_path.exists():
+            self.backup_file(project_path)
+            
+            with open(project_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Update PRODUCT_BUNDLE_IDENTIFIER
+            content = re.sub(
+                r'PRODUCT_BUNDLE_IDENTIFIER\s*=\s*[^;]+;',
+                f'PRODUCT_BUNDLE_IDENTIFIER = {self.config["project"]["package_name"]};',
+                content
+            )
+            
+            # Update PRODUCT_NAME
+            content = re.sub(
+                r'PRODUCT_NAME\s*=\s*[^;]+;',
+                f'PRODUCT_NAME = {self.config["project"]["name"].replace(" ", "")};',
+                content
+            )
+            
+            with open(project_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+            
+            print(f"✅ Updated iOS project.pbxproj")
+    
+    def update_dart_files(self):
+        """Update Dart files with new package name"""
+        lib_dir = self.project_root / "lib"
+        if not lib_dir.exists():
+            print("❌ lib directory not found")
+            return
+        
+        # Get old package name from current pubspec.yaml
+        old_package_name = None
+        pubspec_path = self.project_root / "pubspec.yaml"
+        if pubspec_path.exists():
+            with open(pubspec_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+                match = re.search(r'^name:\s*(.+)$', content, re.MULTILINE)
+                if match:
+                    old_package_name = match.group(1).strip()
+        
+        if not old_package_name:
+            print("⚠️  Could not determine old package name")
+            return
+        
+        new_package_name = self.config["project"]["name"].lower().replace(" ", "_")
+        
+        # Update all Dart files
+        for dart_file in lib_dir.rglob("*.dart"):
+            self.backup_file(dart_file)
+            
+            with open(dart_file, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Update import statements
+            old_import = f'package:{old_package_name}/'
+            new_import = f'package:{new_package_name}/'
+            content = content.replace(old_import, new_import)
+            
+            with open(dart_file, 'w', encoding='utf-8') as file:
+                file.write(content)
+        
+        print(f"✅ Updated Dart files with new package name")
+    
+    def create_readme(self):
+        """Create or update README with configuration details"""
+        readme_path = self.project_root / "README.md"
+        
+        readme_content = f"""# {self.config["project"]["name"]}
+
+{self.config["project"]["description"]}
+
+## Configuration
+
+This project was configured using the automated configuration system.
+
+### Project Details
+- **Name**: {self.config["project"]["name"]}
+- **Version**: {self.config["project"]["version"]}
+- **Package**: {self.config["project"]["package_name"]}
+- **Company**: {self.config["company"]["name"]}
+
+### Build Flavors
+"""
+        
+        for flavor_name, flavor_config in self.config["flavors"].items():
+            readme_content += f"- **{flavor_config['name']}**: {flavor_config['app_name']}\n"
+        
+        readme_content += f"""
+### Features
+"""
+        
+        for feature, enabled in self.config["features"].items():
+            status = "✅" if enabled else "❌"
+            readme_content += f"- {status} {feature.replace('_', ' ').title()}\n"
+        
+        readme_content += f"""
+## Development
+
+To modify the project configuration, edit `config/project_config.yaml` and run:
+
+```bash
+python scripts/configure_project.py
+```
+
+## Company Information
+- **Website**: {self.config["company"]["website"]}
+- **Email**: {self.config["company"]["email"]}
+"""
+        
+        with open(readme_path, 'w', encoding='utf-8') as file:
+            file.write(readme_content)
+        
+        print(f"✅ Updated README.md")
+    
+    def run(self):
+        """Run the complete configuration process"""
+        print("🚀 Starting project configuration...")
+        print(f"📁 Project: {self.config['project']['name']}")
+        print(f"📦 Package: {self.config['project']['package_name']}")
+        print()
+        
+        try:
+            self.update_pubspec_yaml()
+            self.update_android_config()
+            self.update_ios_config()
+            self.update_dart_files()
+            self.create_readme()
+            
+            print()
+            print("🎉 Project configuration completed successfully!")
+            print("📋 Backup files have been created for all modified files")
+            print("🔄 You may need to run 'flutter clean' and 'flutter pub get'")
+            
+        except Exception as e:
+            print(f"❌ Error during configuration: {e}")
+            exit(1)
+
+def main():
+    configurator = ProjectConfigurator()
+    configurator.run()
+
+if __name__ == "__main__":
+    main()
