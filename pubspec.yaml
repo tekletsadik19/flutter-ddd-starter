@@ -33,7 +33,7 @@ dev_dependencies:
   freezed_annotation: ^2.4.4
   injectable_generator: ^2.6.2
   mocktail: ^1.0.4
-  retrofit_generator: ^9.1.5
+  retrofit_generator: ^9.7.0
   very_good_analysis: ^6.0.0
 
 flutter:
