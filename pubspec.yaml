@@ -22,7 +22,7 @@ dependencies:
   injectable: ^2.5.1
   intl: ^0.20.2
   json_annotation: ^4.9.0
-  json_serializable: ^6.9.0
+  json_serializable: ^6.9.5
   retrofit: ^4.5.0
 
 dev_dependencies:
