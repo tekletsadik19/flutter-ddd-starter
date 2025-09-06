@@ -42,6 +42,7 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 .fvm/
+# Note: .fvmrc should be committed to track Flutter version
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -109,6 +110,7 @@ app.*.map.json
 !/dev/ci/**/Gemfile.lock
 !.vscode/extensions.json
 !.vscode/launch.json
+!.vscode/settings.json
 !.idea/codeStyles/
 !.idea/dictionaries/
 !.idea/runConfigurations/
