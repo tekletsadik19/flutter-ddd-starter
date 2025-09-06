@@ -143,7 +143,7 @@ class DebugUtils {
 
     return FloatingActionButton(
       mini: true,
-      backgroundColor: Colors.red.withOpacity(0.8),
+      backgroundColor: Colors.red.withValues(alpha: 0.8),
       onPressed: () => _showDebugMenu(context),
       child: const Icon(Icons.bug_report, color: Colors.white),
     );
@@ -214,7 +214,7 @@ class _DebugInfoPanelState extends State<_DebugInfoPanel> {
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.black.withOpacity(0.8),
+      color: Colors.black.withValues(alpha: 0.8),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.all(8),

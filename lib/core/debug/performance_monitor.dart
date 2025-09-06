@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
-import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -285,7 +283,6 @@ class _PerformanceInfoPanel extends StatefulWidget {
 
 class _PerformanceInfoPanelState extends State<_PerformanceInfoPanel> {
   Timer? _updateTimer;
-  String _memoryUsage = '';
   int _frameCount = 0;
 
   @override
@@ -308,17 +305,12 @@ class _PerformanceInfoPanelState extends State<_PerformanceInfoPanel> {
   }
 
   void _updateMemoryUsage() {
-    try {
-      final info = developer.Service.getIsolateID(Isolate.current);
-      _memoryUsage = 'Memory info unavailable';
-    } catch (e) {
-      _memoryUsage = 'Error getting memory';
-    }
+    // Memory usage tracking removed for simplicity
   }
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.green.withOpacity(0.8),
+      color: Colors.green.withValues(alpha: 0.8),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.all(8),

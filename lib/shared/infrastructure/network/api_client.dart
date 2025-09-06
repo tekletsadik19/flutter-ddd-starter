@@ -50,7 +50,7 @@ class ApiClient {
   /// POST request
   Future<Response<T>> post<T>(
     String path, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
@@ -71,7 +71,7 @@ class ApiClient {
   /// PUT request
   Future<Response<T>> put<T>(
     String path, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {

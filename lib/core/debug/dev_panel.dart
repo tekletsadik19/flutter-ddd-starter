@@ -75,7 +75,7 @@ class _DevPanelState extends State<DevPanel> with TickerProviderStateMixin {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.8),
+                  color: Colors.purple.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Icon(

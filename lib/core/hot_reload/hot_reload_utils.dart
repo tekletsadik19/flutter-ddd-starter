@@ -34,7 +34,7 @@ class HotReloadUtils {
   }
 
   /// Preserve state during hot reload
-  static void preserveState(String key, value) {
+  static void preserveState(String key, dynamic value) {
     if (!kDebugMode) return;
     _preservedState[key] = value;
     developer.log('🔥 State preserved: $key');
@@ -309,7 +309,7 @@ class _HotReloadIndicatorState extends State<HotReloadIndicator>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.9),
+                  color: Colors.orange.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Row(
