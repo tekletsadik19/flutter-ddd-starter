@@ -1,15 +1,13 @@
-import 'package:ddd_flutter_app/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shemanit/l10n/arb/app_localizations.dart';
 
 extension PumpApp on WidgetTester {
-  Future<void> pumpApp(Widget widget) {
-    return pumpWidget(
+  Future<void> pumpApp(Widget widget) => pumpWidget(
       MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: widget,
       ),
     );
-  }
 }
