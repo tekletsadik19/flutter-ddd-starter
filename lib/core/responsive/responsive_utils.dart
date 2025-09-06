@@ -68,13 +68,14 @@ class ResponsiveUtils {
     T? largeDesktop,
   }) {
     final deviceType = getDeviceType(MediaQuery.of(context).size.width);
-    
+
     return switch (deviceType) {
       DeviceType.mobile => mobile,
       DeviceType.mobileLarge => mobileLarge ?? mobile,
       DeviceType.tablet => tablet ?? mobileLarge ?? mobile,
       DeviceType.desktop => desktop ?? tablet ?? mobileLarge ?? mobile,
-      DeviceType.largeDesktop => largeDesktop ?? desktop ?? tablet ?? mobileLarge ?? mobile,
+      DeviceType.largeDesktop =>
+        largeDesktop ?? desktop ?? tablet ?? mobileLarge ?? mobile,
     };
   }
 
@@ -121,13 +122,14 @@ class ResponsiveUtils {
     double scaleFactor = 0.1,
   }) {
     final deviceType = getDeviceType(MediaQuery.of(context).size.width);
-    
+
     return switch (deviceType) {
       DeviceType.mobile => baseFontSize - (baseFontSize * scaleFactor),
       DeviceType.mobileLarge => baseFontSize,
       DeviceType.tablet => baseFontSize + (baseFontSize * scaleFactor * 0.5),
       DeviceType.desktop => baseFontSize + (baseFontSize * scaleFactor),
-      DeviceType.largeDesktop => baseFontSize + (baseFontSize * scaleFactor * 1.5),
+      DeviceType.largeDesktop =>
+        baseFontSize + (baseFontSize * scaleFactor * 1.5),
     };
   }
 
@@ -156,9 +158,9 @@ class ResponsiveUtils {
   static BorderRadius responsiveBorderRadius(BuildContext context) {
     final radius = responsiveValue(
       context: context,
-      mobile: 8.0,
-      tablet: 12.0,
-      desktop: 16.0,
+      mobile: 8,
+      tablet: 12,
+      desktop: 16,
     );
     return BorderRadius.circular(radius);
   }
@@ -167,9 +169,9 @@ class ResponsiveUtils {
   static double responsiveElevation(BuildContext context) {
     return responsiveValue(
       context: context,
-      mobile: 2.0,
-      tablet: 4.0,
-      desktop: 6.0,
+      mobile: 2,
+      tablet: 4,
+      desktop: 6,
     );
   }
 
@@ -203,7 +205,7 @@ class ResponsiveUtils {
     final size = MediaQuery.of(context).size;
     final deviceType = getDeviceType(size.width);
     final orientation = MediaQuery.of(context).orientation;
-    
+
     return ScreenSize(
       width: size.width,
       height: size.height,

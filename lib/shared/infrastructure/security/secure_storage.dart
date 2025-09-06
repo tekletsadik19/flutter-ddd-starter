@@ -37,8 +37,10 @@ class SecureStorageImpl implements SecureStorage {
   Future<Box<String>> get secureBox async {
     if (_secureBox?.isOpen == true) return _secureBox!;
 
-    final config = _encryptionManager.createSecureBoxConfig(_secureBoxName,
-        isSecure: true,);
+    final config = _encryptionManager.createSecureBoxConfig(
+      _secureBoxName,
+      isSecure: true,
+    );
     _secureBox = await Hive.openBox<String>(
       config.name,
       encryptionCipher: config.cipher,
@@ -85,7 +87,8 @@ class SecureStorageImpl implements SecureStorage {
         Logger.error('Data integrity check failed for key: $key');
         await delete(key); // Remove corrupted data
         throw const CacheException(
-            message: 'Data integrity verification failed',);
+          message: 'Data integrity verification failed',
+        );
       }
 
       Logger.debug('Secure data retrieved for key: $key');

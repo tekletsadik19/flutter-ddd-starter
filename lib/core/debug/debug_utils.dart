@@ -37,8 +37,12 @@ class DebugUtils {
   }
 
   /// Log a debug message
-  static void logDebug(String message,
-      {String? name, Object? error, StackTrace? stackTrace,}) {
+  static void logDebug(
+    String message, {
+    String? name,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     if (kDebugMode) {
       developer.log(
         message,
@@ -74,8 +78,12 @@ class DebugUtils {
   }
 
   /// Log an error message
-  static void logError(String message,
-      {String? name, Object? error, StackTrace? stackTrace,}) {
+  static void logError(
+    String message, {
+    String? name,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     developer.log(
       message,
       name: name ?? 'ERROR',
@@ -214,65 +222,68 @@ class _DebugInfoPanelState extends State<_DebugInfoPanel> {
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.black.withValues(alpha: 0.8),
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () => setState(() => _expanded = !_expanded),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    _expanded ? Icons.expand_less : Icons.expand_more,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  const Text(
-                    'DEBUG',
-                    style: TextStyle(
+        color: Colors.black.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => setState(() => _expanded = !_expanded),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _expanded ? Icons.expand_less : Icons.expand_more,
                       color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                      size: 16,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 4),
+                    const Text(
+                      'DEBUG',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            if (_expanded) ...[
-              const SizedBox(height: 8),
-              _buildInfoRow('Env', AppConfig.instance.environment.name),
-              _buildInfoRow('Debug',
-                  AppConfig.instance.debugConfig.enableDebugMode.toString(),),
-              _buildInfoRow('Platform', defaultTargetPlatform.name),
-              _buildInfoRow(
+              if (_expanded) ...[
+                const SizedBox(height: 8),
+                _buildInfoRow('Env', AppConfig.instance.environment.name),
+                _buildInfoRow(
+                  'Debug',
+                  AppConfig.instance.debugConfig.enableDebugMode.toString(),
+                ),
+                _buildInfoRow('Platform', defaultTargetPlatform.name),
+                _buildInfoRow(
                   'Mode',
                   kDebugMode
                       ? 'Debug'
                       : kProfileMode
                           ? 'Profile'
-                          : 'Release',),
+                          : 'Release',
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-      ),
-    );
+      );
 
   Widget _buildInfoRow(String label, String value) => Padding(
-      padding: const EdgeInsets.only(bottom: 2),
-      child: Text(
-        '$label: $value',
-        style: const TextStyle(
-          color: Colors.white70,
-          fontSize: 10,
+        padding: const EdgeInsets.only(bottom: 2),
+        child: Text(
+          '$label: $value',
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 10,
+          ),
         ),
-      ),
-    );
+      );
 }
 
 /// Debug menu bottom sheet
@@ -281,76 +292,76 @@ class _DebugMenuSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Debug Menu',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Debug Menu',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          _buildDebugButton(
-            'Print Widget Tree',
-            () {
-              DebugUtils.printWidgetTree(context);
-              Navigator.pop(context);
-            },
-          ),
-          _buildDebugButton(
-            'Print Render Tree',
-            () {
-              DebugUtils.printRenderTree();
-              Navigator.pop(context);
-            },
-          ),
-          _buildDebugButton(
-            'Print Layer Tree',
-            () {
-              DebugUtils.printLayerTree();
-              Navigator.pop(context);
-            },
-          ),
-          _buildDebugButton(
-            'Memory Usage',
-            () {
-              DebugUtils.printMemoryUsage();
-              Navigator.pop(context);
-            },
-          ),
-          _buildDebugButton(
-            'App Info',
-            () {
-              final config = AppConfig.instance;
-              DebugUtils.debugCopy('''
+            const SizedBox(height: 16),
+            _buildDebugButton(
+              'Print Widget Tree',
+              () {
+                DebugUtils.printWidgetTree(context);
+                Navigator.pop(context);
+              },
+            ),
+            _buildDebugButton(
+              'Print Render Tree',
+              () {
+                DebugUtils.printRenderTree();
+                Navigator.pop(context);
+              },
+            ),
+            _buildDebugButton(
+              'Print Layer Tree',
+              () {
+                DebugUtils.printLayerTree();
+                Navigator.pop(context);
+              },
+            ),
+            _buildDebugButton(
+              'Memory Usage',
+              () {
+                DebugUtils.printMemoryUsage();
+                Navigator.pop(context);
+              },
+            ),
+            _buildDebugButton(
+              'App Info',
+              () {
+                final config = AppConfig.instance;
+                DebugUtils.debugCopy('''
 App: ${config.fullAppName}
 Environment: ${config.environment.name}
 Base URL: ${config.apiConfig.baseUrl}
 Debug Mode: ${config.debugConfig.enableDebugMode}
 Platform: ${defaultTargetPlatform.name}
 ''');
-              Navigator.pop(context);
-            },
-          ),
-          const SizedBox(height: 8),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
+                Navigator.pop(context);
+              },
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
 
   Widget _buildDebugButton(String title, VoidCallback onPressed) => Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        child: Text(title),
-      ),
-    );
+        padding: const EdgeInsets.only(bottom: 8),
+        child: ElevatedButton(
+          onPressed: onPressed,
+          child: Text(title),
+        ),
+      );
 }

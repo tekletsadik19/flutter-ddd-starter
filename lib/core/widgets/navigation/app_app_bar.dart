@@ -37,7 +37,7 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (Platform.isIOS) {
       return _buildCupertinoAppBar(context);
     }
-    
+
     // Use Material app bar for all other platforms
     return _buildMaterialAppBar(context);
   }
@@ -52,7 +52,7 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: CupertinoNavigationBar(
         leading: leading,
         middle: title,
-        trailing: effectiveActions.isNotEmpty 
+        trailing: effectiveActions.isNotEmpty
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: effectiveActions,
@@ -89,17 +89,17 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   List<Widget> _buildEffectiveActions(BuildContext context) {
     final actionsList = <Widget>[];
-    
+
     // Add custom actions first
     if (actions != null) {
       actionsList.addAll(actions!);
     }
-    
+
     // Add theme toggle if requested
     if (showThemeToggle) {
       actionsList.add(_buildThemeToggle(context));
     }
-    
+
     return actionsList;
   }
 
@@ -108,22 +108,23 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
       builder: (context, state) {
         final themeCubit = context.read<ThemeCubit>();
         final isDark = themeCubit.isDarkMode;
-        
+
         if (Platform.isIOS) {
           return CupertinoButton(
             padding: const EdgeInsets.all(8),
-            onPressed: () => themeCubit.toggleTheme(),
+            onPressed: themeCubit.toggleTheme,
             child: Icon(
               isDark ? CupertinoIcons.sun_max : CupertinoIcons.moon,
               semanticLabel: AccessibilityUtils.createButtonLabel(
-                label: isDark ? 'Switch to light theme' : 'Switch to dark theme',
+                label:
+                    isDark ? 'Switch to light theme' : 'Switch to dark theme',
               ),
             ),
           );
         }
-        
+
         return IconButton(
-          onPressed: () => themeCubit.toggleTheme(),
+          onPressed: themeCubit.toggleTheme,
           icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
           tooltip: isDark ? 'Switch to light theme' : 'Switch to dark theme',
           semanticLabel: AccessibilityUtils.createButtonLabel(
@@ -137,9 +138,10 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize {
     if (Platform.isIOS) {
-      return const Size.fromHeight(44.0); // Standard iOS navigation bar height
+      return const Size.fromHeight(44); // Standard iOS navigation bar height
     }
-    return const Size.fromHeight(kToolbarHeight); // Standard Material app bar height
+    return const Size.fromHeight(
+        kToolbarHeight); // Standard Material app bar height
   }
 }
 
@@ -165,12 +167,13 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = ResponsiveUtils.isMobile(context);
-    
+
     return AppAppBar(
       title: title,
-      leading: leading ?? (isMobile && onMenuPressed != null 
-          ? _buildMenuButton(context)
-          : null),
+      leading: leading ??
+          (isMobile && onMenuPressed != null
+              ? _buildMenuButton(context)
+              : null),
       actions: _buildResponsiveActions(context),
       showThemeToggle: showThemeToggle,
       semanticLabel: semanticLabel,
@@ -191,7 +194,7 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       );
     }
-    
+
     return IconButton(
       onPressed: onMenuPressed,
       icon: const Icon(Icons.menu),
@@ -205,7 +208,7 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
   List<Widget> _buildResponsiveActions(BuildContext context) {
     final actionsList = <Widget>[];
     final isDesktop = ResponsiveUtils.isDesktop(context);
-    
+
     // Add custom actions
     if (actions != null) {
       if (isDesktop) {
@@ -215,19 +218,19 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
         // Show limited actions on mobile, rest in overflow menu
         final visibleActions = actions!.take(2).toList();
         actionsList.addAll(visibleActions);
-        
+
         if (actions!.length > 2) {
           actionsList.add(_buildOverflowMenu(context));
         }
       }
     }
-    
+
     return actionsList;
   }
 
   Widget _buildOverflowMenu(BuildContext context) {
     final remainingActions = actions!.skip(2).toList();
-    
+
     if (Platform.isIOS) {
       return CupertinoButton(
         padding: const EdgeInsets.all(8),
@@ -240,17 +243,19 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       );
     }
-    
+
     return PopupMenuButton<int>(
       icon: const Icon(Icons.more_vert),
       tooltip: 'More actions',
       itemBuilder: (context) => remainingActions
           .asMap()
           .entries
-          .map((entry) => PopupMenuItem<int>(
-                value: entry.key,
-                child: entry.value,
-              ))
+          .map(
+            (entry) => PopupMenuItem<int>(
+              value: entry.key,
+              child: entry.value,
+            ),
+          )
           .toList(),
       onSelected: (index) {
         // Handle action selection
@@ -263,10 +268,12 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
       context: context,
       builder: (context) => CupertinoActionSheet(
         actions: actions
-            .map((action) => CupertinoActionSheetAction(
-                  onPressed: () => Navigator.pop(context),
-                  child: action,
-                ))
+            .map(
+              (action) => CupertinoActionSheetAction(
+                onPressed: () => Navigator.pop(context),
+                child: action,
+              ),
+            )
             .toList(),
         cancelButton: CupertinoActionSheetAction(
           onPressed: () => Navigator.pop(context),
@@ -279,7 +286,7 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize {
     if (Platform.isIOS) {
-      return const Size.fromHeight(44.0);
+      return const Size.fromHeight(44);
     }
     return const Size.fromHeight(kToolbarHeight);
   }

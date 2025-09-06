@@ -154,43 +154,50 @@ class AppButton extends HookWidget {
     final isPressed = useState(false);
     final isFocused = useState(false);
     final isHovered = useState(false);
-    
+
     // Animation controller for loading state
     final animationController = useAnimationController(
       duration: animationDuration ?? const Duration(milliseconds: 200),
     );
-    
+
     // Debounced callback to prevent rapid taps
-    final debouncedCallback = useMemoized(() {
-      if (onPressed == null) return null;
-      
-      Timer? debounceTimer;
-      return () {
-        debounceTimer?.cancel();
-        debounceTimer = Timer(debounceDelay, () {
-          if (hapticFeedback) {
-            HapticFeedback.lightImpact();
-          }
-          onPressed!();
-        });
-      };
-    }, [onPressed, debounceDelay, hapticFeedback]);
-    
+    final debouncedCallback = useMemoized(
+      () {
+        if (onPressed == null) return null;
+
+        Timer? debounceTimer;
+        return () {
+          debounceTimer?.cancel();
+          debounceTimer = Timer(debounceDelay, () {
+            if (hapticFeedback) {
+              HapticFeedback.lightImpact();
+            }
+            onPressed!();
+          });
+        };
+      },
+      [onPressed, debounceDelay, hapticFeedback],
+    );
+
     // Handle loading state animation
-    useEffect(() {
-      if (isLoading) {
-        animationController.repeat();
-      } else {
-        animationController.stop();
-      }
-      return null;
-    }, [isLoading]);
-    
-    final isEffectivelyEnabled = isEnabled && !isLoading && debouncedCallback != null;
-    
-    Widget button = _buildPlatformButton(
-      context, 
-      isEffectivelyEnabled, 
+    useEffect(
+      () {
+        if (isLoading) {
+          animationController.repeat();
+        } else {
+          animationController.stop();
+        }
+        return null;
+      },
+      [isLoading],
+    );
+
+    final isEffectivelyEnabled =
+        isEnabled && !isLoading && debouncedCallback != null;
+
+    var button = _buildPlatformButton(
+      context,
+      isEffectivelyEnabled,
       debouncedCallback,
       isPressed,
       isFocused,
@@ -205,7 +212,7 @@ class AppButton extends HookWidget {
     // Add tooltip if provided
     if (tooltip != null) {
       button = Tooltip(
-        message: tooltip!,
+        message: tooltip,
         child: button,
       );
     }
@@ -236,7 +243,7 @@ class AppButton extends HookWidget {
   }
 
   Widget _buildPlatformButton(
-    BuildContext context, 
+    BuildContext context,
     bool isEffectivelyEnabled,
     VoidCallback? debouncedCallback,
     ValueNotifier<bool> isPressed,
@@ -246,22 +253,23 @@ class AppButton extends HookWidget {
   ) {
     // Use Cupertino buttons on iOS for native feel
     if (Platform.isIOS) {
-      return _buildCupertinoButton(context, debouncedCallback, animationController);
+      return _buildCupertinoButton(
+          context, debouncedCallback, animationController);
     }
-    
+
     // Use Material buttons on Android and other platforms
     return _buildMaterialButton(
-      context, 
-      debouncedCallback, 
-      isPressed, 
-      isFocused, 
+      context,
+      debouncedCallback,
+      isPressed,
+      isFocused,
       isHovered,
       animationController,
     );
   }
 
   Widget _buildCupertinoButton(
-    BuildContext context, 
+    BuildContext context,
     VoidCallback? debouncedCallback,
     AnimationController animationController,
   ) {
@@ -276,23 +284,23 @@ class AppButton extends HookWidget {
           padding: padding,
           child: buttonChild,
         );
-      
+
       case AppButtonVariant.secondary:
       case AppButtonVariant.outlined:
         return CupertinoButton(
           onPressed: debouncedCallback,
           padding: padding,
-          color: theme.colorScheme.surfaceVariant,
+          color: theme.colorScheme.surfaceContainerHighest,
           child: buttonChild,
         );
-      
+
       case AppButtonVariant.text:
         return CupertinoButton(
           onPressed: debouncedCallback,
           padding: padding,
           child: buttonChild,
         );
-      
+
       case AppButtonVariant.destructive:
         return CupertinoButton.filled(
           onPressed: debouncedCallback,
@@ -303,7 +311,7 @@ class AppButton extends HookWidget {
   }
 
   Widget _buildMaterialButton(
-    BuildContext context, 
+    BuildContext context,
     VoidCallback? debouncedCallback,
     ValueNotifier<bool> isPressed,
     ValueNotifier<bool> isFocused,
@@ -313,7 +321,7 @@ class AppButton extends HookWidget {
     final buttonChild = _buildButtonChild(context, animationController);
     final theme = Theme.of(context);
 
-    Widget button = switch (variant) {
+    final Widget button = switch (variant) {
       AppButtonVariant.primary => ElevatedButton(
           onPressed: debouncedCallback,
           style: ElevatedButton.styleFrom(
@@ -322,18 +330,16 @@ class AppButton extends HookWidget {
           ),
           child: buttonChild,
         ),
-      
       AppButtonVariant.secondary => ElevatedButton(
           onPressed: debouncedCallback,
           style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.surfaceVariant,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
             foregroundColor: theme.colorScheme.onSurfaceVariant,
             padding: _getButtonPadding(context),
             minimumSize: _getMinimumSize(context),
           ),
           child: buttonChild,
         ),
-      
       AppButtonVariant.outlined => OutlinedButton(
           onPressed: debouncedCallback,
           style: OutlinedButton.styleFrom(
@@ -342,7 +348,6 @@ class AppButton extends HookWidget {
           ),
           child: buttonChild,
         ),
-      
       AppButtonVariant.text => TextButton(
           onPressed: debouncedCallback,
           style: TextButton.styleFrom(
@@ -351,7 +356,6 @@ class AppButton extends HookWidget {
           ),
           child: buttonChild,
         ),
-      
       AppButtonVariant.destructive => ElevatedButton(
           onPressed: debouncedCallback,
           style: ElevatedButton.styleFrom(
@@ -380,7 +384,8 @@ class AppButton extends HookWidget {
     );
   }
 
-  Widget _buildButtonChild(BuildContext context, AnimationController animationController) {
+  Widget _buildButtonChild(
+      BuildContext context, AnimationController animationController) {
     if (isLoading) {
       return _buildLoadingIndicator(context, animationController);
     }
@@ -399,11 +404,12 @@ class AppButton extends HookWidget {
     return child;
   }
 
-  Widget _buildLoadingIndicator(BuildContext context, AnimationController animationController) {
+  Widget _buildLoadingIndicator(
+      BuildContext context, AnimationController animationController) {
     final theme = Theme.of(context);
     final size = _getLoadingIndicatorSize();
 
-    Widget indicator = Platform.isIOS
+    final indicator = Platform.isIOS
         ? CupertinoActivityIndicator(
             radius: size / 2,
             color: theme.colorScheme.onPrimary,
@@ -445,19 +451,28 @@ class AppButton extends HookWidget {
     return ResponsiveUtils.responsiveValue(
       context: context,
       mobile: switch (size) {
-        AppButtonSize.small => const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        AppButtonSize.medium => const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        AppButtonSize.large => const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        AppButtonSize.small =>
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        AppButtonSize.medium =>
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        AppButtonSize.large =>
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       },
       tablet: switch (size) {
-        AppButtonSize.small => const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        AppButtonSize.medium => const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        AppButtonSize.large => const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        AppButtonSize.small =>
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        AppButtonSize.medium =>
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        AppButtonSize.large =>
+          const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       },
       desktop: switch (size) {
-        AppButtonSize.small => const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        AppButtonSize.medium => const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        AppButtonSize.large => const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+        AppButtonSize.small =>
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        AppButtonSize.medium =>
+          const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        AppButtonSize.large =>
+          const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
       },
     );
   }

@@ -14,89 +14,101 @@ import 'package:shemanit/core/di/injection_container.dart';
   String key, {
   Future<T> Function()? fetcher,
   Duration? expiration,
-  T Function(dynamic)? fromJson,
+  T Function()? fromJson,
   dynamic Function(T)? toJson,
 }) {
   final cacheService = getIt<CacheService>();
-  
+
   final data = useState<T?>(null);
   final isLoading = useState(false);
   final error = useState<String?>(null);
 
   // Load data from cache on mount
-  useEffect(() {
-    Future<void> loadFromCache() async {
+  useEffect(
+    () {
+      Future<void> loadFromCache() async {
+        try {
+          isLoading.value = true;
+          error.value = null;
+
+          T? cachedData;
+          if (expiration != null) {
+            cachedData = await cacheService.getWithExpirationCheck<T>(key);
+          } else {
+            cachedData = await cacheService.get<T>(key);
+          }
+
+          if (cachedData != null) {
+            data.value = cachedData;
+          } else if (fetcher != null) {
+            // Cache miss, fetch fresh data
+            await refreshData();
+          }
+        } catch (e) {
+          error.value = e.toString();
+        } finally {
+          isLoading.value = false;
+        }
+      }
+
+      loadFromCache();
+      return null;
+    },
+    [key],
+  );
+
+  final setData = useCallback(
+    (T newData) async {
+      try {
+        data.value = newData;
+        if (expiration != null) {
+          await cacheService.putWithExpiration(key, newData, expiration);
+        } else {
+          await cacheService.put(key, newData);
+        }
+      } catch (e) {
+        error.value = e.toString();
+      }
+    },
+    [key, expiration],
+  );
+
+  final removeData = useCallback(
+    () async {
+      try {
+        data.value = null;
+        await cacheService.delete(key);
+      } catch (e) {
+        error.value = e.toString();
+      }
+    },
+    [key],
+  );
+
+  final refreshData = useCallback(
+    () async {
+      if (fetcher == null) return;
+
       try {
         isLoading.value = true;
         error.value = null;
 
-        T? cachedData;
-        if (expiration != null) {
-          cachedData = await cacheService.getWithExpirationCheck<T>(key);
-        } else {
-          cachedData = await cacheService.get<T>(key);
-        }
+        final freshData = await fetcher();
+        data.value = freshData;
 
-        if (cachedData != null) {
-          data.value = cachedData;
-        } else if (fetcher != null) {
-          // Cache miss, fetch fresh data
-          await refreshData();
+        if (expiration != null) {
+          await cacheService.putWithExpiration(key, freshData, expiration);
+        } else {
+          await cacheService.put(key, freshData);
         }
       } catch (e) {
         error.value = e.toString();
       } finally {
         isLoading.value = false;
       }
-    }
-
-    loadFromCache();
-    return null;
-  }, [key]);
-
-  final setData = useCallback((T newData) async {
-    try {
-      data.value = newData;
-      if (expiration != null) {
-        await cacheService.putWithExpiration(key, newData, expiration);
-      } else {
-        await cacheService.put(key, newData);
-      }
-    } catch (e) {
-      error.value = e.toString();
-    }
-  }, [key, expiration]);
-
-  final removeData = useCallback(() async {
-    try {
-      data.value = null;
-      await cacheService.delete(key);
-    } catch (e) {
-      error.value = e.toString();
-    }
-  }, [key]);
-
-  final refreshData = useCallback(() async {
-    if (fetcher == null) return;
-
-    try {
-      isLoading.value = true;
-      error.value = null;
-      
-      final freshData = await fetcher();
-      data.value = freshData;
-      
-      if (expiration != null) {
-        await cacheService.putWithExpiration(key, freshData, expiration);
-      } else {
-        await cacheService.put(key, freshData);
-      }
-    } catch (e) {
-      error.value = e.toString();
-    } finally {
-      isLoading.value = false;
-    }
-  }, [key, fetcher, expiration]);
+    },
+    [key, fetcher, expiration],
+  );
 
   return (
     data: data.value,
@@ -116,34 +128,37 @@ Map<String, T?> useCacheMultiple<T>(
   final cacheService = getIt<CacheService>();
   final dataMap = useState<Map<String, T?>>({});
 
-  useEffect(() {
-    Future<void> loadMultiple() async {
-      try {
-        final results = await cacheService.getAll<T>(keys);
-        dataMap.value = results;
+  useEffect(
+    () {
+      Future<void> loadMultiple() async {
+        try {
+          final results = await cacheService.getAll<T>(keys);
+          dataMap.value = results;
 
-        // Fetch missing data if fetchers are provided
-        if (fetchers != null) {
-          for (final key in keys) {
-            if (results[key] == null && fetchers.containsKey(key)) {
-              try {
-                final freshData = await fetchers[key]!();
-                await cacheService.put(key, freshData);
-                dataMap.value = {...dataMap.value, key: freshData};
-              } catch (e) {
-                // Handle individual fetch errors
+          // Fetch missing data if fetchers are provided
+          if (fetchers != null) {
+            for (final key in keys) {
+              if (results[key] == null && fetchers.containsKey(key)) {
+                try {
+                  final freshData = await fetchers[key]!();
+                  await cacheService.put(key, freshData);
+                  dataMap.value = {...dataMap.value, key: freshData};
+                } catch (e) {
+                  // Handle individual fetch errors
+                }
               }
             }
           }
+        } catch (e) {
+          // Handle error
         }
-      } catch (e) {
-        // Handle error
       }
-    }
 
-    loadMultiple();
-    return null;
-  }, [keys]);
+      loadMultiple();
+      return null;
+    },
+    [keys],
+  );
 
   return dataMap.value;
 }
@@ -156,21 +171,31 @@ Map<String, T?> useCacheMultiple<T>(
 }) useCacheInvalidation() {
   final cacheService = getIt<CacheService>();
 
-  final invalidateByPattern = useCallback((String pattern) async {
-    final allKeys = await cacheService.getAllKeys();
-    final keysToDelete = allKeys.where((key) => key.contains(pattern)).toList();
-    if (keysToDelete.isNotEmpty) {
-      await cacheService.deleteAll(keysToDelete);
-    }
-  }, []);
+  final invalidateByPattern = useCallback(
+    (String pattern) async {
+      final allKeys = await cacheService.getAllKeys();
+      final keysToDelete =
+          allKeys.where((key) => key.contains(pattern)).toList();
+      if (keysToDelete.isNotEmpty) {
+        await cacheService.deleteAll(keysToDelete);
+      }
+    },
+    [],
+  );
 
-  final invalidateAll = useCallback(() async {
-    await cacheService.clear();
-  }, []);
+  final invalidateAll = useCallback(
+    () async {
+      await cacheService.clear();
+    },
+    [],
+  );
 
-  final invalidateKeys = useCallback((List<String> keys) async {
-    await cacheService.deleteAll(keys);
-  }, []);
+  final invalidateKeys = useCallback(
+    (List<String> keys) async {
+      await cacheService.deleteAll(keys);
+    },
+    [],
+  );
 
   return (
     invalidateByPattern: invalidateByPattern,
@@ -187,9 +212,9 @@ Map<String, T?> useCacheMultiple<T>(
 }) useCacheStats() {
   final cacheService = getIt<CacheService>();
 
-  final getCacheSize = useCallback(() => cacheService.getSize(), []);
-  final getAllKeys = useCallback(() => cacheService.getAllKeys(), []);
-  final compactCache = useCallback(() => cacheService.compact(), []);
+  final getCacheSize = useCallback(cacheService.getSize, []);
+  final getAllKeys = useCallback(cacheService.getAllKeys, []);
+  final compactCache = useCallback(cacheService.compact, []);
 
   return (
     getCacheSize: getCacheSize,
@@ -210,29 +235,32 @@ Map<String, T?> useCacheMultiple<T>(
 }) {
   final cacheHook = useCache<T>(key, fetcher: fetcher);
 
-  final optimisticUpdate = useCallback((T optimisticData, Future<T> Function() actualUpdate) async {
-    // Store current data as backup
-    final originalData = cacheHook.data;
-    
-    try {
-      // Apply optimistic update immediately
-      await cacheHook.setData(optimisticData);
-      
-      // Perform actual update
-      final actualData = await actualUpdate();
-      
-      // Update with actual result
-      await cacheHook.setData(actualData);
-    } catch (e) {
-      // Rollback on error
-      if (originalData != null) {
-        await cacheHook.setData(originalData);
-      } else {
-        await cacheHook.removeData();
+  final optimisticUpdate = useCallback(
+    (T optimisticData, Future<T> Function() actualUpdate) async {
+      // Store current data as backup
+      final originalData = cacheHook.data;
+
+      try {
+        // Apply optimistic update immediately
+        await cacheHook.setData(optimisticData);
+
+        // Perform actual update
+        final actualData = await actualUpdate();
+
+        // Update with actual result
+        await cacheHook.setData(actualData);
+      } catch (e) {
+        // Rollback on error
+        if (originalData != null) {
+          await cacheHook.setData(originalData);
+        } else {
+          await cacheHook.removeData();
+        }
+        rethrow;
       }
-      rethrow;
-    }
-  }, [cacheHook.setData, cacheHook.removeData]);
+    },
+    [cacheHook.setData, cacheHook.removeData],
+  );
 
   return (
     data: cacheHook.data,
@@ -243,35 +271,41 @@ Map<String, T?> useCacheMultiple<T>(
 }
 
 /// Hook for cache synchronization across tabs/windows
-void useCacheSync(String key, void Function(dynamic) onUpdate) {
-  useEffect(() {
-    // In a real implementation, you'd listen for storage events
-    // or use other cross-tab communication mechanisms
-    return null;
-  }, [key]);
+void useCacheSync(String key, void Function() onUpdate) {
+  useEffect(
+    () {
+      // In a real implementation, you'd listen for storage events
+      // or use other cross-tab communication mechanisms
+      return null;
+    },
+    [key],
+  );
 }
 
 /// Hook for cache preloading
-void useCachePreload<T>(List<String> keys, Map<String, Future<T> Function()> fetchers) {
+void useCachePreload<T>(
+    List<String> keys, Map<String, Future<T> Function()> fetchers) {
   final cacheService = getIt<CacheService>();
 
-  useEffect(() {
-    Future<void> preload() async {
-      for (final key in keys) {
-        final exists = await cacheService.exists(key);
-        if (!exists && fetchers.containsKey(key)) {
-          try {
-            final data = await fetchers[key]!();
-            await cacheService.put(key, data);
-          } catch (e) {
-            // Ignore preload errors
+  useEffect(
+    () {
+      Future<void> preload() async {
+        for (final key in keys) {
+          final exists = await cacheService.exists(key);
+          if (!exists && fetchers.containsKey(key)) {
+            try {
+              final data = await fetchers[key]!();
+              await cacheService.put(key, data);
+            } catch (e) {
+              // Ignore preload errors
+            }
           }
         }
       }
-    }
 
-    preload();
-    return null;
-  }, [keys]);
+      preload();
+      return null;
+    },
+    [keys],
+  );
 }
-

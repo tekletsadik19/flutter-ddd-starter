@@ -11,9 +11,9 @@ class CounterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-      create: (_) => sl<CounterCubit>(),
-      child: const CounterView(),
-    );
+        create: (_) => sl<CounterCubit>(),
+        child: const CounterView(),
+      );
 }
 
 /// Counter page scaffold

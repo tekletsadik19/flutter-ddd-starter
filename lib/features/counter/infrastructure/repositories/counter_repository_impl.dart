@@ -30,7 +30,8 @@ class CounterRepositoryImpl implements CounterRepository {
 
   @override
   Future<Either<Failure, CounterEntity>> saveCounter(
-      CounterEntity counter,) async {
+    CounterEntity counter,
+  ) async {
     try {
       final counterModel = CounterModel.fromEntity(counter);
       await _localDataSource.cacheCounter(counterModel);
@@ -82,20 +83,24 @@ class CounterRepositoryImpl implements CounterRepository {
 
   // Base repository methods implementation
   @override
-  Future<Either<Failure, CounterEntity>> getById(String id) async => getCurrentCounter();
+  Future<Either<Failure, CounterEntity>> getById(String id) async =>
+      getCurrentCounter();
 
   @override
   Future<Either<Failure, List<CounterEntity>>> getAll({
     int? limit,
     int? offset,
     Map<String, dynamic>? filters,
-  }) async => getCounterHistory(limit: limit ?? 10);
+  }) async =>
+      getCounterHistory(limit: limit ?? 10);
 
   @override
-  Future<Either<Failure, CounterEntity>> create(CounterEntity entity) async => saveCounter(entity);
+  Future<Either<Failure, CounterEntity>> create(CounterEntity entity) async =>
+      saveCounter(entity);
 
   @override
-  Future<Either<Failure, CounterEntity>> update(CounterEntity entity) async => saveCounter(entity);
+  Future<Either<Failure, CounterEntity>> update(CounterEntity entity) async =>
+      saveCounter(entity);
 
   @override
   Future<Either<Failure, bool>> delete(String id) async {

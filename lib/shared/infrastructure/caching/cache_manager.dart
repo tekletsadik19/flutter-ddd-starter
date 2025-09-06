@@ -17,10 +17,10 @@ class CacheEntry<T> {
 
   /// Create from JSON
   factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry<T>(
-      data: json['data'] as T,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      ttl: Duration(milliseconds: json['ttl'] as int),
-    );
+        data: json['data'] as T,
+        timestamp: DateTime.parse(json['timestamp'] as String),
+        ttl: Duration(milliseconds: json['ttl'] as int),
+      );
 
   final T data;
   final DateTime timestamp;

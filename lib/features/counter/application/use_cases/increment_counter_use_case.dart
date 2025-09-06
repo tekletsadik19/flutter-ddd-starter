@@ -47,7 +47,8 @@ class IncrementCounterUseCase implements UseCase<CounterEntity, NoParams> {
                 Left.new,
                 (savedCounter) {
                   Logger.info(
-                      'Counter incremented successfully: ${savedCounter.value}',);
+                    'Counter incremented successfully: ${savedCounter.value}',
+                  );
 
                   // Check for milestone
                   if (_counterDomainService.hasReachedMilestone(savedCounter)) {

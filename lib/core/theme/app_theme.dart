@@ -28,7 +28,7 @@ class AppTheme {
     outlineVariant: Color(0xFFE5E7EB), // Gray 200
     surface: Color(0xFFFFFFFF),
     onSurface: Color(0xFF111827), // Gray 900
-    surfaceVariant: Color(0xFFF9FAFB), // Gray 50
+    surfaceContainerHighest: Color(0xFFF9FAFB), // Gray 50
     onSurfaceVariant: Color(0xFF374151), // Gray 700
     inverseSurface: Color(0xFF111827), // Gray 900
     onInverseSurface: Color(0xFFFFFFFF),
@@ -60,7 +60,7 @@ class AppTheme {
     outlineVariant: Color(0xFF374151), // Gray 700
     surface: Color(0xFF111827), // Gray 900
     onSurface: Color(0xFFF9FAFB), // Gray 50
-    surfaceVariant: Color(0xFF1F2937), // Gray 800
+    surfaceContainerHighest: Color(0xFF1F2937), // Gray 800
     onSurfaceVariant: Color(0xFFD1D5DB), // Gray 300
     inverseSurface: Color(0xFFF9FAFB), // Gray 50
     onInverseSurface: Color(0xFF111827), // Gray 900
@@ -170,7 +170,7 @@ class AppTheme {
         colorScheme: _lightColorScheme,
         textTheme: _textTheme,
         brightness: Brightness.light,
-        
+
         // AppBar theme
         appBarTheme: AppBarTheme(
           backgroundColor: _lightColorScheme.surface,
@@ -185,7 +185,7 @@ class AppTheme {
         ),
 
         // Card theme
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -227,7 +227,7 @@ class AppTheme {
         // Input decoration theme
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: _lightColorScheme.surfaceVariant,
+          fillColor: _lightColorScheme.surfaceContainerHighest,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
@@ -248,14 +248,16 @@ class AppTheme {
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: _lightColorScheme.error, width: 2),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
 
         // Chip theme
         chipTheme: ChipThemeData(
-          backgroundColor: _lightColorScheme.surfaceVariant,
+          backgroundColor: _lightColorScheme.surfaceContainerHighest,
           selectedColor: _lightColorScheme.primaryContainer,
-          disabledColor: _lightColorScheme.surfaceVariant.withOpacity(0.12),
+          disabledColor:
+              _lightColorScheme.surfaceContainerHighest.withOpacity(0.12),
           labelStyle: _textTheme.labelLarge,
           secondaryLabelStyle: _textTheme.labelLarge,
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -265,7 +267,7 @@ class AppTheme {
         ),
 
         // Dialog theme
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: _lightColorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -294,7 +296,8 @@ class AppTheme {
 
         // List tile theme
         listTileTheme: ListTileThemeData(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -314,7 +317,7 @@ class AppTheme {
         colorScheme: _darkColorScheme,
         textTheme: _textTheme,
         brightness: Brightness.dark,
-        
+
         // AppBar theme
         appBarTheme: AppBarTheme(
           backgroundColor: _darkColorScheme.surface,
@@ -329,7 +332,7 @@ class AppTheme {
         ),
 
         // Card theme
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -371,7 +374,7 @@ class AppTheme {
         // Input decoration theme
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: _darkColorScheme.surfaceVariant,
+          fillColor: _darkColorScheme.surfaceContainerHighest,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
@@ -392,14 +395,16 @@ class AppTheme {
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: _darkColorScheme.error, width: 2),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
 
         // Chip theme
         chipTheme: ChipThemeData(
-          backgroundColor: _darkColorScheme.surfaceVariant,
+          backgroundColor: _darkColorScheme.surfaceContainerHighest,
           selectedColor: _darkColorScheme.primaryContainer,
-          disabledColor: _darkColorScheme.surfaceVariant.withOpacity(0.12),
+          disabledColor:
+              _darkColorScheme.surfaceContainerHighest.withOpacity(0.12),
           labelStyle: _textTheme.labelLarge,
           secondaryLabelStyle: _textTheme.labelLarge,
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -409,7 +414,7 @@ class AppTheme {
         ),
 
         // Dialog theme
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: _darkColorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -427,7 +432,7 @@ class AppTheme {
         ),
 
         // Floating action button theme
-        floatingActionButtonThemeData: FloatingActionButtonThemeData(
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: _darkColorScheme.primary,
           foregroundColor: _darkColorScheme.onPrimary,
           elevation: 6,
@@ -438,7 +443,8 @@ class AppTheme {
 
         // List tile theme
         listTileTheme: ListTileThemeData(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),

@@ -23,9 +23,9 @@ class AppErrorWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final iconSize = ResponsiveUtils.responsiveValue(
       context: context,
-      mobile: 48.0,
-      tablet: 56.0,
-      desktop: 64.0,
+      mobile: 48,
+      tablet: 56,
+      desktop: 64,
     );
 
     return Semantics(
@@ -40,7 +40,7 @@ class AppErrorWidget extends StatelessWidget {
                 size: iconSize,
                 color: theme.colorScheme.error,
               ),
-              SizedBox(height: ResponsiveUtils.spacing16),
+              const SizedBox(height: ResponsiveUtils.spacing16),
               Text(
                 title ?? 'Oops! Something went wrong',
                 style: ResponsiveUtils.responsiveValue(
@@ -50,7 +50,7 @@ class AppErrorWidget extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: ResponsiveUtils.spacing8),
+              const SizedBox(height: ResponsiveUtils.spacing8),
               Text(
                 message,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -59,7 +59,7 @@ class AppErrorWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               if (onRetry != null) ...[
-                SizedBox(height: ResponsiveUtils.spacing24),
+                const SizedBox(height: ResponsiveUtils.spacing24),
                 ElevatedButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh),
@@ -94,12 +94,13 @@ class AppLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final indicatorSize = size ?? ResponsiveUtils.responsiveValue(
-      context: context,
-      mobile: 24.0,
-      tablet: 28.0,
-      desktop: 32.0,
-    );
+    final indicatorSize = size ??
+        ResponsiveUtils.responsiveValue(
+          context: context,
+          mobile: 24,
+          tablet: 28,
+          desktop: 32,
+        );
 
     return Semantics(
       label: semanticLabel ?? 'Loading: $message',
@@ -115,13 +116,13 @@ class AppLoadingWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: ResponsiveUtils.responsiveValue(
                     context: context,
-                    mobile: 2.0,
+                    mobile: 2,
                     tablet: 2.5,
-                    desktop: 3.0,
+                    desktop: 3,
                   ),
                 ),
               ),
-              SizedBox(height: ResponsiveUtils.spacing16),
+              const SizedBox(height: ResponsiveUtils.spacing16),
               Text(
                 message,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -161,9 +162,9 @@ class AppEmptyWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final iconSize = ResponsiveUtils.responsiveValue(
       context: context,
-      mobile: 48.0,
-      tablet: 56.0,
-      desktop: 64.0,
+      mobile: 48,
+      tablet: 56,
+      desktop: 64,
     );
 
     return Semantics(
@@ -178,7 +179,7 @@ class AppEmptyWidget extends StatelessWidget {
                 size: iconSize,
                 color: theme.colorScheme.outline,
               ),
-              SizedBox(height: ResponsiveUtils.spacing16),
+              const SizedBox(height: ResponsiveUtils.spacing16),
               if (title != null) ...[
                 Text(
                   title!,
@@ -189,7 +190,7 @@ class AppEmptyWidget extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: ResponsiveUtils.spacing8),
+                const SizedBox(height: ResponsiveUtils.spacing8),
               ],
               Text(
                 message,
@@ -199,7 +200,7 @@ class AppEmptyWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               if (onAction != null && actionLabel != null) ...[
-                SizedBox(height: ResponsiveUtils.spacing24),
+                const SizedBox(height: ResponsiveUtils.spacing24),
                 ElevatedButton(
                   onPressed: onAction,
                   child: Text(actionLabel!),

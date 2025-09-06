@@ -53,7 +53,7 @@ class AppTextField extends HookWidget {
     this.selectionHeightStyle = BoxHeightStyle.tight,
     this.selectionWidthStyle = BoxWidthStyle.tight,
     this.keyboardAppearance,
-    this.scrollPadding = const EdgeInsets.all(20.0),
+    this.scrollPadding = const EdgeInsets.all(20),
     this.dragStartBehavior = DragStartBehavior.start,
     this.enableInteractiveSelection,
     this.selectionControls,
@@ -169,68 +169,80 @@ class AppTextField extends HookWidget {
     final effectiveFocusNode = focusNode ?? useFocusNode();
     final errorText = useState<String?>(error);
     final isFocused = useState(false);
-    
+
     // Debounced validation
-    final debouncedValue = useMemoized(() {
-      final notifier = ValueNotifier(effectiveController.text);
-      Timer? debounceTimer;
-      
-      void listener() {
-        debounceTimer?.cancel();
-        debounceTimer = Timer(debounceDelay, () {
-          notifier.value = effectiveController.text;
-        });
-      }
-      
-      effectiveController.addListener(listener);
-      return notifier;
-    }, [effectiveController, debounceDelay]);
-    
+    final debouncedValue = useMemoized(
+      () {
+        final notifier = ValueNotifier(effectiveController.text);
+        Timer? debounceTimer;
+
+        void listener() {
+          debounceTimer?.cancel();
+          debounceTimer = Timer(debounceDelay, () {
+            notifier.value = effectiveController.text;
+          });
+        }
+
+        effectiveController.addListener(listener);
+        return notifier;
+      },
+      [effectiveController, debounceDelay],
+    );
+
     final debouncedText = useListenable(debouncedValue).value;
-    
+
     // Auto-validation with debouncing
-    useEffect(() {
-      if (autoValidate && validator != null) {
-        final validationError = validator!(debouncedText);
-        errorText.value = validationError;
-      }
-      return null;
-    }, [debouncedText, validator, autoValidate]);
-    
+    useEffect(
+      () {
+        if (autoValidate && validator != null) {
+          final validationError = validator!(debouncedText);
+          errorText.value = validationError;
+        }
+        return null;
+      },
+      [debouncedText, validator, autoValidate],
+    );
+
     // Handle text changes
-    final handleChanged = useCallback((String value) {
-      if (!autoValidate && validator != null) {
-        final validationError = validator!(value);
-        errorText.value = validationError;
-      }
-      onChanged?.call(value);
-    }, [validator, autoValidate, onChanged]);
-    
+    final handleChanged = useCallback(
+      (String value) {
+        if (!autoValidate && validator != null) {
+          final validationError = validator!(value);
+          errorText.value = validationError;
+        }
+        onChanged?.call(value);
+      },
+      [validator, autoValidate, onChanged],
+    );
+
     // Focus state management
-    useEffect(() {
-      void focusListener() {
-        isFocused.value = effectiveFocusNode.hasFocus;
-      }
-      
-      effectiveFocusNode.addListener(focusListener);
-      return () => effectiveFocusNode.removeListener(focusListener);
-    }, [effectiveFocusNode]);
+    useEffect(
+      () {
+        void focusListener() {
+          isFocused.value = effectiveFocusNode.hasFocus;
+        }
+
+        effectiveFocusNode.addListener(focusListener);
+        return () => effectiveFocusNode.removeListener(focusListener);
+      },
+      [effectiveFocusNode],
+    );
 
     // Use platform-specific text field on iOS
     if (Platform.isIOS && variant == AppTextFieldVariant.standard) {
       return _buildCupertinoTextField(
-        context, 
-        effectiveController, 
+        context,
+        effectiveController,
         effectiveFocusNode,
         errorText.value,
         handleChanged,
       );
     }
-    
+
     // Use Material text field for all other cases
     return _buildMaterialTextField(
-      context, 
-      effectiveController, 
+      context,
+      effectiveController,
       effectiveFocusNode,
       errorText.value,
       handleChanged,
@@ -246,8 +258,8 @@ class AppTextField extends HookWidget {
     ValueChanged<String> handleChanged,
   ) {
     final theme = Theme.of(context);
-    
-    Widget textField = CupertinoTextField(
+
+    final Widget textField = CupertinoTextField(
       controller: effectiveController,
       focusNode: effectiveFocusNode,
       keyboardType: widget.keyboardType,
@@ -297,7 +309,7 @@ class AppTextField extends HookWidget {
         tablet: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: ResponsiveUtils.responsiveBorderRadius(context),
         border: _errorText != null
             ? Border.all(color: theme.colorScheme.error)
@@ -312,7 +324,7 @@ class AppTextField extends HookWidget {
     final theme = Theme.of(context);
     final decoration = _buildInputDecoration(context, theme);
 
-    Widget textField = TextField(
+    final Widget textField = TextField(
       controller: widget.controller,
       focusNode: _focusNode,
       decoration: decoration,
@@ -374,7 +386,7 @@ class AppTextField extends HookWidget {
 
   InputDecoration _buildInputDecoration(BuildContext context, ThemeData theme) {
     final baseDecoration = widget.decoration ?? const InputDecoration();
-    
+
     return baseDecoration.copyWith(
       labelText: widget.label,
       hintText: widget.hint,
@@ -395,7 +407,7 @@ class AppTextField extends HookWidget {
 
   InputBorder _getBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
-    
+
     return switch (widget.variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.outline),
@@ -413,7 +425,7 @@ class AppTextField extends HookWidget {
 
   InputBorder _getFocusedBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
-    
+
     return switch (widget.variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
@@ -431,7 +443,7 @@ class AppTextField extends HookWidget {
 
   InputBorder _getErrorBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
-    
+
     return switch (widget.variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.error),
@@ -449,7 +461,7 @@ class AppTextField extends HookWidget {
 
   InputBorder _getFocusedErrorBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
-    
+
     return switch (widget.variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.error, width: 2),
@@ -465,10 +477,11 @@ class AppTextField extends HookWidget {
     };
   }
 
-  Widget _wrapWithLabelsAndAccessibility(BuildContext context, Widget textField) {
+  Widget _wrapWithLabelsAndAccessibility(
+      BuildContext context, Widget textField) {
     final theme = Theme.of(context);
-    
-    Widget result = textField;
+
+    var result = textField;
 
     // Add semantic label for accessibility
     if (widget.semanticLabel != null) {

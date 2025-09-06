@@ -47,7 +47,8 @@ class DecrementCounterUseCase implements UseCase<CounterEntity, NoParams> {
                 Left.new,
                 (savedCounter) {
                   Logger.info(
-                      'Counter decremented successfully: ${savedCounter.value}',);
+                    'Counter decremented successfully: ${savedCounter.value}',
+                  );
                   return Right(savedCounter);
                 },
               );

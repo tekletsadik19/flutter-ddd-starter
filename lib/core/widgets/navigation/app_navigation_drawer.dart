@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:shemanit/core/accessibility/accessibility_utils.dart';
@@ -59,33 +57,39 @@ class AppNavigationDrawer extends HookWidget {
     final theme = useTheme();
     final colorScheme = useColorScheme();
     final screenSize = useScreenSize();
-    
+
     // State for drawer interactions
     final selectedIndexState = useState(selectedIndex);
     final isHoveredIndex = useState<int?>(null);
-    
+
     // Animation controller for item transitions
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 200),
     );
-    
+
     // Update selected index when prop changes
-    useEffect(() {
-      selectedIndexState.value = selectedIndex;
-      return null;
-    }, [selectedIndex]);
-    
+    useEffect(
+      () {
+        selectedIndexState.value = selectedIndex;
+        return null;
+      },
+      [selectedIndex],
+    );
+
     // Responsive width calculation
-    final effectiveWidth = useMemoized(() {
-      if (width != null) return width!;
-      
-      return ResponsiveUtils.responsiveValue(
-        context: context,
-        mobile: 280.0,
-        tablet: 320.0,
-        desktop: 360.0,
-      );
-    }, [width, screenSize]);
+    final effectiveWidth = useMemoized(
+      () {
+        if (width != null) return width!;
+
+        return ResponsiveUtils.responsiveValue(
+          context: context,
+          mobile: 280,
+          tablet: 320,
+          desktop: 360,
+        );
+      },
+      [width, screenSize],
+    );
 
     return Semantics(
       label: semanticLabel ?? 'Navigation drawer',
@@ -99,14 +103,14 @@ class AppNavigationDrawer extends HookWidget {
           children: [
             // Header
             if (header != null) header!,
-            
+
             // Navigation items
             ...items.asMap().entries.map((entry) {
               final index = entry.key;
               final item = entry.value;
               final isSelected = index == selectedIndexState.value;
               final isHovered = index == isHoveredIndex.value;
-              
+
               return _buildNavigationItem(
                 context,
                 item,
@@ -124,7 +128,7 @@ class AppNavigationDrawer extends HookWidget {
                 },
               );
             }),
-            
+
             // Footer
             if (footer != null) ...[
               const Divider(),
@@ -152,9 +156,7 @@ class AppNavigationDrawer extends HookWidget {
         onEnter: (_) => onHover(true),
         onExit: (_) => onHover(false),
         child: ListTile(
-          leading: isSelected 
-              ? (item.selectedIcon ?? item.icon)
-              : item.icon,
+          leading: isSelected ? (item.selectedIcon ?? item.icon) : item.icon,
           title: Text(item.label),
           trailing: item.badge,
           selected: isSelected,
@@ -170,15 +172,15 @@ class AppNavigationDrawer extends HookWidget {
           semanticContainer: true,
           enableFeedback: true,
           // Custom styling based on state
-          tileColor: isSelected 
+          tileColor: isSelected
               ? colorScheme.secondaryContainer.withOpacity(0.3)
-              : isHovered 
-                  ? colorScheme.surfaceVariant.withOpacity(0.5)
+              : isHovered
+                  ? colorScheme.surfaceContainerHighest.withOpacity(0.5)
                   : null,
-          textColor: isSelected 
+          textColor: isSelected
               ? colorScheme.onSecondaryContainer
               : colorScheme.onSurface,
-          iconColor: isSelected 
+          iconColor: isSelected
               ? colorScheme.onSecondaryContainer
               : colorScheme.onSurfaceVariant,
         ),
@@ -220,50 +222,65 @@ class AppNavigationRail extends HookWidget {
   Widget build(BuildContext context) {
     final colorScheme = useColorScheme();
     final accessibility = useAccessibility();
-    
+
     // State management
     final selectedIndexState = useState(selectedIndex);
     final extendedState = useState(extended);
-    
+
     // Animation for rail extension
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 300),
     );
-    
+
     final widthAnimation = useAnimation(
       Tween<double>(
         begin: minWidth,
         end: minExtendedWidth,
-      ).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Curves.easeInOut,
-      )),
+      ).animate(
+        CurvedAnimation(
+          parent: animationController,
+          curve: Curves.easeInOut,
+        ),
+      ),
     );
-    
+
     // Handle extension state changes
-    useEffect(() {
-      if (extendedState.value) {
-        animationController.forward();
-      } else {
-        animationController.reverse();
-      }
-      return null;
-    }, [extendedState.value]);
-    
+    useEffect(
+      () {
+        if (extendedState.value) {
+          animationController.forward();
+        } else {
+          animationController.reverse();
+        }
+        return null;
+      },
+      [extendedState.value],
+    );
+
     // Update selected index when prop changes
-    useEffect(() {
-      selectedIndexState.value = selectedIndex;
-      return null;
-    }, [selectedIndex]);
-    
+    useEffect(
+      () {
+        selectedIndexState.value = selectedIndex;
+        return null;
+      },
+      [selectedIndex],
+    );
+
     // Convert items to NavigationRailDestination
-    final destinations = useMemoized(() {
-      return items.map((item) => NavigationRailDestination(
-        icon: item.icon,
-        selectedIcon: item.selectedIcon ?? item.icon,
-        label: Text(item.label),
-      )).toList();
-    }, [items]);
+    final destinations = useMemoized(
+      () {
+        return items
+            .map(
+              (item) => NavigationRailDestination(
+                icon: item.icon,
+                selectedIcon: item.selectedIcon ?? item.icon,
+                label: Text(item.label),
+              ),
+            )
+            .toList();
+      },
+      [items],
+    );
 
     return Semantics(
       label: semanticLabel ?? 'Navigation rail',
@@ -287,13 +304,13 @@ class AppNavigationRail extends HookWidget {
               IconButton(
                 onPressed: () => extendedState.value = !extendedState.value,
                 icon: Icon(
-                  extendedState.value 
-                      ? Icons.keyboard_arrow_left 
+                  extendedState.value
+                      ? Icons.keyboard_arrow_left
                       : Icons.keyboard_arrow_right,
                 ),
                 tooltip: extendedState.value ? 'Collapse' : 'Expand',
                 semanticLabel: AccessibilityUtils.createButtonLabel(
-                  label: extendedState.value 
+                  label: extendedState.value
                       ? 'Collapse navigation'
                       : 'Expand navigation',
                 ),
@@ -345,8 +362,8 @@ class AppAdaptiveNavigation extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = useScreenSize();
-    final drawerKey = useMemoized(() => GlobalKey<ScaffoldState>(), []);
-    
+    final drawerKey = useMemoized(GlobalKey<ScaffoldState>.new, []);
+
     // Show drawer on mobile, rail on larger screens
     if (screenSize.isMobile) {
       return Scaffold(
@@ -362,7 +379,7 @@ class AppAdaptiveNavigation extends HookWidget {
         body: child,
       );
     }
-    
+
     // Rail navigation for tablet/desktop
     return Scaffold(
       body: Row(

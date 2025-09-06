@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:shemanit/core/accessibility/accessibility_utils.dart';
 import 'package:shemanit/core/responsive/responsive_utils.dart';
 import 'package:shemanit/core/widgets/hooks/use_theme.dart';
 
@@ -33,19 +32,28 @@ class AppLayout extends HookWidget {
   Widget build(BuildContext context) {
     final screenSize = useScreenSize();
     final accessibility = useAccessibility();
-    
+
     // Responsive calculations
-    final effectiveMaxWidth = useMemoized(() {
-      return maxWidth ?? ResponsiveUtils.getMaxContentWidth(context);
-    }, [maxWidth, screenSize]);
-    
-    final effectivePadding = useMemoized(() {
-      return padding ?? ResponsiveUtils.responsivePadding(context);
-    }, [padding, screenSize]);
-    
-    final effectiveMargin = useMemoized(() {
-      return margin ?? ResponsiveUtils.responsiveMargin(context);
-    }, [margin, screenSize]);
+    final effectiveMaxWidth = useMemoized(
+      () {
+        return maxWidth ?? ResponsiveUtils.getMaxContentWidth(context);
+      },
+      [maxWidth, screenSize],
+    );
+
+    final effectivePadding = useMemoized(
+      () {
+        return padding ?? ResponsiveUtils.responsivePadding(context);
+      },
+      [padding, screenSize],
+    );
+
+    final effectiveMargin = useMemoized(
+      () {
+        return margin ?? ResponsiveUtils.responsiveMargin(context);
+      },
+      [margin, screenSize],
+    );
 
     Widget content = Container(
       width: double.infinity,
@@ -119,14 +127,17 @@ class AppGridLayout extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = useScreenSize();
-    
+
     // Calculate responsive columns
-    final columns = useMemoized(() {
-      if (screenSize.isDesktop) return desktopColumns;
-      if (screenSize.isTablet) return tabletColumns;
-      return mobileColumns;
-    }, [screenSize]);
-    
+    final columns = useMemoized(
+      () {
+        if (screenSize.isDesktop) return desktopColumns;
+        if (screenSize.isTablet) return tabletColumns;
+        return mobileColumns;
+      },
+      [screenSize],
+    );
+
     final effectiveRunSpacing = runSpacing ?? spacing;
     final screenWidth = MediaQuery.of(context).size.width;
     final totalSpacing = spacing * (columns - 1);
@@ -217,10 +228,13 @@ class AppSection extends HookWidget {
     final theme = useTheme();
     final textTheme = useTextTheme();
     final accessibility = useAccessibility();
-    
-    final effectivePadding = useMemoized(() {
-      return padding ?? ResponsiveUtils.responsivePadding(context);
-    }, [padding]);
+
+    final effectivePadding = useMemoized(
+      () {
+        return padding ?? ResponsiveUtils.responsivePadding(context);
+      },
+      [padding],
+    );
 
     return Semantics(
       label: semanticLabel ?? 'Section: $title',
@@ -254,7 +268,7 @@ class AppSection extends HookWidget {
                           Text(
                             subtitle!,
                             style: textTheme.bodyMedium?.copyWith(
-                              color: theme.isDark 
+                              color: theme.isDark
                                   ? Colors.grey[400]
                                   : Colors.grey[600],
                             ),
@@ -270,14 +284,14 @@ class AppSection extends HookWidget {
                   ],
                 ],
               ),
-              
+
               if (showDivider) ...[
                 const SizedBox(height: 16),
                 const Divider(),
               ],
-              
+
               const SizedBox(height: 16),
-              
+
               // Content
               child,
             ],
@@ -320,37 +334,51 @@ class AppFlexLayout extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = useScreenSize();
-    
+
     // Calculate responsive direction
-    final effectiveDirection = useMemoized(() {
-      if (screenSize.isDesktop && desktopDirection != null) {
-        return desktopDirection!;
-      }
-      if (screenSize.isTablet && tabletDirection != null) {
-        return tabletDirection!;
-      }
-      if (screenSize.isMobile && mobileDirection != null) {
-        return mobileDirection!;
-      }
-      return direction;
-    }, [screenSize, direction, mobileDirection, tabletDirection, desktopDirection]);
-    
-    // Add spacing between children
-    final spacedChildren = useMemoized(() {
-      if (spacing == 0 || children.isEmpty) return children;
-      
-      final result = <Widget>[];
-      for (int i = 0; i < children.length; i++) {
-        result.add(children[i]);
-        if (i < children.length - 1) {
-          result.add(SizedBox(
-            width: effectiveDirection == Axis.horizontal ? spacing : 0,
-            height: effectiveDirection == Axis.vertical ? spacing : 0,
-          ));
+    final effectiveDirection = useMemoized(
+      () {
+        if (screenSize.isDesktop && desktopDirection != null) {
+          return desktopDirection!;
         }
-      }
-      return result;
-    }, [children, spacing, effectiveDirection]);
+        if (screenSize.isTablet && tabletDirection != null) {
+          return tabletDirection!;
+        }
+        if (screenSize.isMobile && mobileDirection != null) {
+          return mobileDirection!;
+        }
+        return direction;
+      },
+      [
+        screenSize,
+        direction,
+        mobileDirection,
+        tabletDirection,
+        desktopDirection
+      ],
+    );
+
+    // Add spacing between children
+    final spacedChildren = useMemoized(
+      () {
+        if (spacing == 0 || children.isEmpty) return children;
+
+        final result = <Widget>[];
+        for (var i = 0; i < children.length; i++) {
+          result.add(children[i]);
+          if (i < children.length - 1) {
+            result.add(
+              SizedBox(
+                width: effectiveDirection == Axis.horizontal ? spacing : 0,
+                height: effectiveDirection == Axis.vertical ? spacing : 0,
+              ),
+            );
+          }
+        }
+        return result;
+      },
+      [children, spacing, effectiveDirection],
+    );
 
     Widget flexWidget = effectiveDirection == Axis.horizontal
         ? Row(

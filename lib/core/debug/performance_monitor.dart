@@ -63,7 +63,9 @@ class PerformanceMonitor {
 
   /// Measure execution time of a function
   static Future<T> measure<T>(
-      String name, Future<T> Function() function,) async {
+    String name,
+    Future<T> Function() function,
+  ) async {
     startTimer(name);
     try {
       final result = await function();
@@ -310,39 +312,39 @@ class _PerformanceInfoPanelState extends State<_PerformanceInfoPanel> {
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.green.withValues(alpha: 0.8),
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'PERF',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+        color: Colors.green.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'PERF',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Frames: $_frameCount',
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 10,
+              const SizedBox(height: 4),
+              Text(
+                'Frames: $_frameCount',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 10,
+                ),
               ),
-            ),
-            Text(
-              'Metrics: ${PerformanceMonitor.getMetrics().length}',
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 10,
+              Text(
+                'Metrics: ${PerformanceMonitor.getMetrics().length}',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 10,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
 }

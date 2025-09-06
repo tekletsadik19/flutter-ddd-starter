@@ -30,7 +30,8 @@ class ResetCounterUseCase
   @override
   Future<Either<Failure, CounterEntity>> call(ResetCounterParams params) async {
     Logger.info(
-        'Executing ResetCounterUseCase for counter: ${params.counterId}',);
+      'Executing ResetCounterUseCase for counter: ${params.counterId}',
+    );
 
     try {
       final result = await _counterRepository.resetCounter(params.counterId);

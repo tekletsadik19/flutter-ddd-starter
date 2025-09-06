@@ -80,7 +80,8 @@ mixin HotReloadPreservation<T extends StatefulWidget> on State<T> {
   }
 
   /// Restore state after hot reload
-  Map<String, dynamic>? restoreState() => HotReloadUtils.restoreState<Map<String, dynamic>>(preservationKey);
+  Map<String, dynamic>? restoreState() =>
+      HotReloadUtils.restoreState<Map<String, dynamic>>(preservationKey);
 
   @override
   void dispose() {
@@ -179,9 +180,9 @@ abstract class HotReloadOptimizedState<
   /// Build method with hot reload optimization
   @override
   Widget build(BuildContext context) => HotReloadPreserver(
-      preservationKey: preservationKey,
-      child: buildOptimized(context),
-    );
+        preservationKey: preservationKey,
+        child: buildOptimized(context),
+      );
 
   /// Override this instead of build() for hot reload optimization
   Widget buildOptimized(BuildContext context);
@@ -299,41 +300,41 @@ class _HotReloadIndicatorState extends State<HotReloadIndicator>
 
   @override
   Widget build(BuildContext context) => Stack(
-      children: [
-        if (widget.child != null) widget.child!,
-        if (_showIndicator && kDebugMode)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 50,
-            left: 20,
-            child: FadeTransition(
-              opacity: _animationController,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.flash_on, color: Colors.white, size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      'Hot Reloaded',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+        children: [
+          if (widget.child != null) widget.child!,
+          if (_showIndicator && kDebugMode)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 50,
+              left: 20,
+              child: FadeTransition(
+                opacity: _animationController,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.flash_on, color: Colors.white, size: 16),
+                      SizedBox(width: 4),
+                      Text(
+                        'Hot Reloaded',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
-    );
+        ],
+      );
 }
 
 /// Const widget wrapper to optimize hot reload

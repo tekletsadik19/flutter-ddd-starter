@@ -35,7 +35,8 @@ class CounterDomainService extends BaseDomainService
   }
 
   /// Check if counter has reached a milestone
-  bool hasReachedMilestone(CounterEntity counter) => counter.value % 10 == 0 && counter.value > 0;
+  bool hasReachedMilestone(CounterEntity counter) =>
+      counter.value % 10 == 0 && counter.value > 0;
 
   /// Calculate counter statistics
   CounterStatistics calculateStatistics(List<CounterEntity> history) {

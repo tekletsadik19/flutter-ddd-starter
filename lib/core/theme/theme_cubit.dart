@@ -16,7 +16,9 @@ class ThemeState with _$ThemeState {
 
 @injectable
 class ThemeCubit extends Cubit<ThemeState> {
-  ThemeCubit(this._prefs) : super(const ThemeState(themeMode: ThemeMode.system, isSystemTheme: true)) {
+  ThemeCubit(this._prefs)
+      : super(const ThemeState(
+            themeMode: ThemeMode.system, isSystemTheme: true)) {
     _loadTheme();
   }
 
@@ -30,21 +32,23 @@ class ThemeCubit extends Cubit<ThemeState> {
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
     };
-    
-    emit(ThemeState(
-      themeMode: themeMode,
-      isSystemTheme: themeMode == ThemeMode.system,
-    ));
+
+    emit(
+      ThemeState(
+        themeMode: themeMode,
+        isSystemTheme: themeMode == ThemeMode.system,
+      ),
+    );
   }
 
   Future<void> setLightTheme() async {
     await _prefs.setString(_themeKey, 'light');
-    emit(const ThemeState(themeMode: ThemeMode.light, isSystemTheme: false));
+    emit(const ThemeState(themeMode: ThemeMode.light));
   }
 
   Future<void> setDarkTheme() async {
     await _prefs.setString(_themeKey, 'dark');
-    emit(const ThemeState(themeMode: ThemeMode.dark, isSystemTheme: false));
+    emit(const ThemeState(themeMode: ThemeMode.dark));
   }
 
   Future<void> setSystemTheme() async {
@@ -56,25 +60,24 @@ class ThemeCubit extends Cubit<ThemeState> {
     switch (state.themeMode) {
       case ThemeMode.light:
         await setDarkTheme();
-        break;
       case ThemeMode.dark:
         await setSystemTheme();
-        break;
       case ThemeMode.system:
         await setLightTheme();
-        break;
     }
   }
 
   bool get isDarkMode {
     return state.themeMode == ThemeMode.dark ||
-        (state.themeMode == ThemeMode.system && 
-         WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark);
+        (state.themeMode == ThemeMode.system &&
+            WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+                Brightness.dark);
   }
 
   bool get isLightMode {
     return state.themeMode == ThemeMode.light ||
-        (state.themeMode == ThemeMode.system && 
-         WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.light);
+        (state.themeMode == ThemeMode.system &&
+            WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+                Brightness.light);
   }
 }

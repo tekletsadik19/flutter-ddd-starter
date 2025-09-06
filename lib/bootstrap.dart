@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shemanit/core/cache/cache_service.dart';
 import 'package:shemanit/core/config/app_config.dart';
 import 'package:shemanit/core/debug/debug_utils.dart';

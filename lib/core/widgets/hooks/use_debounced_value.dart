@@ -7,18 +7,24 @@ T useDebounced<T>(T value, Duration delay) {
   final debouncedValue = useState(value);
   final timer = useRef<Timer?>(null);
 
-  useEffect(() {
-    timer.value?.cancel();
-    timer.value = Timer(delay, () {
-      debouncedValue.value = value;
-    });
+  useEffect(
+    () {
+      timer.value?.cancel();
+      timer.value = Timer(delay, () {
+        debouncedValue.value = value;
+      });
 
-    return () => timer.value?.cancel();
-  }, [value, delay]);
+      return () => timer.value?.cancel();
+    },
+    [value, delay],
+  );
 
-  useEffect(() {
-    return () => timer.value?.cancel();
-  }, []);
+  useEffect(
+    () {
+      return () => timer.value?.cancel();
+    },
+    [],
+  );
 
   return debouncedValue.value;
 }
@@ -28,78 +34,94 @@ T useThrottled<T>(T value, Duration duration) {
   final throttledValue = useState(value);
   final lastExecuted = useRef<DateTime?>(null);
 
-  useEffect(() {
-    final now = DateTime.now();
-    final lastExec = lastExecuted.value;
+  useEffect(
+    () {
+      final now = DateTime.now();
+      final lastExec = lastExecuted.value;
 
-    if (lastExec == null || now.difference(lastExec) >= duration) {
-      throttledValue.value = value;
-      lastExecuted.value = now;
-    } else {
-      final timer = Timer(
-        duration - now.difference(lastExec),
-        () {
-          throttledValue.value = value;
-          lastExecuted.value = DateTime.now();
-        },
-      );
+      if (lastExec == null || now.difference(lastExec) >= duration) {
+        throttledValue.value = value;
+        lastExecuted.value = now;
+      } else {
+        final timer = Timer(
+          duration - now.difference(lastExec),
+          () {
+            throttledValue.value = value;
+            lastExecuted.value = DateTime.now();
+          },
+        );
 
-      return () => timer.cancel();
-    }
+        return timer.cancel;
+      }
 
-    return null;
-  }, [value]);
+      return null;
+    },
+    [value],
+  );
 
   return throttledValue.value;
 }
 
 /// Hook for managing async operations
-AsyncSnapshot<T> useAsync<T>(Future<T> Function() future, [List<Object?> keys = const []]) {
+AsyncSnapshot<T> useAsync<T>(Future<T> Function() future,
+    [List<Object?> keys = const []]) {
   final snapshot = useState<AsyncSnapshot<T>>(const AsyncSnapshot.waiting());
 
-  useEffect(() {
-    snapshot.value = const AsyncSnapshot.waiting();
+  useEffect(
+    () {
+      snapshot.value = const AsyncSnapshot.waiting();
 
-    future().then((data) {
-      snapshot.value = AsyncSnapshot.withData(ConnectionState.done, data);
-    }).catchError((error, stackTrace) {
-      snapshot.value = AsyncSnapshot.withError(ConnectionState.done, error, stackTrace);
-    });
+      future().then((data) {
+        snapshot.value = AsyncSnapshot.withData(ConnectionState.done, data);
+      }).catchError((error, stackTrace) {
+        snapshot.value =
+            AsyncSnapshot.withError(ConnectionState.done, error, stackTrace);
+      });
 
-    return null;
-  }, keys);
+      return null;
+    },
+    keys,
+  );
 
   return snapshot.value;
 }
 
 /// Hook for managing periodic operations
-void usePeriodic(Duration duration, VoidCallback callback, [List<Object?> keys = const []]) {
-  useEffect(() {
-    final timer = Timer.periodic(duration, (_) => callback());
-    return () => timer.cancel();
-  }, keys);
+void usePeriodic(Duration duration, VoidCallback callback,
+    [List<Object?> keys = const []]) {
+  useEffect(
+    () {
+      final timer = Timer.periodic(duration, (_) => callback());
+      return timer.cancel;
+    },
+    keys,
+  );
 }
 
 /// Hook for managing countdown timer
-Duration useCountdown(Duration initialDuration, {Duration interval = const Duration(seconds: 1)}) {
+Duration useCountdown(Duration initialDuration,
+    {Duration interval = const Duration(seconds: 1)}) {
   final remaining = useState(initialDuration);
   final isActive = useState(false);
 
-  useEffect(() {
-    if (!isActive.value || remaining.value <= Duration.zero) return null;
+  useEffect(
+    () {
+      if (!isActive.value || remaining.value <= Duration.zero) return null;
 
-    final timer = Timer.periodic(interval, (_) {
-      final newRemaining = remaining.value - interval;
-      if (newRemaining <= Duration.zero) {
-        remaining.value = Duration.zero;
-        isActive.value = false;
-      } else {
-        remaining.value = newRemaining;
-      }
-    });
+      final timer = Timer.periodic(interval, (_) {
+        final newRemaining = remaining.value - interval;
+        if (newRemaining <= Duration.zero) {
+          remaining.value = Duration.zero;
+          isActive.value = false;
+        } else {
+          remaining.value = newRemaining;
+        }
+      });
 
-    return () => timer.cancel();
-  }, [isActive.value]);
+      return timer.cancel;
+    },
+    [isActive.value],
+  );
 
   // Return control functions via a custom object if needed
   // For now, just return the remaining time
@@ -107,16 +129,23 @@ Duration useCountdown(Duration initialDuration, {Duration interval = const Durat
 }
 
 /// Hook for managing boolean toggle state
-({bool value, void Function() toggle, void Function(bool) setValue}) useBooleanToggle([bool initialValue = false]) {
+({bool value, void Function() toggle, void Function(bool) setValue})
+    useBooleanToggle([bool initialValue = false]) {
   final state = useState(initialValue);
 
-  final toggle = useCallback(() {
-    state.value = !state.value;
-  }, []);
+  final toggle = useCallback(
+    () {
+      state.value = !state.value;
+    },
+    [],
+  );
 
-  final setValue = useCallback((bool value) {
-    state.value = value;
-  }, []);
+  final setValue = useCallback(
+    (bool value) {
+      state.value = value;
+    },
+    [],
+  );
 
   return (
     value: state.value,
@@ -126,26 +155,40 @@ Duration useCountdown(Duration initialDuration, {Duration interval = const Durat
 }
 
 /// Hook for managing form validation
-({bool isValid, Map<String, String?> errors, void Function(String, String?) setError, void Function() clearErrors}) useFormValidation() {
+({
+  bool isValid,
+  Map<String, String?> errors,
+  void Function(String, String?) setError,
+  void Function() clearErrors
+}) useFormValidation() {
   final errors = useState<Map<String, String?>>({});
 
-  final setError = useCallback((String field, String? error) {
-    final newErrors = Map<String, String?>.from(errors.value);
-    if (error == null) {
-      newErrors.remove(field);
-    } else {
-      newErrors[field] = error;
-    }
-    errors.value = newErrors;
-  }, []);
+  final setError = useCallback(
+    (String field, String? error) {
+      final newErrors = Map<String, String?>.from(errors.value);
+      if (error == null) {
+        newErrors.remove(field);
+      } else {
+        newErrors[field] = error;
+      }
+      errors.value = newErrors;
+    },
+    [],
+  );
 
-  final clearErrors = useCallback(() {
-    errors.value = {};
-  }, []);
+  final clearErrors = useCallback(
+    () {
+      errors.value = {};
+    },
+    [],
+  );
 
-  final isValid = useMemoized(() {
-    return errors.value.values.every((error) => error == null);
-  }, [errors.value]);
+  final isValid = useMemoized(
+    () {
+      return errors.value.values.every((error) => error == null);
+    },
+    [errors.value],
+  );
 
   return (
     isValid: isValid,
@@ -168,30 +211,44 @@ T? usePrevious<T>(T value) {
 }
 
 /// Hook for managing local storage
-({T? value, void Function(T) setValue, void Function() removeValue, bool isLoading}) useLocalStorage<T>(
+({
+  T? value,
+  void Function(T) setValue,
+  void Function() removeValue,
+  bool isLoading
+}) useLocalStorage<T>(
   String key,
-  T Function(dynamic) fromJson,
+  T Function() fromJson,
   dynamic Function(T) toJson,
 ) {
   final value = useState<T?>(null);
   final isLoading = useState(true);
 
-  useEffect(() {
-    // Load initial value from storage
-    // This would integrate with your cache service
-    isLoading.value = false;
-    return null;
-  }, [key]);
+  useEffect(
+    () {
+      // Load initial value from storage
+      // This would integrate with your cache service
+      isLoading.value = false;
+      return null;
+    },
+    [key],
+  );
 
-  final setValue = useCallback((T newValue) {
-    value.value = newValue;
-    // Save to storage
-  }, []);
+  final setValue = useCallback(
+    (T newValue) {
+      value.value = newValue;
+      // Save to storage
+    },
+    [],
+  );
 
-  final removeValue = useCallback(() {
-    value.value = null;
-    // Remove from storage
-  }, []);
+  final removeValue = useCallback(
+    () {
+      value.value = null;
+      // Remove from storage
+    },
+    [],
+  );
 
   return (
     value: value.value,
@@ -205,17 +262,20 @@ T? usePrevious<T>(T value) {
 Size useWindowSize() {
   final size = useState(Size.zero);
 
-  useEffect(() {
-    void updateSize() {
-      final window = WidgetsBinding.instance.platformDispatcher.views.first;
-      size.value = window.physicalSize / window.devicePixelRatio;
-    }
+  useEffect(
+    () {
+      void updateSize() {
+        final window = WidgetsBinding.instance.platformDispatcher.views.first;
+        size.value = window.physicalSize / window.devicePixelRatio;
+      }
 
-    updateSize();
-    
-    // In a real implementation, you'd listen to window resize events
-    return null;
-  }, []);
+      updateSize();
+
+      // In a real implementation, you'd listen to window resize events
+      return null;
+    },
+    [],
+  );
 
   return size.value;
 }
@@ -228,27 +288,31 @@ MediaQueryData useMediaQuery() {
 
 /// Hook for managing focus
 FocusNode useFocusNode() {
-  return useMemoized(() => FocusNode());
+  return useMemoized(FocusNode.new);
 }
 
 /// Hook for managing text editing controller with validation
-({TextEditingController controller, String? error, bool isValid}) useValidatedTextController({
+({TextEditingController controller, String? error, bool isValid})
+    useValidatedTextController({
   String? initialText,
   String? Function(String)? validator,
 }) {
   final controller = useTextEditingController(text: initialText);
   final error = useState<String?>(null);
 
-  useEffect(() {
-    void validate() {
-      if (validator != null) {
-        error.value = validator(controller.text);
+  useEffect(
+    () {
+      void validate() {
+        if (validator != null) {
+          error.value = validator(controller.text);
+        }
       }
-    }
 
-    controller.addListener(validate);
-    return () => controller.removeListener(validate);
-  }, [validator]);
+      controller.addListener(validate);
+      return () => controller.removeListener(validate);
+    },
+    [validator],
+  );
 
   final isValid = useMemoized(() => error.value == null, [error.value]);
 

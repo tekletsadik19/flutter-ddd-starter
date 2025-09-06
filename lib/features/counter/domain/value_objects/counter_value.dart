@@ -7,7 +7,8 @@ class CounterValue extends ValidatedValueObject<int> {
   const CounterValue._(super.value);
 
   /// Factory constructor with validation
-  static Either<ValidationFailure, CounterValue> create(int value) => _validate(value).map(CounterValue._);
+  static Either<ValidationFailure, CounterValue> create(int value) =>
+      _validate(value).map(CounterValue._);
 
   /// Validate counter value
   static Either<ValidationFailure, int> _validate(int value) {
@@ -15,7 +16,8 @@ class CounterValue extends ValidatedValueObject<int> {
     if (value < -1000000) {
       return const Left(
         ValidationFailure(
-            message: 'Counter value cannot be less than -1,000,000',),
+          message: 'Counter value cannot be less than -1,000,000',
+        ),
       );
     }
 
@@ -29,7 +31,8 @@ class CounterValue extends ValidatedValueObject<int> {
   }
 
   @override
-  Either<ValidationFailure, ValidatedValueObject<int>> validate() => _validate(value).map(CounterValue._);
+  Either<ValidationFailure, ValidatedValueObject<int>> validate() =>
+      _validate(value).map(CounterValue._);
 
   /// Create initial counter value (zero)
   static CounterValue get initial => const CounterValue._(0);

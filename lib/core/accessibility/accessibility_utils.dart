@@ -26,7 +26,8 @@ class AccessibilityUtils {
   }
 
   /// Get safe text scale factor (clamped between reasonable bounds)
-  static double getSafeTextScaleFactor(BuildContext context, {
+  static double getSafeTextScaleFactor(
+    BuildContext context, {
     double min = 0.8,
     double max = 2.0,
   }) {
@@ -57,13 +58,13 @@ class AccessibilityUtils {
     List<String>? additionalInfo,
   }) {
     final parts = <String>[];
-    
+
     if (role != null) parts.add(role);
     if (label != null) parts.add(label);
     if (value != null) parts.add(value);
     if (hint != null) parts.add(hint);
     if (additionalInfo != null) parts.addAll(additionalInfo);
-    
+
     return parts.join(', ');
   }
 
@@ -75,17 +76,17 @@ class AccessibilityUtils {
     String? additionalInfo,
   }) {
     final parts = <String>[label];
-    
+
     if (isLoading) {
       parts.add('loading');
     } else if (!isEnabled) {
       parts.add('disabled');
     }
-    
+
     if (additionalInfo != null) {
       parts.add(additionalInfo);
     }
-    
+
     parts.add('button');
     return parts.join(', ');
   }
@@ -99,12 +100,12 @@ class AccessibilityUtils {
     String? hint,
   }) {
     final parts = <String>[label];
-    
+
     if (isRequired) parts.add('required');
     if (hasError) parts.add('has error');
     if (value != null && value.isNotEmpty) parts.add('current value: $value');
     if (hint != null) parts.add('hint: $hint');
-    
+
     parts.add('text field');
     return parts.join(', ');
   }
@@ -118,14 +119,14 @@ class AccessibilityUtils {
     int? total,
   }) {
     final parts = <String>[title];
-    
+
     if (subtitle != null) parts.add(subtitle);
     if (metadata != null) parts.add(metadata);
-    
+
     if (position != null && total != null) {
       parts.add('item $position of $total');
     }
-    
+
     return parts.join(', ');
   }
 
@@ -138,10 +139,10 @@ class AccessibilityUtils {
     if (isIndeterminate) {
       return label != null ? '$label, loading' : 'loading';
     }
-    
+
     final percentage = (progress * 100).round();
     final progressText = '$percentage percent complete';
-    
+
     return label != null ? '$label, $progressText' : progressText;
   }
 
@@ -171,19 +172,21 @@ class AccessibilityUtils {
   static double getContrastRatio(Color foreground, Color background) {
     final foregroundLuminance = foreground.computeLuminance();
     final backgroundLuminance = background.computeLuminance();
-    
-    final lighter = foregroundLuminance > backgroundLuminance 
-        ? foregroundLuminance 
+
+    final lighter = foregroundLuminance > backgroundLuminance
+        ? foregroundLuminance
         : backgroundLuminance;
-    final darker = foregroundLuminance < backgroundLuminance 
-        ? foregroundLuminance 
+    final darker = foregroundLuminance < backgroundLuminance
+        ? foregroundLuminance
         : backgroundLuminance;
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 
   /// Check if color combination meets WCAG AA standards
-  static bool meetsWCAGAAStandard(Color foreground, Color background, {
+  static bool meetsWCAGAAStandard(
+    Color foreground,
+    Color background, {
     bool isLargeText = false,
   }) {
     final ratio = getContrastRatio(foreground, background);
@@ -191,7 +194,9 @@ class AccessibilityUtils {
   }
 
   /// Check if color combination meets WCAG AAA standards
-  static bool meetsWCAGAAAStandard(Color foreground, Color background, {
+  static bool meetsWCAGAAAStandard(
+    Color foreground,
+    Color background, {
     bool isLargeText = false,
   }) {
     final ratio = getContrastRatio(foreground, background);
@@ -205,7 +210,7 @@ class AccessibilityUtils {
   ) {
     final scaleFactor = getSafeTextScaleFactor(context);
     final isBold = isBoldTextEnabled(context);
-    
+
     return baseStyle.copyWith(
       fontSize: (baseStyle.fontSize ?? 14) * scaleFactor,
       fontWeight: isBold ? FontWeight.bold : baseStyle.fontWeight,
@@ -232,15 +237,15 @@ class AccessibilityUtils {
   }
 
   /// Create accessible hover effects
-  static MaterialStateProperty<Color?> createAccessibleHoverColor(
+  static WidgetStateProperty<Color?> createAccessibleHoverColor(
     Color baseColor,
     BuildContext context,
   ) {
-    return MaterialStateProperty.resolveWith((states) {
-      if (states.contains(MaterialState.hovered)) {
+    return WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.hovered)) {
         return baseColor.withOpacity(0.08);
       }
-      if (states.contains(MaterialState.focused)) {
+      if (states.contains(WidgetState.focused)) {
         return baseColor.withOpacity(0.12);
       }
       return null;
@@ -275,7 +280,7 @@ class AccessibleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget result = child;
+    var result = child;
 
     if (!excludeSemantics) {
       result = Semantics(
@@ -320,7 +325,8 @@ class ScreenReaderAnnouncement extends StatefulWidget {
   final bool announceOnMount;
 
   @override
-  State<ScreenReaderAnnouncement> createState() => _ScreenReaderAnnouncementState();
+  State<ScreenReaderAnnouncement> createState() =>
+      _ScreenReaderAnnouncementState();
 }
 
 class _ScreenReaderAnnouncementState extends State<ScreenReaderAnnouncement> {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:shemanit/core/accessibility/accessibility_utils.dart';
 import 'package:shemanit/core/responsive/responsive_utils.dart';
 
 /// Enumeration for card variants
@@ -50,8 +49,8 @@ class AppCard extends HookWidget {
     this.width,
     this.height,
     this.clipBehavior = Clip.antiAlias,
-  }) : variant = AppCardVariant.elevated,
-       borderColor = null;
+  })  : variant = AppCardVariant.elevated,
+        borderColor = null;
 
   /// Convenience constructor for outlined card
   const AppCard.outlined({
@@ -67,9 +66,9 @@ class AppCard extends HookWidget {
     this.width,
     this.height,
     this.clipBehavior = Clip.antiAlias,
-  }) : variant = AppCardVariant.outlined,
-       elevation = null,
-       shadowColor = null;
+  })  : variant = AppCardVariant.outlined,
+        elevation = null,
+        shadowColor = null;
 
   /// Convenience constructor for filled card
   const AppCard.filled({
@@ -84,10 +83,10 @@ class AppCard extends HookWidget {
     this.width,
     this.height,
     this.clipBehavior = Clip.antiAlias,
-  }) : variant = AppCardVariant.filled,
-       elevation = null,
-       shadowColor = null,
-       borderColor = null;
+  })  : variant = AppCardVariant.filled,
+        elevation = null,
+        shadowColor = null,
+        borderColor = null;
 
   final Widget child;
   final AppCardVariant variant;
@@ -111,45 +110,52 @@ class AppCard extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Hooks for interactive states
     final isPressed = useState(false);
     final isHovered = useState(false);
     final isFocused = useState(false);
-    
+
     // Animation controller for elevation changes
-    final animationController = useAnimationController(duration: animationDuration);
+    final animationController =
+        useAnimationController(duration: animationDuration);
     final elevationAnimation = useAnimation(
       Tween<double>(
         begin: _getEffectiveElevation(context),
-        end: _getInteractiveElevation(context, isPressed.value, isHovered.value),
-      ).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Curves.easeInOut,
-      )),
+        end:
+            _getInteractiveElevation(context, isPressed.value, isHovered.value),
+      ).animate(
+        CurvedAnimation(
+          parent: animationController,
+          curve: Curves.easeInOut,
+        ),
+      ),
     );
-    
+
     // Handle state changes
-    useEffect(() {
-      if (isPressed.value || isHovered.value) {
-        animationController.forward();
-      } else {
-        animationController.reverse();
-      }
-      return null;
-    }, [isPressed.value, isHovered.value]);
-    
+    useEffect(
+      () {
+        if (isPressed.value || isHovered.value) {
+          animationController.forward();
+        } else {
+          animationController.reverse();
+        }
+        return null;
+      },
+      [isPressed.value, isHovered.value],
+    );
+
     // Memoized calculations
     final effectivePadding = useMemoized(
       () => padding ?? ResponsiveUtils.responsivePadding(context),
       [padding],
     );
-    
+
     final effectiveBorderRadius = useMemoized(
       () => borderRadius ?? ResponsiveUtils.responsiveBorderRadius(context),
       [borderRadius],
     );
-    
+
     final cardShape = useMemoized(
       () => _getCardShape(context, theme, effectiveBorderRadius),
       [effectiveBorderRadius, theme, variant],
@@ -214,23 +220,25 @@ class AppCard extends HookWidget {
 
   double? _getEffectiveElevation(BuildContext context) {
     return switch (variant) {
-      AppCardVariant.elevated => elevation ?? ResponsiveUtils.responsiveElevation(context),
+      AppCardVariant.elevated =>
+        elevation ?? ResponsiveUtils.responsiveElevation(context),
       AppCardVariant.outlined => 0,
       AppCardVariant.filled => 0,
     };
   }
 
-  double _getInteractiveElevation(BuildContext context, bool isPressed, bool isHovered) {
+  double _getInteractiveElevation(
+      BuildContext context, bool isPressed, bool isHovered) {
     final baseElevation = _getEffectiveElevation(context) ?? 0;
-    
+
     if (isPressed) {
       return pressedElevation ?? (baseElevation * 0.5);
     }
-    
+
     if (isHovered) {
       return hoverElevation ?? (baseElevation * 1.5);
     }
-    
+
     return baseElevation;
   }
 
@@ -240,11 +248,12 @@ class AppCard extends HookWidget {
     return switch (variant) {
       AppCardVariant.elevated => theme.cardColor,
       AppCardVariant.outlined => theme.cardColor,
-      AppCardVariant.filled => theme.colorScheme.surfaceVariant,
+      AppCardVariant.filled => theme.colorScheme.surfaceContainerHighest,
     };
   }
 
-  ShapeBorder _getCardShape(BuildContext context, ThemeData theme, BorderRadius borderRadius) {
+  ShapeBorder _getCardShape(
+      BuildContext context, ThemeData theme, BorderRadius borderRadius) {
     return switch (variant) {
       AppCardVariant.elevated => RoundedRectangleBorder(
           borderRadius: borderRadius,
@@ -253,7 +262,6 @@ class AppCard extends HookWidget {
           borderRadius: borderRadius,
           side: BorderSide(
             color: borderColor ?? theme.colorScheme.outline,
-            width: 1,
           ),
         ),
       AppCardVariant.filled => RoundedRectangleBorder(
@@ -298,14 +306,14 @@ class AppCardWithHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final defaultPadding = ResponsiveUtils.responsivePadding(context);
-    final effectiveHeaderPadding = headerPadding ?? 
+    final effectiveHeaderPadding = headerPadding ??
         EdgeInsets.fromLTRB(
           defaultPadding.left,
           defaultPadding.top,
           defaultPadding.right,
           ResponsiveUtils.spacing8,
         );
-    final effectiveContentPadding = contentPadding ?? 
+    final effectiveContentPadding = contentPadding ??
         EdgeInsets.fromLTRB(
           defaultPadding.left,
           0,

@@ -96,10 +96,13 @@ class HiveEncryptionManager {
   HiveCipher get defaultCipher => _defaultCipher;
 
   /// Create secure box configuration
-  SecureBoxConfig createSecureBoxConfig(String boxName,
-      {bool isSecure = false,}) => SecureBoxConfig(
-      name: boxName,
-      cipher: isSecure ? secureCipher : cacheCipher,
-      compactionStrategy: (entries, deletedEntries) => deletedEntries > 50,
-    );
+  SecureBoxConfig createSecureBoxConfig(
+    String boxName, {
+    bool isSecure = false,
+  }) =>
+      SecureBoxConfig(
+        name: boxName,
+        cipher: isSecure ? secureCipher : cacheCipher,
+        compactionStrategy: (entries, deletedEntries) => deletedEntries > 50,
+      );
 }

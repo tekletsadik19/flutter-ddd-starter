@@ -10,7 +10,7 @@ class CounterBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<CounterCubit, CounterState>(
-      builder: (context, state) => state.when(
+        builder: (context, state) => state.when(
           initial: () => const Center(
             child: Text('Initializing...'),
           ),
@@ -62,7 +62,7 @@ class CounterBody extends StatelessWidget {
             ),
           ),
         ),
-    );
+      );
 
   Color? _getCounterColor(int value) {
     if (value > 0) return Colors.green;
@@ -79,31 +79,32 @@ class CounterStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Counter Information',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Counter Information',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text('ID: ${counter.id}'),
-            Text('Created: ${_formatDateTime(counter.createdAt)}'),
-            if (counter.updatedAt != null)
-              Text('Last Updated: ${_formatDateTime(counter.updatedAt!)}'),
-          ],
+              const SizedBox(height: 8),
+              Text('ID: ${counter.id}'),
+              Text('Created: ${_formatDateTime(counter.createdAt)}'),
+              if (counter.updatedAt != null)
+                Text('Last Updated: ${_formatDateTime(counter.updatedAt!)}'),
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
-  String _formatDateTime(DateTime dateTime) => '${dateTime.day}/${dateTime.month}/${dateTime.year} '
-        '${dateTime.hour.toString().padLeft(2, '0')}:'
-        '${dateTime.minute.toString().padLeft(2, '0')}';
+  String _formatDateTime(DateTime dateTime) =>
+      '${dateTime.day}/${dateTime.month}/${dateTime.year} '
+      '${dateTime.hour.toString().padLeft(2, '0')}:'
+      '${dateTime.minute.toString().padLeft(2, '0')}';
 }
 
 /// Floating action buttons for counter operations
@@ -112,30 +113,30 @@ class CounterFloatingActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<CounterCubit, CounterState>(
-      builder: (context, state) {
-        final isLoading = state is CounterLoading;
+        builder: (context, state) {
+          final isLoading = state is CounterLoading;
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-              onPressed: isLoading
-                  ? null
-                  : () => context.read<CounterCubit>().increment(),
-              heroTag: 'increment',
-              child: const Icon(Icons.add),
-            ),
-            const SizedBox(height: 8),
-            FloatingActionButton(
-              onPressed: isLoading
-                  ? null
-                  : () => context.read<CounterCubit>().decrement(),
-              heroTag: 'decrement',
-              child: const Icon(Icons.remove),
-            ),
-          ],
-        );
-      },
-    );
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                onPressed: isLoading
+                    ? null
+                    : () => context.read<CounterCubit>().increment(),
+                heroTag: 'increment',
+                child: const Icon(Icons.add),
+              ),
+              const SizedBox(height: 8),
+              FloatingActionButton(
+                onPressed: isLoading
+                    ? null
+                    : () => context.read<CounterCubit>().decrement(),
+                heroTag: 'decrement',
+                child: const Icon(Icons.remove),
+              ),
+            ],
+          );
+        },
+      );
 }

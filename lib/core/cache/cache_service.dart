@@ -6,23 +6,23 @@ import 'package:injectable/injectable.dart';
 abstract class CacheService {
   Future<void> initialize();
   Future<void> dispose();
-  
+
   // Basic operations
   Future<void> put<T>(String key, T value);
   Future<T?> get<T>(String key);
   Future<void> delete(String key);
   Future<void> clear();
   Future<bool> exists(String key);
-  
+
   // Bulk operations
   Future<void> putAll<T>(Map<String, T> entries);
   Future<Map<String, T?>> getAll<T>(List<String> keys);
   Future<void> deleteAll(List<String> keys);
-  
+
   // Cache with expiration
   Future<void> putWithExpiration<T>(String key, T value, Duration expiration);
   Future<T?> getWithExpirationCheck<T>(String key);
-  
+
   // Cache info
   Future<List<String>> getAllKeys();
   Future<int> getSize();
@@ -34,18 +34,18 @@ abstract class CacheService {
 class HiveCacheService implements CacheService {
   late Box<dynamic> _cacheBox;
   late Box<DateTime> _expirationBox;
-  
+
   static const String _cacheBoxName = 'app_cache';
   static const String _expirationBoxName = 'cache_expiration';
 
   @override
   Future<void> initialize() async {
     await Hive.initFlutter();
-    
+
     // Open cache boxes
     _cacheBox = await Hive.openBox<dynamic>(_cacheBoxName);
     _expirationBox = await Hive.openBox<DateTime>(_expirationBoxName);
-    
+
     // Clean expired entries on initialization
     await _cleanExpiredEntries();
   }
@@ -59,7 +59,7 @@ class HiveCacheService implements CacheService {
   @override
   Future<void> put<T>(String key, T value) async {
     await _cacheBox.put(key, _serializeValue(value));
-    
+
     // Remove from expiration box if it exists
     if (_expirationBox.containsKey(key)) {
       await _expirationBox.delete(key);
@@ -69,7 +69,7 @@ class HiveCacheService implements CacheService {
   @override
   Future<T?> get<T>(String key) async {
     if (!_cacheBox.containsKey(key)) return null;
-    
+
     final value = _cacheBox.get(key);
     return _deserializeValue<T>(value);
   }
@@ -97,9 +97,9 @@ class HiveCacheService implements CacheService {
     for (final entry in entries.entries) {
       serializedEntries[entry.key] = _serializeValue(entry.value);
     }
-    
+
     await _cacheBox.putAll(serializedEntries);
-    
+
     // Remove from expiration box for all keys
     for (final key in entries.keys) {
       if (_expirationBox.containsKey(key)) {
@@ -111,11 +111,11 @@ class HiveCacheService implements CacheService {
   @override
   Future<Map<String, T?>> getAll<T>(List<String> keys) async {
     final result = <String, T?>{};
-    
+
     for (final key in keys) {
       result[key] = await get<T>(key);
     }
-    
+
     return result;
   }
 
@@ -126,9 +126,10 @@ class HiveCacheService implements CacheService {
   }
 
   @override
-  Future<void> putWithExpiration<T>(String key, T value, Duration expiration) async {
+  Future<void> putWithExpiration<T>(
+      String key, T value, Duration expiration) async {
     final expirationTime = DateTime.now().add(expiration);
-    
+
     await _cacheBox.put(key, _serializeValue(value));
     await _expirationBox.put(key, expirationTime);
   }
@@ -136,18 +137,18 @@ class HiveCacheService implements CacheService {
   @override
   Future<T?> getWithExpirationCheck<T>(String key) async {
     if (!_cacheBox.containsKey(key)) return null;
-    
+
     // Check if key has expiration
     if (_expirationBox.containsKey(key)) {
       final expirationTime = _expirationBox.get(key)!;
-      
+
       if (DateTime.now().isAfter(expirationTime)) {
         // Entry has expired, remove it
         await delete(key);
         return null;
       }
     }
-    
+
     final value = _cacheBox.get(key);
     return _deserializeValue<T>(value);
   }
@@ -171,17 +172,17 @@ class HiveCacheService implements CacheService {
   // Helper methods
   dynamic _serializeValue<T>(T value) {
     if (value == null) return null;
-    
+
     // Handle primitive types directly
     if (value is String || value is num || value is bool) {
       return value;
     }
-    
+
     // Handle lists and maps
     if (value is List || value is Map) {
       return jsonEncode(value);
     }
-    
+
     // For complex objects, try to serialize as JSON
     try {
       return jsonEncode(value);
@@ -191,12 +192,12 @@ class HiveCacheService implements CacheService {
     }
   }
 
-  T? _deserializeValue<T>(dynamic value) {
+  T? _deserializeValue<T>(value) {
     if (value == null) return null;
-    
+
     // If T is dynamic, return value as-is
     if (T == dynamic) return value as T;
-    
+
     // Handle primitive types
     if (T == String) return value.toString() as T;
     if (T == int) {
@@ -216,7 +217,7 @@ class HiveCacheService implements CacheService {
       }
       return false as T;
     }
-    
+
     // Handle collections
     if (T == List) {
       if (value is List) return value as T;
@@ -228,7 +229,7 @@ class HiveCacheService implements CacheService {
         }
       }
     }
-    
+
     if (T == Map) {
       if (value is Map) return value as T;
       if (value is String) {
@@ -239,7 +240,7 @@ class HiveCacheService implements CacheService {
         }
       }
     }
-    
+
     // For other types, try JSON decoding if it's a string
     if (value is String) {
       try {
@@ -250,24 +251,24 @@ class HiveCacheService implements CacheService {
         return value as T;
       }
     }
-    
+
     // Return as-is if type matches
     if (value is T) return value;
-    
+
     return null;
   }
 
   Future<void> _cleanExpiredEntries() async {
     final now = DateTime.now();
     final expiredKeys = <String>[];
-    
+
     for (final key in _expirationBox.keys) {
       final expirationTime = _expirationBox.get(key);
       if (expirationTime != null && now.isAfter(expirationTime)) {
         expiredKeys.add(key.toString());
       }
     }
-    
+
     if (expiredKeys.isNotEmpty) {
       await deleteAll(expiredKeys);
     }

@@ -12,12 +12,13 @@ class TestHelpers {
   static Widget createTestWidget({
     required Widget child,
     CounterCubit? counterCubit,
-  }) => MaterialApp(
-      home: BlocProvider<CounterCubit>.value(
-        value: counterCubit ?? MockCounterCubit(),
-        child: child,
-      ),
-    );
+  }) =>
+      MaterialApp(
+        home: BlocProvider<CounterCubit>.value(
+          value: counterCubit ?? MockCounterCubit(),
+          child: child,
+        ),
+      );
 
   /// Pump and settle widget
   static Future<void> pumpAndSettle(
@@ -44,12 +45,13 @@ class TestDataFactory {
     int? value,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) => CounterEntity(
-      id: id ?? defaultCounterId,
-      value: value ?? 0,
-      createdAt: createdAt ?? DateTime(2024),
-      updatedAt: updatedAt,
-    );
+  }) =>
+      CounterEntity(
+        id: id ?? defaultCounterId,
+        value: value ?? 0,
+        createdAt: createdAt ?? DateTime(2024),
+        updatedAt: updatedAt,
+      );
 
   /// Create test counter model
   static CounterModel createCounterModel({
@@ -57,10 +59,11 @@ class TestDataFactory {
     int? value,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) => CounterModel(
-      id: id ?? defaultCounterId,
-      value: value ?? 0,
-      createdAt: createdAt ?? DateTime(2024),
-      updatedAt: updatedAt,
-    );
+  }) =>
+      CounterModel(
+        id: id ?? defaultCounterId,
+        value: value ?? 0,
+        createdAt: createdAt ?? DateTime(2024),
+        updatedAt: updatedAt,
+      );
 }

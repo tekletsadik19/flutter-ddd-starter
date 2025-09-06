@@ -19,8 +19,7 @@ void main() {
       Hive.init(tempDir.path);
 
       // Initialize encryption manager
-      encryptionManager = HiveEncryptionManager()
-      ..initialize();
+      encryptionManager = HiveEncryptionManager()..initialize();
     });
 
     tearDownAll(() async {
@@ -66,8 +65,10 @@ void main() {
 
         expect(hash, isNotEmpty);
         expect(EncryptionService.verifyDataIntegrity(testData, hash), isTrue);
-        expect(EncryptionService.verifyDataIntegrity('modified_data', hash),
-            isFalse,);
+        expect(
+          EncryptionService.verifyDataIntegrity('modified_data', hash),
+          isFalse,
+        );
       });
     });
 

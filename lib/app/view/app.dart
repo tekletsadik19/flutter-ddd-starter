@@ -30,7 +30,8 @@ class App extends StatelessWidget {
               return MediaQuery(
                 data: MediaQuery.of(context).copyWith(
                   // Ensure text scale factor is within reasonable bounds
-                  textScaleFactor: MediaQuery.of(context).textScaleFactor.clamp(0.8, 2.0),
+                  textScaler: TextScaler.linear(
+                      MediaQuery.of(context).textScaleFactor.clamp(0.8, 2.0)),
                 ),
                 child: child!,
               );

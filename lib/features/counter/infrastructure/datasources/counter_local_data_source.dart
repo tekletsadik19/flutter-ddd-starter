@@ -154,7 +154,8 @@ class CounterLocalDataSourceImpl extends CounterLocalDataSource
   }
 
   @override
-  Future<List<CounterModel>> getAll({Map<String, dynamic>? filters}) async => getCachedCounterHistory();
+  Future<List<CounterModel>> getAll({Map<String, dynamic>? filters}) async =>
+      getCachedCounterHistory();
 
   @override
   Future<void> save(CounterModel entity) async {

@@ -16,11 +16,11 @@ class CounterModel with _$CounterModel {
 
   /// Create from domain entity
   factory CounterModel.fromEntity(CounterEntity entity) => CounterModel(
-      id: entity.id,
-      value: entity.value,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    );
+        id: entity.id,
+        value: entity.value,
+        createdAt: entity.createdAt,
+        updatedAt: entity.updatedAt,
+      );
 
   factory CounterModel.fromJson(Map<String, dynamic> json) =>
       _$CounterModelFromJson(json);
@@ -29,9 +29,9 @@ class CounterModel with _$CounterModel {
 
   /// Convert to domain entity
   CounterEntity toEntity() => CounterEntity(
-      id: id,
-      value: value,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-    );
+        id: id,
+        value: value,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+      );
 }
