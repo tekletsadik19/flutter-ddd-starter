@@ -28,6 +28,8 @@ dependencies:
   json_annotation: ^4.9.0
   json_serializable: ^6.9.0
   retrofit: ^4.5.0
+  shared_preferences: ^2.2.2
+  device_info_plus: ^9.1.0
 
 dev_dependencies:
   bloc_test: ^9.1.7

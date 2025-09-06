@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shemanit/core/cache/cache_service.dart';
 import 'package:shemanit/core/config/app_config.dart';
 import 'package:shemanit/core/debug/debug_utils.dart';
 import 'package:shemanit/core/debug/performance_monitor.dart';
@@ -38,6 +40,15 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   // Initialize dependency injection
   await configureDependencies();
+
+  // Initialize cache service
+  try {
+    final cacheService = getIt<CacheService>();
+    await cacheService.initialize();
+    log('✅ Cache service initialized');
+  } catch (e) {
+    log('❌ Failed to initialize cache service: $e');
+  }
 
   // Initialize development tools
   if (kDebugMode) {
