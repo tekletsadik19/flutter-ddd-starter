@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
 import 'package:shemanit/core/errors/exceptions.dart';
 import 'package:shemanit/core/utils/logger.dart';
+import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Secure storage interface
 abstract class SecureStorage {
@@ -25,18 +26,40 @@ abstract class SecureStorage {
 
 @Singleton(as: SecureStorage)
 class SecureStorageImpl implements SecureStorage {
-  SecureStorageImpl(this._sharedPreferences);
+  SecureStorageImpl(this._encryptionManager);
 
-  final SharedPreferences _sharedPreferences;
-  static const String _securePrefix = 'SECURE_';
+  final HiveEncryptionManager _encryptionManager;
+  static const String _secureBoxName = 'secure_box';
+  
+  Box<String>? _secureBox;
+
+  /// Get or open the secure box with enhanced encryption
+  Future<Box<String>> get secureBox async {
+    if (_secureBox?.isOpen == true) return _secureBox!;
+    
+    final config = _encryptionManager.createSecureBoxConfig(_secureBoxName, isSecure: true);
+    _secureBox = await Hive.openBox<String>(
+      config.name,
+      encryptionCipher: config.cipher,
+      compactionStrategy: config.compactionStrategy,
+    );
+    return _secureBox!;
+  }
 
   @override
   Future<void> store(String key, String value) async {
     try {
-      // In production, you would use flutter_secure_storage
-      // For now, we'll use SharedPreferences with encoding
-      final encodedValue = base64Encode(utf8.encode(value));
-      await _sharedPreferences.setString(_securePrefix + key, encodedValue);
+      final box = await secureBox;
+      
+      // Additional SHA-256 hashing for integrity verification
+      final valueWithHash = {
+        'data': value,
+        'hash': EncryptionService.hashData(value),
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+      
+      final jsonString = json.encode(valueWithHash);
+      await box.put(key, jsonString);
       Logger.debug('Secure data stored for key: $key');
     } catch (e) {
       Logger.error('Error storing secure data', e);
@@ -47,12 +70,23 @@ class SecureStorageImpl implements SecureStorage {
   @override
   Future<String?> retrieve(String key) async {
     try {
-      final encodedValue = _sharedPreferences.getString(_securePrefix + key);
-      if (encodedValue == null) return null;
+      final box = await secureBox;
+      final jsonString = box.get(key);
+      if (jsonString == null) return null;
 
-      final decodedValue = utf8.decode(base64Decode(encodedValue));
+      final jsonMap = json.decode(jsonString) as Map<String, dynamic>;
+      final data = jsonMap['data'] as String;
+      final expectedHash = jsonMap['hash'] as String;
+      
+      // Verify data integrity using SHA-256
+      if (!EncryptionService.verifyDataIntegrity(data, expectedHash)) {
+        Logger.error('Data integrity check failed for key: $key');
+        await delete(key); // Remove corrupted data
+        throw const CacheException(message: 'Data integrity verification failed');
+      }
+
       Logger.debug('Secure data retrieved for key: $key');
-      return decodedValue;
+      return data;
     } catch (e) {
       Logger.error('Error retrieving secure data', e);
       throw const CacheException(message: 'Failed to retrieve secure data');
@@ -62,7 +96,8 @@ class SecureStorageImpl implements SecureStorage {
   @override
   Future<void> delete(String key) async {
     try {
-      await _sharedPreferences.remove(_securePrefix + key);
+      final box = await secureBox;
+      await box.delete(key);
       Logger.debug('Secure data deleted for key: $key');
     } catch (e) {
       Logger.error('Error deleting secure data', e);
@@ -73,7 +108,8 @@ class SecureStorageImpl implements SecureStorage {
   @override
   Future<bool> containsKey(String key) async {
     try {
-      return _sharedPreferences.containsKey(_securePrefix + key);
+      final box = await secureBox;
+      return box.containsKey(key);
     } catch (e) {
       Logger.error('Error checking secure key existence', e);
       return false;
@@ -83,15 +119,8 @@ class SecureStorageImpl implements SecureStorage {
   @override
   Future<void> clear() async {
     try {
-      final keys = _sharedPreferences
-          .getKeys()
-          .where((key) => key.startsWith(_securePrefix))
-          .toList();
-
-      for (final key in keys) {
-        await _sharedPreferences.remove(key);
-      }
-
+      final box = await secureBox;
+      await box.clear();
       Logger.debug('All secure data cleared');
     } catch (e) {
       Logger.error('Error clearing secure data', e);

@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
 import 'package:shemanit/core/constants/app_constants.dart';
 import 'package:shemanit/core/errors/exceptions.dart';
 import 'package:shemanit/core/utils/logger.dart';
+import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Cache entry with expiration
 class CacheEntry<T> {
@@ -61,14 +62,30 @@ abstract class CacheManager {
 
 @Singleton(as: CacheManager)
 class CacheManagerImpl implements CacheManager {
-  CacheManagerImpl(this._sharedPreferences);
+  CacheManagerImpl(this._encryptionManager);
 
-  final SharedPreferences _sharedPreferences;
-  static const String _cachePrefix = 'CACHE_';
+  final HiveEncryptionManager _encryptionManager;
+  static const String _cacheBoxName = 'cache_box';
+  
+  Box<String>? _cacheBox;
+
+  /// Get or open the cache box
+  Future<Box<String>> get cacheBox async {
+    if (_cacheBox?.isOpen == true) return _cacheBox!;
+    
+    final config = _encryptionManager.createSecureBoxConfig(_cacheBoxName);
+    _cacheBox = await Hive.openBox<String>(
+      config.name,
+      encryptionCipher: config.cipher,
+      compactionStrategy: config.compactionStrategy,
+    );
+    return _cacheBox!;
+  }
 
   @override
   Future<void> store<T>(String key, T data, {Duration? ttl}) async {
     try {
+      final box = await cacheBox;
       final cacheEntry = CacheEntry<T>(
         data: data,
         timestamp: DateTime.now(),
@@ -76,7 +93,7 @@ class CacheManagerImpl implements CacheManager {
       );
 
       final jsonString = json.encode(cacheEntry.toJson());
-      await _sharedPreferences.setString(_cachePrefix + key, jsonString);
+      await box.put(key, jsonString);
 
       Logger.debug('Data cached for key: $key');
     } catch (e) {
@@ -88,7 +105,8 @@ class CacheManagerImpl implements CacheManager {
   @override
   Future<T?> retrieve<T>(String key) async {
     try {
-      final jsonString = _sharedPreferences.getString(_cachePrefix + key);
+      final box = await cacheBox;
+      final jsonString = box.get(key);
       if (jsonString == null) return null;
 
       final jsonMap = json.decode(jsonString) as Map<String, dynamic>;
@@ -111,7 +129,8 @@ class CacheManagerImpl implements CacheManager {
   @override
   Future<void> remove(String key) async {
     try {
-      await _sharedPreferences.remove(_cachePrefix + key);
+      final box = await cacheBox;
+      await box.delete(key);
       Logger.debug('Cache entry removed: $key');
     } catch (e) {
       Logger.error('Error removing cached data', e);
@@ -122,7 +141,8 @@ class CacheManagerImpl implements CacheManager {
   @override
   Future<bool> contains(String key) async {
     try {
-      final jsonString = _sharedPreferences.getString(_cachePrefix + key);
+      final box = await cacheBox;
+      final jsonString = box.get(key);
       if (jsonString == null) return false;
 
       final jsonMap = json.decode(jsonString) as Map<String, dynamic>;
@@ -143,15 +163,8 @@ class CacheManagerImpl implements CacheManager {
   @override
   Future<void> clear() async {
     try {
-      final keys = _sharedPreferences
-          .getKeys()
-          .where((key) => key.startsWith(_cachePrefix))
-          .toList();
-
-      for (final key in keys) {
-        await _sharedPreferences.remove(key);
-      }
-
+      final box = await cacheBox;
+      await box.clear();
       Logger.debug('All cache cleared');
     } catch (e) {
       Logger.error('Error clearing cache', e);
@@ -162,14 +175,12 @@ class CacheManagerImpl implements CacheManager {
   @override
   Future<void> clearExpired() async {
     try {
-      final keys = _sharedPreferences
-          .getKeys()
-          .where((key) => key.startsWith(_cachePrefix))
-          .toList();
-
+      final box = await cacheBox;
+      final keys = box.keys.toList();
       var removedCount = 0;
+
       for (final key in keys) {
-        final jsonString = _sharedPreferences.getString(key);
+        final jsonString = box.get(key);
         if (jsonString == null) continue;
 
         try {
@@ -177,12 +188,12 @@ class CacheManagerImpl implements CacheManager {
           final cacheEntry = CacheEntry<dynamic>.fromJson(jsonMap);
 
           if (cacheEntry.isExpired) {
-            await _sharedPreferences.remove(key);
+            await box.delete(key);
             removedCount++;
           }
         } catch (e) {
           // Remove corrupted entries
-          await _sharedPreferences.remove(key);
+          await box.delete(key);
           removedCount++;
         }
       }

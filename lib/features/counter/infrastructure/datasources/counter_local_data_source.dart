@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
 import 'package:shemanit/core/errors/exceptions.dart';
 import 'package:shemanit/core/utils/logger.dart';
 import 'package:shemanit/features/counter/infrastructure/models/counter_model.dart';
+import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Local data source for counter persistence
 abstract class CounterLocalDataSource {
@@ -26,17 +27,34 @@ abstract class CounterLocalDataSource {
 
 @Singleton(as: CounterLocalDataSource)
 class CounterLocalDataSourceImpl implements CounterLocalDataSource {
-  CounterLocalDataSourceImpl(this._sharedPreferences);
+  CounterLocalDataSourceImpl(this._encryptionManager);
 
-  final SharedPreferences _sharedPreferences;
+  final HiveEncryptionManager _encryptionManager;
 
+  static const String _counterBoxName = 'counter_box';
   static const String _counterKey = 'CACHED_COUNTER';
   static const String _historyKey = 'COUNTER_HISTORY';
+
+  Box<String>? _counterBox;
+
+  /// Get or open the counter box
+  Future<Box<String>> get counterBox async {
+    if (_counterBox?.isOpen == true) return _counterBox!;
+    
+    final config = _encryptionManager.createSecureBoxConfig(_counterBoxName);
+    _counterBox = await Hive.openBox<String>(
+      config.name,
+      encryptionCipher: config.cipher,
+      compactionStrategy: config.compactionStrategy,
+    );
+    return _counterBox!;
+  }
 
   @override
   Future<CounterModel> getCachedCounter() async {
     try {
-      final jsonString = _sharedPreferences.getString(_counterKey);
+      final box = await counterBox;
+      final jsonString = box.get(_counterKey);
 
       if (jsonString == null) {
         // Return default counter if none exists
@@ -60,8 +78,9 @@ class CounterLocalDataSourceImpl implements CounterLocalDataSource {
   @override
   Future<void> cacheCounter(CounterModel counter) async {
     try {
+      final box = await counterBox;
       final jsonString = json.encode(counter.toJson());
-      await _sharedPreferences.setString(_counterKey, jsonString);
+      await box.put(_counterKey, jsonString);
       Logger.debug('Counter cached successfully');
     } catch (e) {
       Logger.error('Error caching counter', e);
@@ -72,7 +91,8 @@ class CounterLocalDataSourceImpl implements CounterLocalDataSource {
   @override
   Future<List<CounterModel>> getCachedCounterHistory() async {
     try {
-      final jsonString = _sharedPreferences.getString(_historyKey);
+      final box = await counterBox;
+      final jsonString = box.get(_historyKey);
 
       if (jsonString == null) {
         return [];
@@ -99,10 +119,11 @@ class CounterLocalDataSourceImpl implements CounterLocalDataSource {
         currentHistory.removeRange(0, currentHistory.length - 100);
       }
 
+      final box = await counterBox;
       final jsonString = json.encode(
         currentHistory.map((model) => model.toJson()).toList(),
       );
-      await _sharedPreferences.setString(_historyKey, jsonString);
+      await box.put(_historyKey, jsonString);
       Logger.debug('Counter added to history');
     } catch (e) {
       Logger.error('Error adding to counter history', e);
@@ -113,8 +134,9 @@ class CounterLocalDataSourceImpl implements CounterLocalDataSource {
   @override
   Future<void> clearCache() async {
     try {
-      await _sharedPreferences.remove(_counterKey);
-      await _sharedPreferences.remove(_historyKey);
+      final box = await counterBox;
+      await box.delete(_counterKey);
+      await box.delete(_historyKey);
       Logger.debug('Counter cache cleared');
     } catch (e) {
       Logger.error('Error clearing counter cache', e);

@@ -1,8 +1,9 @@
 import 'package:shemanit/core/di/injection_container.config.dart';
+import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service locator instance
 final GetIt sl = GetIt.instance;
@@ -10,11 +11,16 @@ final GetIt sl = GetIt.instance;
 /// Initialize dependency injection
 @InjectableInit()
 Future<void> configureDependencies() async {
-  // Register SharedPreferences
-  final sharedPreferences = await SharedPreferences.getInstance();
-  sl
-    ..registerSingleton<SharedPreferences>(sharedPreferences)
-    ..init();
+  // Initialize Hive
+  await Hive.initFlutter();
+  
+  // Initialize and register encryption manager
+  final encryptionManager = HiveEncryptionManager();
+  encryptionManager.initialize();
+  sl.registerSingleton<HiveEncryptionManager>(encryptionManager);
+  
+  // Initialize dependency injection
+  sl.init();
 }
 
 /// Register external dependencies that can't use @injectable
