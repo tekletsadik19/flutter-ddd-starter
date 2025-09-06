@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:shemanit/core/accessibility/accessibility_utils.dart';
 import 'package:shemanit/core/responsive/responsive_utils.dart';
 
 /// Enumeration for text field variants
@@ -228,25 +229,22 @@ class AppTextField extends HookWidget {
       [effectiveFocusNode],
     );
 
-    // Use platform-specific text field on iOS
     if (Platform.isIOS && variant == AppTextFieldVariant.standard) {
       return _buildCupertinoTextField(
         context,
         effectiveController,
         effectiveFocusNode,
-        errorText.value,
+        errorText,
         handleChanged,
       );
     }
 
-    // Use Material text field for all other cases
     return _buildMaterialTextField(
       context,
       effectiveController,
       effectiveFocusNode,
-      errorText.value,
+      errorText,
       handleChanged,
-      isFocused.value,
     );
   }
 
@@ -254,7 +252,7 @@ class AppTextField extends HookWidget {
     BuildContext context,
     TextEditingController effectiveController,
     FocusNode effectiveFocusNode,
-    String? currentErrorText,
+    ValueNotifier<String?> errorText,
     ValueChanged<String> handleChanged,
   ) {
     final theme = Theme.of(context);
@@ -278,14 +276,14 @@ class AppTextField extends HookWidget {
       expands: expands,
       maxLength: maxLength,
       maxLengthEnforcement: maxLengthEnforcement,
-      onChanged: _handleChanged,
+      onChanged: handleChanged,
       onEditingComplete: onEditingComplete,
       onSubmitted: onSubmitted,
       inputFormatters: inputFormatters,
-      enabled: enabled,
+      enabled: enabled ?? true,
       cursorWidth: cursorWidth,
       cursorHeight: cursorHeight,
-      cursorRadius: cursorRadius,
+      cursorRadius: cursorRadius ?? const Radius.circular(2),
       cursorColor: cursorColor,
       keyboardAppearance: keyboardAppearance,
       scrollPadding: scrollPadding,
@@ -298,7 +296,7 @@ class AppTextField extends HookWidget {
       autofillHints: autofillHints,
       clipBehavior: clipBehavior,
       restorationId: restorationId,
-      scribbleEnabled: scribbleEnabled,
+      stylusHandwritingEnabled: scribbleEnabled,
       enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
       placeholder: hint,
       prefix: prefixIcon,
@@ -317,15 +315,21 @@ class AppTextField extends HookWidget {
       ),
     );
 
-    return _wrapWithLabelsAndAccessibility(context, textField);
+    return _wrapWithLabelsAndAccessibility(context, textField, errorText);
   }
 
-  Widget _buildMaterialTextField(BuildContext context) {
+  Widget _buildMaterialTextField(
+    BuildContext context,
+    TextEditingController effectiveController,
+    FocusNode effectiveFocusNode,
+    ValueNotifier<String?> errorText,
+    ValueChanged<String> handleChanged,
+  ) {
     final theme = Theme.of(context);
-    final decoration = _buildInputDecoration(context, theme);
+    final decoration = _buildInputDecoration(context, theme, errorText);
 
     final Widget textField = TextField(
-      controller: controller,
+      controller: effectiveController,
       focusNode: effectiveFocusNode,
       decoration: decoration,
       keyboardType: keyboardType,
@@ -347,7 +351,7 @@ class AppTextField extends HookWidget {
       expands: expands,
       maxLength: maxLength,
       maxLengthEnforcement: maxLengthEnforcement,
-      onChanged: _handleChanged,
+      onChanged: handleChanged,
       onEditingComplete: onEditingComplete,
       onSubmitted: onSubmitted,
       onAppPrivateCommand: onAppPrivateCommand,
@@ -373,7 +377,7 @@ class AppTextField extends HookWidget {
       autofillHints: autofillHints,
       clipBehavior: clipBehavior,
       restorationId: restorationId,
-      scribbleEnabled: scribbleEnabled,
+      stylusHandwritingEnabled: scribbleEnabled,
       enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
       contextMenuBuilder: contextMenuBuilder,
       canRequestFocus: canRequestFocus,
@@ -381,17 +385,18 @@ class AppTextField extends HookWidget {
       magnifierConfiguration: magnifierConfiguration,
     );
 
-    return _wrapWithLabelsAndAccessibility(context, textField);
+    return _wrapWithLabelsAndAccessibility(context, textField, errorText);
   }
 
-  InputDecoration _buildInputDecoration(BuildContext context, ThemeData theme) {
+  InputDecoration _buildInputDecoration(
+      BuildContext context, ThemeData theme, ValueNotifier<String?> errorText,) {
     final baseDecoration = decoration ?? const InputDecoration();
 
     return baseDecoration.copyWith(
       labelText: label,
       hintText: hint,
       helperText: helper,
-      errorText: errorText.value ?? error,
+      errorText: errorText.value,
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
       prefix: prefix,
@@ -477,8 +482,8 @@ class AppTextField extends HookWidget {
     };
   }
 
-  Widget _wrapWithLabelsAndAccessibility(
-      BuildContext context, Widget textField) {
+  Widget _wrapWithLabelsAndAccessibility(BuildContext context, Widget textField,
+      ValueNotifier<String?> errorText,) {
     final theme = Theme.of(context);
 
     var result = textField;
@@ -540,15 +545,5 @@ class AppTextField extends HookWidget {
     }
 
     return result;
-  }
-
-  void _handleChanged(String value) {
-    // Validate if validator is provided
-    if (validator != null) {
-      errorText.value = validator!(value);
-    }
-
-    // Call the original onChanged callback
-    onChanged?.call(value);
   }
 }

@@ -17,8 +17,12 @@ class ThemeState with _$ThemeState {
 @injectable
 class ThemeCubit extends Cubit<ThemeState> {
   ThemeCubit(this._prefs)
-      : super(const ThemeState(
-            themeMode: ThemeMode.system, isSystemTheme: true)) {
+      : super(
+          const ThemeState(
+            themeMode: ThemeMode.system,
+            isSystemTheme: true,
+          ),
+        ) {
     _loadTheme();
   }
 

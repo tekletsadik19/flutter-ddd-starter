@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:flutter/services.dart';
 
 /// Accessibility utilities and helpers
 class AccessibilityUtils {
@@ -23,7 +22,7 @@ class AccessibilityUtils {
 
   /// Get text scale factor
   static double getTextScaleFactor(BuildContext context) {
-    return MediaQuery.of(context).textScaleFactor;
+    return MediaQuery.of(context).textScaler.scale(1);
   }
 
   /// Get safe text scale factor (clamped between reasonable bounds)
@@ -242,10 +241,10 @@ class AccessibilityUtils {
   ) {
     return WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.hovered)) {
-        return baseColor.withOpacity(0.08);
+        return baseColor.withValues(alpha: 0.08);
       }
       if (states.contains(WidgetState.focused)) {
-        return baseColor.withOpacity(0.12);
+        return baseColor.withValues(alpha: 0.12);
       }
       return null;
     });

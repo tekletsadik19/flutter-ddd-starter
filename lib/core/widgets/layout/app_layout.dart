@@ -31,7 +31,7 @@ class AppLayout extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = useScreenSize();
-    final accessibility = useAccessibility();
+    useAccessibility();
 
     // Responsive calculations
     final effectiveMaxWidth = useMemoized(
@@ -227,7 +227,7 @@ class AppSection extends HookWidget {
   Widget build(BuildContext context) {
     final theme = useTheme();
     final textTheme = useTextTheme();
-    final accessibility = useAccessibility();
+    useAccessibility();
 
     final effectivePadding = useMemoized(
       () {
@@ -354,7 +354,7 @@ class AppFlexLayout extends HookWidget {
         direction,
         mobileDirection,
         tabletDirection,
-        desktopDirection
+        desktopDirection,
       ],
     );
 

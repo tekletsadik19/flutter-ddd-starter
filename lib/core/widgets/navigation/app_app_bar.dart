@@ -61,7 +61,7 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
         backgroundColor: backgroundColor ?? theme.appBarTheme.backgroundColor,
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
             width: 0.5,
           ),
         ),
@@ -127,9 +127,6 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: themeCubit.toggleTheme,
           icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
           tooltip: isDark ? 'Switch to light theme' : 'Switch to dark theme',
-          semanticLabel: AccessibilityUtils.createButtonLabel(
-            label: isDark ? 'Switch to light theme' : 'Switch to dark theme',
-          ),
         );
       },
     );
@@ -141,7 +138,8 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
       return const Size.fromHeight(44); // Standard iOS navigation bar height
     }
     return const Size.fromHeight(
-        kToolbarHeight); // Standard Material app bar height
+      kToolbarHeight,
+    ); // Standard Material app bar height
   }
 }
 
@@ -199,9 +197,6 @@ class ResponsiveAppBar extends StatelessWidget implements PreferredSizeWidget {
       onPressed: onMenuPressed,
       icon: const Icon(Icons.menu),
       tooltip: 'Open navigation menu',
-      semanticLabel: AccessibilityUtils.createButtonLabel(
-        label: 'Open navigation menu',
-      ),
     );
   }
 

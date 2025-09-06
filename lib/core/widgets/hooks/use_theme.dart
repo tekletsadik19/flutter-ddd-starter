@@ -182,25 +182,27 @@ Color useDynamicColor(Color baseColor, {double lightnessFactor = 0.1}) {
             isScreenReaderEnabled: mediaQuery.accessibleNavigation,
             isHighContrastEnabled: mediaQuery.highContrast,
             isBoldTextEnabled: mediaQuery.boldText,
-            textScaleFactor: mediaQuery.textScaleFactor,
+            textScaleFactor: mediaQuery.textScaler.scale(1),
             reduceMotion: mediaQuery.disableAnimations,
           ),
       [
         mediaQuery.accessibleNavigation,
         mediaQuery.highContrast,
         mediaQuery.boldText,
-        mediaQuery.textScaleFactor,
+        mediaQuery.textScaler.scale(1),
         mediaQuery.disableAnimations,
       ]);
 }
 
 /// Hook for adaptive padding based on screen size
-EdgeInsets useAdaptivePadding({
+EdgeInsets useAdaptivePadding(
+  BuildContext context, {
   double mobile = 16.0,
   double tablet = 24.0,
   double desktop = 32.0,
 }) {
-  return useResponsive(
+  return useResponsive<EdgeInsets>(
+    context,
     mobile: EdgeInsets.all(mobile),
     tablet: EdgeInsets.all(tablet),
     desktop: EdgeInsets.all(desktop),
@@ -208,12 +210,14 @@ EdgeInsets useAdaptivePadding({
 }
 
 /// Hook for adaptive margin based on screen size
-EdgeInsets useAdaptiveMargin({
+EdgeInsets useAdaptiveMargin(
+  BuildContext context, {
   double mobile = 8.0,
   double tablet = 16.0,
   double desktop = 24.0,
 }) {
-  return useResponsive(
+  return useResponsive<EdgeInsets>(
+    context,
     mobile: EdgeInsets.all(mobile),
     tablet: EdgeInsets.all(tablet),
     desktop: EdgeInsets.all(desktop),
@@ -239,7 +243,7 @@ double useAdaptiveFontSize(double baseFontSize, {double scaleFactor = 0.1}) {
 }
 
 /// Hook for BLoC state management integration with hooks
-T useBlocBuilder<B extends StateStreamable<S>, S>(B bloc) {
+S useBlocBuilder<B extends StateStreamable<S>, S>(B bloc) {
   final state = useState<S>(bloc.state);
 
   useEffect(

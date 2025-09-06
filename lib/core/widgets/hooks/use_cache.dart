@@ -23,6 +23,34 @@ import 'package:shemanit/core/di/injection_container.dart';
   final isLoading = useState(false);
   final error = useState<String?>(null);
 
+  // Define refresh callback first
+  late final Future<void> Function() refreshData;
+
+  refreshData = useCallback(
+    () async {
+      if (fetcher == null) return;
+
+      try {
+        isLoading.value = true;
+        error.value = null;
+
+        final freshData = await fetcher();
+        data.value = freshData;
+
+        if (expiration != null) {
+          await cacheService.putWithExpiration(key, freshData, expiration);
+        } else {
+          await cacheService.put(key, freshData);
+        }
+      } catch (e) {
+        error.value = e.toString();
+      } finally {
+        isLoading.value = false;
+      }
+    },
+    [key, fetcher, expiration],
+  );
+
   // Load data from cache on mount
   useEffect(
     () {
@@ -85,31 +113,6 @@ import 'package:shemanit/core/di/injection_container.dart';
     [key],
   );
 
-  final refreshData = useCallback(
-    () async {
-      if (fetcher == null) return;
-
-      try {
-        isLoading.value = true;
-        error.value = null;
-
-        final freshData = await fetcher();
-        data.value = freshData;
-
-        if (expiration != null) {
-          await cacheService.putWithExpiration(key, freshData, expiration);
-        } else {
-          await cacheService.put(key, freshData);
-        }
-      } catch (e) {
-        error.value = e.toString();
-      } finally {
-        isLoading.value = false;
-      }
-    },
-    [key, fetcher, expiration],
-  );
-
   return (
     data: data.value,
     isLoading: isLoading.value,
@@ -165,7 +168,7 @@ Map<String, T?> useCacheMultiple<T>(
 
 /// Hook for cache invalidation patterns
 ({
-  Future<void> Function() invalidateByPattern,
+  Future<void> Function(String) invalidateByPattern,
   Future<void> Function() invalidateAll,
   Future<void> Function(List<String>) invalidateKeys,
 }) useCacheInvalidation() {
@@ -284,7 +287,9 @@ void useCacheSync(String key, void Function() onUpdate) {
 
 /// Hook for cache preloading
 void useCachePreload<T>(
-    List<String> keys, Map<String, Future<T> Function()> fetchers) {
+  List<String> keys,
+  Map<String, Future<T> Function()> fetchers,
+) {
   final cacheService = getIt<CacheService>();
 
   useEffect(

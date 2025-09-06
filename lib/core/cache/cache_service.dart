@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_annotating_with_dynamic
+
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
@@ -127,7 +129,10 @@ class HiveCacheService implements CacheService {
 
   @override
   Future<void> putWithExpiration<T>(
-      String key, T value, Duration expiration) async {
+    String key,
+    T value,
+    Duration expiration,
+  ) async {
     final expirationTime = DateTime.now().add(expiration);
 
     await _cacheBox.put(key, _serializeValue(value));
@@ -192,7 +197,7 @@ class HiveCacheService implements CacheService {
     }
   }
 
-  T? _deserializeValue<T>(value) {
+  T? _deserializeValue<T>(dynamic value) {
     if (value == null) return null;
 
     // If T is dynamic, return value as-is

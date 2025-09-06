@@ -33,7 +33,11 @@ class App extends StatelessWidget {
                   data: MediaQuery.of(context).copyWith(
                     // Ensure text scale factor is within reasonable bounds
                     textScaler: TextScaler.linear(
-                        MediaQuery.of(context).textScaleFactor.clamp(0.8, 2.0)),
+                      MediaQuery.of(context)
+                          .textScaler
+                          .scale(1)
+                          .clamp(0.8, 2.0),
+                    ),
                   ),
                   child: child!,
                 ),
@@ -41,7 +45,8 @@ class App extends StatelessWidget {
                   const Breakpoint(start: 0, end: 450, name: MOBILE),
                   const Breakpoint(start: 451, end: 800, name: TABLET),
                   const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-                  const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+                  const Breakpoint(
+                      start: 1921, end: double.infinity, name: '4K',),
                 ],
               );
             },

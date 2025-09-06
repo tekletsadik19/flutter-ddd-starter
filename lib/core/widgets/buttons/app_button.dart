@@ -254,7 +254,10 @@ class AppButton extends HookWidget {
     // Use Cupertino buttons on iOS for native feel
     if (Platform.isIOS) {
       return _buildCupertinoButton(
-          context, debouncedCallback, animationController);
+        context,
+        debouncedCallback,
+        animationController,
+      );
     }
 
     // Use Material buttons on Android and other platforms
@@ -385,7 +388,9 @@ class AppButton extends HookWidget {
   }
 
   Widget _buildButtonChild(
-      BuildContext context, AnimationController animationController) {
+    BuildContext context,
+    AnimationController animationController,
+  ) {
     if (isLoading) {
       return _buildLoadingIndicator(context, animationController);
     }
@@ -405,7 +410,9 @@ class AppButton extends HookWidget {
   }
 
   Widget _buildLoadingIndicator(
-      BuildContext context, AnimationController animationController) {
+    BuildContext context,
+    AnimationController animationController,
+  ) {
     final theme = Theme.of(context);
     final size = _getLoadingIndicatorSize();
 

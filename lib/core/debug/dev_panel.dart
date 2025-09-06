@@ -150,8 +150,9 @@ class _DevPanelContentState extends State<_DevPanelContent>
                       Tab(icon: Icon(Icons.info, size: 16), text: 'Info'),
                       Tab(icon: Icon(Icons.speed, size: 16), text: 'Perf'),
                       Tab(
-                          icon: Icon(Icons.bug_report, size: 16),
-                          text: 'Debug'),
+                        icon: Icon(Icons.bug_report, size: 16),
+                        text: 'Debug',
+                      ),
                       Tab(icon: Icon(Icons.settings, size: 16), text: 'Tools'),
                     ],
                   ),

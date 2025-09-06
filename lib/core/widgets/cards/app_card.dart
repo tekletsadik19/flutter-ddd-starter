@@ -240,7 +240,10 @@ class AppCard extends HookWidget {
   }
 
   double _getInteractiveElevation(
-      BuildContext context, bool isPressed, bool isHovered) {
+    BuildContext context,
+    bool isPressed,
+    bool isHovered,
+  ) {
     final baseElevation = _getEffectiveElevation(context) ?? 0;
 
     if (isPressed) {
@@ -265,7 +268,10 @@ class AppCard extends HookWidget {
   }
 
   ShapeBorder _getCardShape(
-      BuildContext context, ThemeData theme, BorderRadius borderRadius) {
+    BuildContext context,
+    ThemeData theme,
+    BorderRadius borderRadius,
+  ) {
     return switch (variant) {
       AppCardVariant.elevated => RoundedRectangleBorder(
           borderRadius: borderRadius,

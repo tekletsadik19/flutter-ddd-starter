@@ -68,7 +68,7 @@ class ResponsiveUtils {
     T? largeDesktop,
   }) {
     final breakpoints = ResponsiveBreakpoints.of(context);
-    
+
     if (breakpoints.largerThan(DESKTOP) && largeDesktop != null) {
       return largeDesktop;
     } else if (breakpoints.largerThan(TABLET) && desktop != null) {
@@ -165,7 +165,7 @@ class ResponsiveUtils {
       tablet: 12,
       desktop: 16,
     );
-    return BorderRadius.circular(radius);
+    return BorderRadius.circular(radius as double);
   }
 
   /// Get responsive elevation

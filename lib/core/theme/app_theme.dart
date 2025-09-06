@@ -257,7 +257,7 @@ class AppTheme {
           backgroundColor: _lightColorScheme.surfaceContainerHighest,
           selectedColor: _lightColorScheme.primaryContainer,
           disabledColor:
-              _lightColorScheme.surfaceContainerHighest.withOpacity(0.12),
+              _lightColorScheme.surfaceContainerHighest.withValues(alpha: 0.12),
           labelStyle: _textTheme.labelLarge,
           secondaryLabelStyle: _textTheme.labelLarge,
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -404,7 +404,7 @@ class AppTheme {
           backgroundColor: _darkColorScheme.surfaceContainerHighest,
           selectedColor: _darkColorScheme.primaryContainer,
           disabledColor:
-              _darkColorScheme.surfaceContainerHighest.withOpacity(0.12),
+              _darkColorScheme.surfaceContainerHighest.withValues(alpha: 0.12),
           labelStyle: _textTheme.labelLarge,
           secondaryLabelStyle: _textTheme.labelLarge,
           padding: const EdgeInsets.symmetric(horizontal: 12),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:shemanit/core/accessibility/accessibility_utils.dart';
 import 'package:shemanit/core/responsive/responsive_utils.dart';
 import 'package:shemanit/core/widgets/hooks/use_theme.dart';
 
@@ -54,7 +53,7 @@ class AppNavigationDrawer extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = useTheme();
+    useTheme();
     final colorScheme = useColorScheme();
     final screenSize = useScreenSize();
 
@@ -63,7 +62,7 @@ class AppNavigationDrawer extends HookWidget {
     final isHoveredIndex = useState<int?>(null);
 
     // Animation controller for item transitions
-    final animationController = useAnimationController(
+    useAnimationController(
       duration: const Duration(milliseconds: 200),
     );
 
@@ -94,7 +93,7 @@ class AppNavigationDrawer extends HookWidget {
     return Semantics(
       label: semanticLabel ?? 'Navigation drawer',
       child: SizedBox(
-        width: effectiveWidth,
+        width: effectiveWidth as double?,
         child: NavigationDrawer(
           backgroundColor: backgroundColor ?? colorScheme.surface,
           surfaceTintColor: surfaceTintColor,
@@ -168,14 +167,12 @@ class AppNavigationDrawer extends HookWidget {
             horizontal: 16,
             vertical: 8,
           ),
-          // Accessibility
-          semanticContainer: true,
           enableFeedback: true,
           // Custom styling based on state
           tileColor: isSelected
-              ? colorScheme.secondaryContainer.withOpacity(0.3)
+              ? colorScheme.secondaryContainer.withValues(alpha: 0.3)
               : isHovered
-                  ? colorScheme.surfaceContainerHighest.withOpacity(0.5)
+                  ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
                   : null,
           textColor: isSelected
               ? colorScheme.onSecondaryContainer
@@ -309,11 +306,6 @@ class AppNavigationRail extends HookWidget {
                       : Icons.keyboard_arrow_right,
                 ),
                 tooltip: extendedState.value ? 'Collapse' : 'Expand',
-                semanticLabel: AccessibilityUtils.createButtonLabel(
-                  label: extendedState.value
-                      ? 'Collapse navigation'
-                      : 'Expand navigation',
-                ),
               ),
             ],
           ),

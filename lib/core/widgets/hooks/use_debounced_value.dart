@@ -63,8 +63,10 @@ T useThrottled<T>(T value, Duration duration) {
 }
 
 /// Hook for managing async operations
-AsyncSnapshot<T> useAsync<T>(Future<T> Function() future,
-    [List<Object?> keys = const []]) {
+AsyncSnapshot<T> useAsync<T>(
+  Future<T> Function() future, [
+  List<Object?> keys = const [],
+]) {
   final snapshot = useState<AsyncSnapshot<T>>(const AsyncSnapshot.waiting());
 
   useEffect(
@@ -73,7 +75,7 @@ AsyncSnapshot<T> useAsync<T>(Future<T> Function() future,
 
       future().then((data) {
         snapshot.value = AsyncSnapshot.withData(ConnectionState.done, data);
-      }).catchError((error, stackTrace) {
+      }).catchError((Object error, StackTrace stackTrace) {
         snapshot.value =
             AsyncSnapshot.withError(ConnectionState.done, error, stackTrace);
       });
@@ -87,8 +89,11 @@ AsyncSnapshot<T> useAsync<T>(Future<T> Function() future,
 }
 
 /// Hook for managing periodic operations
-void usePeriodic(Duration duration, VoidCallback callback,
-    [List<Object?> keys = const []]) {
+void usePeriodic(
+  Duration duration,
+  VoidCallback callback, [
+  List<Object?> keys = const [],
+]) {
   useEffect(
     () {
       final timer = Timer.periodic(duration, (_) => callback());
@@ -99,8 +104,10 @@ void usePeriodic(Duration duration, VoidCallback callback,
 }
 
 /// Hook for managing countdown timer
-Duration useCountdown(Duration initialDuration,
-    {Duration interval = const Duration(seconds: 1)}) {
+Duration useCountdown(
+  Duration initialDuration, {
+  Duration interval = const Duration(seconds: 1),
+}) {
   final remaining = useState(initialDuration);
   final isActive = useState(false);
 

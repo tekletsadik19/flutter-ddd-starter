@@ -37,7 +37,7 @@ class AppErrorWidget extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: iconSize,
+                size: iconSize as double?,
                 color: theme.colorScheme.error,
               ),
               const SizedBox(height: ResponsiveUtils.spacing16),
@@ -176,7 +176,7 @@ class AppEmptyWidget extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: iconSize,
+                size: iconSize as double?,
                 color: theme.colorScheme.outline,
               ),
               const SizedBox(height: ResponsiveUtils.spacing16),
