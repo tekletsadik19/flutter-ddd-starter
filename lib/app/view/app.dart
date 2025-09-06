@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+
 import 'package:shemanit/features/counter/presentation/pages/counter_page.dart';
 import 'package:shemanit/l10n/l10n.dart';
-import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -20,3 +21,4 @@ class App extends StatelessWidget {
     );
   }
 }
+

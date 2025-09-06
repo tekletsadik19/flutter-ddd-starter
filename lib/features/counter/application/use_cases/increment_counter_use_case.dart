@@ -19,6 +19,9 @@ class IncrementCounterUseCase implements UseCase<CounterEntity, NoParams> {
   final CounterDomainService _counterDomainService;
 
   @override
+  String get useCaseName => 'IncrementCounterUseCase';
+
+  @override
   Future<Either<Failure, CounterEntity>> call(NoParams params) async {
     Logger.info('Executing IncrementCounterUseCase');
 
@@ -64,3 +67,4 @@ class IncrementCounterUseCase implements UseCase<CounterEntity, NoParams> {
     }
   }
 }
+

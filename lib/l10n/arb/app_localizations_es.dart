@@ -11,3 +11,4 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get counterAppBarTitle => 'Contador';
 }
+

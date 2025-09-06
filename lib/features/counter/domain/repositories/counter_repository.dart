@@ -19,3 +19,4 @@ abstract class CounterRepository extends BaseRepository<CounterEntity, String> {
     int limit = 10,
   });
 }
+

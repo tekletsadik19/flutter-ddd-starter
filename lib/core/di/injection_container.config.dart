@@ -94,3 +94,4 @@ extension GetItInjectableX on _i174.GetIt {
 }
 
 class _$RegisterModule extends _i382.RegisterModule {}
+

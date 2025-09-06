@@ -14,6 +14,9 @@ class GetCounterUseCase implements UseCase<CounterEntity, NoParams> {
   final CounterRepository _counterRepository;
 
   @override
+  String get useCaseName => 'GetCounterUseCase';
+
+  @override
   Future<Either<Failure, CounterEntity>> call(NoParams params) async {
     Logger.info('Executing GetCounterUseCase');
 
@@ -36,3 +39,4 @@ class GetCounterUseCase implements UseCase<CounterEntity, NoParams> {
     }
   }
 }
+

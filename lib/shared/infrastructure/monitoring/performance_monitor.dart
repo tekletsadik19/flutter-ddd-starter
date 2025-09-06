@@ -138,3 +138,4 @@ class PerformanceMonitorImpl implements PerformanceMonitor {
     }
   }
 }
+

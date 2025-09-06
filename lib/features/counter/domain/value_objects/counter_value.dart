@@ -47,3 +47,4 @@ class CounterValue extends ValidatedValueObject<int> {
   /// Check if counter is negative
   bool get isNegative => value < 0;
 }
+

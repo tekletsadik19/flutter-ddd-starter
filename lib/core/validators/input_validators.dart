@@ -102,3 +102,4 @@ class InputValidators {
     return Right(value);
   }
 }
+

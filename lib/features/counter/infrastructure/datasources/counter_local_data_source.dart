@@ -25,7 +25,7 @@ abstract class CounterLocalDataSource extends BaseLocalDataSource<CounterModel, 
 }
 
 @Singleton(as: CounterLocalDataSource)
-class CounterLocalDataSourceImpl implements CounterLocalDataSource with DataSourceValidation<CounterModel> {
+class CounterLocalDataSourceImpl extends CounterLocalDataSource with DataSourceValidation<CounterModel> {
   CounterLocalDataSourceImpl(this._encryptionManager);
 
   final HiveEncryptionManager _encryptionManager;
@@ -201,3 +201,4 @@ class CounterLocalDataSourceImpl implements CounterLocalDataSource with DataSour
     return exists(id);
   }
 }
+

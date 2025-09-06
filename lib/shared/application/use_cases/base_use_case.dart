@@ -33,3 +33,4 @@ class NoParams extends UseCaseParams {
   @override
   List<Object?> get props => [];
 }
+

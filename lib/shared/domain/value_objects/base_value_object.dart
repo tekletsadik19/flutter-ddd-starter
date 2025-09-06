@@ -30,3 +30,4 @@ abstract class ValidatedValueObject<T> extends BaseValueObject<T> {
   /// Abstract validation method to be implemented by subclasses
   Either<ValidationFailure, ValidatedValueObject<T>> validate();
 }
+

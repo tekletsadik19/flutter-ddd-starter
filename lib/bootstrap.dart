@@ -53,3 +53,4 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   runApp(await builder());
 }
+

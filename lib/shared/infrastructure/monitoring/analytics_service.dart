@@ -117,3 +117,4 @@ class AnalyticsServiceImpl implements AnalyticsService {
     Logger.info('Analytics ${enabled ? 'enabled' : 'disabled'}');
   }
 }
+

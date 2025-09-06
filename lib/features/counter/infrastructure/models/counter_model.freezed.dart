@@ -222,3 +222,4 @@ abstract class _CounterModel extends CounterModel {
   _$$CounterModelImplCopyWith<_$CounterModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+

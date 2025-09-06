@@ -76,3 +76,4 @@ class CounterStatistics {
   final int minValue;
   final double averageValue;
 }
+

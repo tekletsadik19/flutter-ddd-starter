@@ -25,3 +25,4 @@ abstract class BaseRepository<T, ID> {
   /// Check if entity exists
   Future<Either<Failure, bool>> exists(ID id);
 }
+

@@ -85,7 +85,6 @@ linter:
     omit_local_variable_types: true
     one_member_abstracts: true
     only_throw_errors: true
-    package_api_docs: false
     parameter_assignments: true
     prefer_asserts_in_initializer_lists: true
     prefer_asserts_with_message: true

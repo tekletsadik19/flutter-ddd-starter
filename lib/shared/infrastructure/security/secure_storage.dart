@@ -128,3 +128,4 @@ class SecureStorageImpl implements SecureStorage {
     }
   }
 }
+
