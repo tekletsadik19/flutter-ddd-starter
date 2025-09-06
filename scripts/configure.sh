@@ -41,4 +41,8 @@ echo "2. Run 'flutter clean' to clean the build cache"
 echo "3. Run 'flutter pub get' to update dependencies"
 echo "4. Test your app with the new configuration"
 echo ""
+<<<<<<< Current (Your changes)
 echo "💡 To revert changes, restore from .backup files"
+=======
+echo "💡 Make sure to commit your changes to version control before running"
+>>>>>>> Incoming (Background Agent changes)

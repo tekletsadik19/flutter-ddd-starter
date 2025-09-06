@@ -30,13 +30,6 @@ class ProjectConfigurator:
             print(f"❌ Error parsing configuration file: {e}")
             exit(1)
     
-    def backup_file(self, file_path: Path) -> Path:
-        """Create a backup of the original file"""
-        backup_path = file_path.with_suffix(file_path.suffix + ".backup")
-        if not backup_path.exists():
-            shutil.copy2(file_path, backup_path)
-            print(f"📋 Created backup: {backup_path}")
-        return backup_path
     
     def update_pubspec_yaml(self):
         """Update pubspec.yaml with new project details"""
@@ -45,7 +38,6 @@ class ProjectConfigurator:
             print("❌ pubspec.yaml not found")
             return
             
-        self.backup_file(pubspec_path)
         
         with open(pubspec_path, 'r', encoding='utf-8') as file:
             content = file.read()
@@ -92,7 +84,6 @@ class ProjectConfigurator:
         # Update build.gradle
         build_gradle_path = android_dir / "app" / "build.gradle"
         if build_gradle_path.exists():
-            self.backup_file(build_gradle_path)
             
             with open(build_gradle_path, 'r', encoding='utf-8') as file:
                 content = file.read()
@@ -172,7 +163,6 @@ class ProjectConfigurator:
         # Update Info.plist
         info_plist_path = ios_dir / "Runner" / "Info.plist"
         if info_plist_path.exists():
-            self.backup_file(info_plist_path)
             
             with open(info_plist_path, 'r', encoding='utf-8') as file:
                 content = file.read()
@@ -201,7 +191,6 @@ class ProjectConfigurator:
         # Update project.pbxproj
         project_path = ios_dir / "Runner.xcodeproj" / "project.pbxproj"
         if project_path.exists():
-            self.backup_file(project_path)
             
             with open(project_path, 'r', encoding='utf-8') as file:
                 content = file.read()
@@ -240,7 +229,6 @@ class ProjectConfigurator:
         
         # Update all Dart files
         for dart_file in lib_dir.rglob("*.dart"):
-            self.backup_file(dart_file)
             
             with open(dart_file, 'r', encoding='utf-8') as file:
                 content = file.read()
@@ -322,7 +310,6 @@ python scripts/configure_project.py
             
             print()
             print("🎉 Project configuration completed successfully!")
-            print("📋 Backup files have been created for all modified files")
             print("🔄 You may need to run 'flutter clean' and 'flutter pub get'")
             
         except Exception as e:
