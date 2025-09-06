@@ -8,6 +8,5 @@ export 'debug/index.dart';
 export 'di/injection_container.dart';
 export 'errors/exceptions.dart';
 export 'errors/failures.dart';
-export 'hot_reload/hot_reload_utils.dart';
 export 'utils/logger.dart';
 export 'validators/input_validators.dart';

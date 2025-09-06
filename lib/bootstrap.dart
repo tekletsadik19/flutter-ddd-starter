@@ -9,7 +9,6 @@ import 'package:shemanit/core/config/app_config.dart';
 import 'package:shemanit/core/debug/debug_utils.dart';
 import 'package:shemanit/core/debug/performance_monitor.dart';
 import 'package:shemanit/core/di/injection_container.dart';
-import 'package:shemanit/core/hot_reload/hot_reload_utils.dart';
 
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
@@ -53,7 +52,6 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   if (kDebugMode) {
     DebugUtils.initialize();
     PerformanceMonitor.initialize();
-    HotReloadUtils.initialize();
 
     final config = AppConfig.instance;
     log('🚀 App initialized for ${config.environment.name} environment');
