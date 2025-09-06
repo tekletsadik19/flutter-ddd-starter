@@ -7,5 +7,5 @@ void main() {
   // Initialize development configuration
   AppConfig.initialize(Environment.development);
 
-  bootstrap(() => const App());
+  bootstrap(() => const SecureApp());
 }

@@ -7,5 +7,5 @@ void main() {
   // Initialize staging configuration
   AppConfig.initialize(Environment.staging);
 
-  bootstrap(() => const App());
+  bootstrap(() => const SecureApp());
 }

@@ -7,5 +7,5 @@ void main() {
   // Initialize production configuration
   AppConfig.initialize(Environment.production);
 
-  bootstrap(() => const App());
+  bootstrap(() => const SecureApp());
 }
