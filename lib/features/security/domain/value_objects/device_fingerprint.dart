@@ -27,17 +27,11 @@ class DeviceFingerprint extends Equatable {
   bool get isIOS => platform.toLowerCase() == 'ios';
 
   bool hasKnownEmulatorSignatures() {
-    if (!isAndroid) return false;
-    
-    final emulatorIndicators = [
-      manufacturer?.toLowerCase().contains('generic') ?? false,
-      model?.toLowerCase().contains('sdk') ?? false,
-      model?.toLowerCase().contains('emulator') ?? false,
-      buildFingerprint?.toLowerCase().contains('generic') ?? false,
-      buildFingerprint?.toLowerCase().contains('test-keys') ?? false,
-    ];
-
-    return emulatorIndicators.any((indicator) => indicator);
+    // Remove heuristic-based emulator detection as it can be bypassed
+    // Only rely on official platform APIs for emulator detection
+    // This method is kept for compatibility but always returns false
+    // Real emulator detection should use JailbreakRootDetection.isOnEmulator
+    return false;
   }
 
   @override

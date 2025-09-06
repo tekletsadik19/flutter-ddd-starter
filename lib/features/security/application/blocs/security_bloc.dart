@@ -11,39 +11,42 @@ part 'security_state.dart';
 
 class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
   SecurityBloc({
-    required CheckSecurityStatus checkSecurityStatus,
-    required CheckForUpdates checkForUpdates,
-  })  : _checkSecurityStatus = checkSecurityStatus,
-        _checkForUpdates = checkForUpdates,
-        super(const SecurityState.initial()) {
-    on<SecurityEvent>(
-      (event, emit) => event.when(
-        checkSecurity: () => _onCheckSecurity(emit),
-        checkUpdates: () => _onCheckUpdates(emit),
-        dismissWarning: () => _onDismissWarning(emit),
-        retryCheck: () => _onRetryCheck(emit),
-      ),
-    );
+    required PerformSecurityAssessment performSecurityAssessment,
+    required EvaluateUpdatePolicy evaluateUpdatePolicy,
+  })  : _performSecurityAssessment = performSecurityAssessment,
+        _evaluateUpdatePolicy = evaluateUpdatePolicy,
+        super(const SecurityInitial()) {
+    on<CheckSecurityEvent>((event, emit) => _onCheckSecurity(emit));
+    on<CheckUpdatesEvent>((event, emit) => _onCheckUpdates(emit));
+    on<DismissWarningEvent>((event, emit) => _onDismissWarning(emit));
+    on<RetryCheckEvent>((event, emit) => _onRetryCheck(emit));
   }
 
-  final CheckSecurityStatus _checkSecurityStatus;
-  final CheckForUpdates _checkForUpdates;
+  final PerformSecurityAssessment _performSecurityAssessment;
+  final EvaluateUpdatePolicy _evaluateUpdatePolicy;
 
   Future<void> _onCheckSecurity(Emitter<SecurityState> emit) async {
-    emit(const SecurityState.loading());
+    emit(const SecurityLoading());
 
-    final securityResult = await _checkSecurityStatus(const NoParams());
-    final updateResult = await _checkForUpdates(const NoParams());
+    final securityResult = await _performSecurityAssessment(const NoParams());
+    final updateResult = await _evaluateUpdatePolicy(const NoParams());
 
     securityResult.fold(
-      (failure) => emit(SecurityState.error(failure.message)),
-      (securityStatus) {
+      (failure) {
+        // For critical security failures, emit a specific error state
+        if (failure.message.contains('CRITICAL SECURITY FAILURE')) {
+          emit(SecurityCriticalFailure(failure.message));
+        } else {
+          emit(SecurityError(failure.message));
+        }
+      },
+      (securityAssessment) {
         updateResult.fold(
-          (failure) => emit(SecurityState.error(failure.message)),
-          (appVersion) => emit(
-            SecurityState.loaded(
-              securityStatus: securityStatus,
-              appVersion: appVersion,
+          (failure) => emit(SecurityError(failure.message)),
+          (updatePolicy) => emit(
+            SecurityLoaded(
+              securityAssessment: securityAssessment,
+              updatePolicy: updatePolicy,
             ),
           ),
         );
@@ -57,7 +60,7 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
     final currentState = state as SecurityLoaded;
     emit(currentState.copyWith(isCheckingUpdates: true));
 
-    final result = await _checkForUpdates(const NoParams());
+    final result = await _evaluateUpdatePolicy(const NoParams());
 
     result.fold(
       (failure) => emit(
@@ -66,10 +69,10 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
           updateError: failure.message,
         ),
       ),
-      (appVersion) => emit(
+      (updatePolicy) => emit(
         currentState.copyWith(
           isCheckingUpdates: false,
-          appVersion: appVersion,
+          updatePolicy: updatePolicy,
           updateError: null,
         ),
       ),
@@ -84,6 +87,6 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
   }
 
   void _onRetryCheck(Emitter<SecurityState> emit) {
-    add(const SecurityEvent.checkSecurity());
+    add(const CheckSecurityEvent());
   }
 }

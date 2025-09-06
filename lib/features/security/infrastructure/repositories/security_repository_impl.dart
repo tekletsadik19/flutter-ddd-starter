@@ -22,7 +22,8 @@ class SecurityRepositoryImpl implements SecurityRepository {
       final assessment = await _securityAssessmentService.assessDeviceSecurity(deviceFingerprint);
       return Right(assessment);
     } catch (e) {
-      return Left(ServerFailure('Failed to perform security assessment: $e'));
+      // For security failures, we fail secure - treat as critical security violation
+      return Left(ServerFailure('CRITICAL SECURITY FAILURE: $e'));
     }
   }
 

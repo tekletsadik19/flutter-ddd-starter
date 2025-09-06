@@ -30,9 +30,8 @@ class SecurityAssessmentService {
       threats.add(SecurityThreat.root());
     }
 
-    // Check for emulator
-    if (await _detectionService.isRunningOnEmulator() || 
-        deviceFingerprint.hasKnownEmulatorSignatures()) {
+    // Check for emulator - only use official platform detection
+    if (await _detectionService.isRunningOnEmulator()) {
       threats.add(SecurityThreat.emulator());
     }
 

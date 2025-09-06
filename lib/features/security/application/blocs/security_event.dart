@@ -1,9 +1,33 @@
 part of 'security_bloc.dart';
 
-@freezed
-class SecurityEvent with _$SecurityEvent {
-  const factory SecurityEvent.checkSecurity() = CheckSecurityEvent;
-  const factory SecurityEvent.checkUpdates() = CheckUpdatesEvent;
-  const factory SecurityEvent.dismissWarning() = DismissWarningEvent;
-  const factory SecurityEvent.retryCheck() = RetryCheckEvent;
+abstract class SecurityEvent extends Equatable {
+  const SecurityEvent();
+}
+
+class CheckSecurityEvent extends SecurityEvent {
+  const CheckSecurityEvent();
+  
+  @override
+  List<Object?> get props => [];
+}
+
+class CheckUpdatesEvent extends SecurityEvent {
+  const CheckUpdatesEvent();
+  
+  @override
+  List<Object?> get props => [];
+}
+
+class DismissWarningEvent extends SecurityEvent {
+  const DismissWarningEvent();
+  
+  @override
+  List<Object?> get props => [];
+}
+
+class RetryCheckEvent extends SecurityEvent {
+  const RetryCheckEvent();
+  
+  @override
+  List<Object?> get props => [];
 }
