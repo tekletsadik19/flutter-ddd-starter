@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_annotating_with_dynamic
+
 import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';
@@ -34,7 +36,7 @@ class HotReloadUtils {
   }
 
   /// Preserve state during hot reload
-  static void preserveState(String key, dynamic value) {
+  static Future<void> preserveState(String key, dynamic value) async {
     if (!kDebugMode) return;
     _preservedState[key] = value;
     developer.log('🔥 State preserved: $key');

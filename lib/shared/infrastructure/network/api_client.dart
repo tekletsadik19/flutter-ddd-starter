@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_annotating_with_dynamic
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shemanit/core/errors/exceptions.dart';
