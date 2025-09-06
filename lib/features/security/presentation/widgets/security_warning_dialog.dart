@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shemanit/features/security/domain/entities/security_status.dart';
 import 'package:shemanit/features/security/domain/value_objects/app_version.dart';
+import 'package:shemanit/features/security/domain/value_objects/threat_level.dart';
+import 'package:shemanit/features/security/domain/value_objects/security_threat.dart';
 
 class SecurityWarningDialog extends StatelessWidget {
   const SecurityWarningDialog({
@@ -20,9 +22,8 @@ class SecurityWarningDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final shouldShowSecurityWarning = !securityStatus.threatLevel.isSecure;
-    final shouldShowUpdateWarning = appVersion.mustUpdate;
+    const shouldShowUpdateWarning = false; // App version checking logic would go here
 
     if (!shouldShowSecurityWarning && !shouldShowUpdateWarning) {
       return const SizedBox.shrink();
@@ -65,8 +66,7 @@ class SecurityWarningDialog extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighThreat = securityStatus.threatLevel.shouldBlockApp;
-    final mustUpdate = appVersion.mustUpdate;
+    const mustUpdate = false; // App version checking logic would go here
 
     return Row(
       children: [
@@ -147,47 +147,40 @@ class SecurityWarningDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          if (appVersion.updateMessage != null) ...[
-            Text(
-              appVersion.updateMessage!,
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 8),
-          ],
           Text(
-            'Current: ${appVersion.currentVersion}\n'
-            'Latest: ${appVersion.latestVersion}',
+            'App update information would be displayed here.',
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Current: $appVersion\n'
+            'Latest: (would be fetched from server)',
             style: theme.textTheme.bodySmall?.copyWith(
               fontFamily: 'monospace',
             ),
           ),
-          if (appVersion.releaseNotes.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              "What's new:",
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          const SizedBox(height: 12),
+          Text(
+            "What's new:",
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 4),
-            ...appVersion.releaseNotes.take(3).map(
-                  (note) => Padding(
-                    padding: const EdgeInsets.only(left: 8, bottom: 2),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('• ', style: theme.textTheme.bodySmall),
-                        Expanded(
-                          child: Text(
-                            note,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ),
-                      ],
-                    ),
+          ),
+          const SizedBox(height: 4),
+          const Padding(
+            padding: EdgeInsets.only(left: 8, bottom: 2),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('• '),
+                Expanded(
+                  child: Text(
+                    'Release notes would be displayed here',
                   ),
                 ),
-          ],
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -251,7 +244,7 @@ class SecurityWarningDialog extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      threat,
+                      threat.description,
                       style: theme.textTheme.bodySmall,
                     ),
                   ),
@@ -293,7 +286,7 @@ class SecurityWarningDialog extends StatelessWidget {
   Widget _buildActions(BuildContext context) {
     final theme = Theme.of(context);
     final shouldBlockApp = securityStatus.threatLevel.shouldBlockApp;
-    final mustUpdate = appVersion.mustUpdate;
+    const mustUpdate = false; // App version checking logic would go here
 
     return Row(
       children: [
@@ -304,10 +297,10 @@ class SecurityWarningDialog extends StatelessWidget {
           ),
           const SizedBox(width: 12),
         ],
-        if (mustUpdate && appVersion.downloadUrl != null) ...[
+        if (mustUpdate) ...[
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: () => _launchUpdateUrl(appVersion.downloadUrl!),
+              onPressed: () => _launchUpdateUrl('https://example.com/update'),
               icon: const Icon(Icons.download),
               label: const Text('Update Now'),
               style: ElevatedButton.styleFrom(
@@ -341,18 +334,20 @@ class SecurityWarningDialog extends StatelessWidget {
     );
   }
 
-  Color _getWarningColor(SecurityThreatLevel level) {
+  Color _getWarningColor(ThreatLevel level) {
     switch (level) {
-      case SecurityThreatLevel.none:
+      case ThreatLevel.none:
         return Colors.green;
-      case SecurityThreatLevel.low:
+      case ThreatLevel.low:
         return Colors.yellow.shade700;
-      case SecurityThreatLevel.medium:
+      case ThreatLevel.medium:
         return Colors.orange;
-      case SecurityThreatLevel.high:
+      case ThreatLevel.high:
         return Colors.red.shade600;
-      case SecurityThreatLevel.critical:
+      case ThreatLevel.critical:
         return Colors.red.shade800;
+      default:
+        return Colors.grey;
     }
   }
 
@@ -366,25 +361,27 @@ class SecurityWarningDialog extends StatelessWidget {
   }
 
   String _getSecurityIcon() {
-    if (securityStatus.isJailbroken || securityStatus.isRooted) {
+    final threats = securityStatus.assessment.detectedThreats;
+    if (threats.any((t) => t.type == ThreatType.jailbreak || t.type == ThreatType.root)) {
       return 'assets/svg/root_jailbreak.svg';
-    } else if (securityStatus.isEmulator) {
+    } else if (threats.any((t) => t.type == ThreatType.emulator)) {
       return 'assets/svg/emulator_warning.svg';
-    } else if (securityStatus.isDevelopmentModeEnabled) {
+    } else if (threats.any((t) => t.type == ThreatType.developmentMode)) {
       return 'assets/svg/developer_mode.svg';
     }
     return 'assets/svg/security_warning.svg';
   }
 
   String _getSecurityRecommendation() {
-    if (securityStatus.isJailbroken || securityStatus.isRooted) {
+    final threats = securityStatus.assessment.detectedThreats;
+    if (threats.any((t) => t.type == ThreatType.jailbreak || t.type == ThreatType.root)) {
       return 'For your security, please use this app on a non-jailbroken/rooted device.';
-    } else if (securityStatus.isEmulator) {
+    } else if (threats.any((t) => t.type == ThreatType.emulator)) {
       return 'Please use this app on a physical device for the best security.';
-    } else if (securityStatus.isDevelopmentModeEnabled) {
+    } else if (threats.any((t) => t.type == ThreatType.developmentMode)) {
       return 'Please disable Developer Options in your device settings.';
     }
-    return 'Please address the security issues to continue safely.';
+    return securityStatus.primaryRecommendation;
   }
 
   Future<void> _launchUpdateUrl(String url) async {

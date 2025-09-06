@@ -86,12 +86,12 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
             listener: (context, state) {
               state.whenOrNull(
                 loaded: (securityAssessment, updatePolicy, warningDismissed, _,
-                    __) {
+                    __,) {
                   if (!securityAssessment.overallThreatLevel.isSecure ||
                       updatePolicy.mustUpdate) {
                     if (!warningDismissed) {
                       _showSecurityDialog(
-                          context, securityAssessment, updatePolicy);
+                          context, securityAssessment, updatePolicy,);
                     }
                   } else {
                     // Security check passed, continue to app

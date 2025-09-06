@@ -37,7 +37,7 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
         // For critical security failures, emit a specific error state
         if (failure.message?.contains('CRITICAL SECURITY FAILURE') == true) {
           emit(SecurityState.criticalFailure(
-              failure.message ?? 'Unknown error'));
+              failure.message ?? 'Unknown error',),);
         } else {
           emit(SecurityState.error(failure.message ?? 'Unknown error'));
         }
@@ -78,7 +78,7 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
 
     state.maybeWhen(
       loaded: (securityAssessment, oldUpdatePolicy, warningDismissed,
-          isCheckingUpdates, updateError) {
+          isCheckingUpdates, updateError,) {
         result.fold(
           (failure) => emit(
             SecurityState.loaded(
@@ -104,7 +104,7 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
   void _onDismissWarning(Emitter<SecurityState> emit) {
     state.maybeWhen(
       loaded: (securityAssessment, updatePolicy, _, isCheckingUpdates,
-          updateError) {
+          updateError,) {
         emit(
           SecurityState.loaded(
             securityAssessment: securityAssessment,

@@ -1,6 +1,6 @@
 export 'application/blocs/security_bloc.dart';
 export 'domain/entities/security_status.dart';
-export 'domain/entities/app_version.dart';
+export 'domain/value_objects/app_version.dart';
 export 'domain/repositories/security_repository.dart';
 export 'domain/repositories/app_update_repository.dart';
 export 'domain/usecases/check_security_status.dart';
