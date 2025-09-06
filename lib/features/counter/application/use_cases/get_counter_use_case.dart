@@ -39,4 +39,3 @@ class GetCounterUseCase implements UseCase<CounterEntity, NoParams> {
     }
   }
 }
-

@@ -10,7 +10,8 @@ import 'package:injectable/injectable.dart';
 
 /// Local data source for counter persistence
 /// Extends BaseLocalDataSource to enforce consistent patterns
-abstract class CounterLocalDataSource extends BaseLocalDataSource<CounterModel, String> {
+abstract class CounterLocalDataSource
+    extends BaseLocalDataSource<CounterModel, String> {
   /// Get cached counter
   Future<CounterModel> getCachedCounter();
 
@@ -25,7 +26,8 @@ abstract class CounterLocalDataSource extends BaseLocalDataSource<CounterModel, 
 }
 
 @Singleton(as: CounterLocalDataSource)
-class CounterLocalDataSourceImpl extends CounterLocalDataSource with DataSourceValidation<CounterModel> {
+class CounterLocalDataSourceImpl extends CounterLocalDataSource
+    with DataSourceValidation<CounterModel> {
   CounterLocalDataSourceImpl(this._encryptionManager);
 
   final HiveEncryptionManager _encryptionManager;
@@ -39,12 +41,13 @@ class CounterLocalDataSourceImpl extends CounterLocalDataSource with DataSourceV
   /// Get or open the counter box
   Future<Box<String>> get counterBox async {
     if (_counterBox?.isOpen == true) return _counterBox!;
-    
+
     final config = _encryptionManager.createSecureBoxConfig(_counterBoxName);
     _counterBox = await Hive.openBox<String>(
       config.name,
       encryptionCipher: config.cipher,
-      compactionStrategy: config.compactionStrategy ?? (entries, deletedEntries) => deletedEntries > 50,
+      compactionStrategy: config.compactionStrategy ??
+          (entries, deletedEntries) => deletedEntries > 50,
     );
     return _counterBox!;
   }
@@ -201,4 +204,3 @@ class CounterLocalDataSourceImpl extends CounterLocalDataSource with DataSourceV
     return exists(id);
   }
 }
-

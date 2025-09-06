@@ -18,7 +18,8 @@ class PerformanceMonitor {
 
   /// Initialize performance monitoring
   static void initialize() {
-    if (!kDebugMode || !AppConfig.instance.loggingConfig.enablePerformanceLogging) {
+    if (!kDebugMode ||
+        !AppConfig.instance.loggingConfig.enablePerformanceLogging) {
       return;
     }
 
@@ -29,7 +30,7 @@ class PerformanceMonitor {
   /// Start timing an operation
   static void startTimer(String name) {
     if (!kDebugMode) return;
-    
+
     _timers[name] = DateTime.now();
     DebugUtils.logDebug('Timer started: $name');
   }
@@ -37,7 +38,7 @@ class PerformanceMonitor {
   /// End timing an operation
   static Duration? endTimer(String name) {
     if (!kDebugMode) return null;
-    
+
     final startTime = _timers.remove(name);
     if (startTime == null) {
       DebugUtils.logWarning('Timer not found: $name');
@@ -63,7 +64,8 @@ class PerformanceMonitor {
   }
 
   /// Measure execution time of a function
-  static Future<T> measure<T>(String name, Future<T> Function() function) async {
+  static Future<T> measure<T>(
+      String name, Future<T> Function() function) async {
     startTimer(name);
     try {
       final result = await function();
@@ -109,7 +111,7 @@ class PerformanceMonitor {
       if (elapsed.inSeconds >= 5) {
         final fps = frameCount / elapsed.inSeconds;
         DebugUtils.logInfo('FPS: ${fps.toStringAsFixed(1)}');
-        
+
         if (fps < 30) {
           DebugUtils.logWarning('Low FPS detected: ${fps.toStringAsFixed(1)}');
         }
@@ -162,8 +164,12 @@ class PerformanceMonitor {
         (sum, metric) => sum + metric.duration.inMilliseconds,
       );
       final avgTime = totalTime / operations.length;
-      final maxTime = operations.map((m) => m.duration.inMilliseconds).reduce((a, b) => a > b ? a : b);
-      final minTime = operations.map((m) => m.duration.inMilliseconds).reduce((a, b) => a < b ? a : b);
+      final maxTime = operations
+          .map((m) => m.duration.inMilliseconds)
+          .reduce((a, b) => a > b ? a : b);
+      final minTime = operations
+          .map((m) => m.duration.inMilliseconds)
+          .reduce((a, b) => a < b ? a : b);
 
       DebugUtils.logInfo('${entry.key}:');
       DebugUtils.logInfo('  Count: ${operations.length}');
@@ -209,7 +215,7 @@ class _BuildMonitorWidgetState extends State<_BuildMonitorWidget> {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    
+
     if (_lastBuild != null) {
       final timeSinceLastBuild = now.difference(_lastBuild!);
       if (timeSinceLastBuild.inMilliseconds < 16) {

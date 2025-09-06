@@ -66,18 +66,19 @@ class CacheManagerImpl implements CacheManager {
 
   final HiveEncryptionManager _encryptionManager;
   static const String _cacheBoxName = 'cache_box';
-  
+
   Box<String>? _cacheBox;
 
   /// Get or open the cache box
   Future<Box<String>> get cacheBox async {
     if (_cacheBox?.isOpen == true) return _cacheBox!;
-    
+
     final config = _encryptionManager.createSecureBoxConfig(_cacheBoxName);
     _cacheBox = await Hive.openBox<String>(
       config.name,
       encryptionCipher: config.cipher,
-      compactionStrategy: config.compactionStrategy ?? (entries, deletedEntries) => deletedEntries > 50,
+      compactionStrategy: config.compactionStrategy ??
+          (entries, deletedEntries) => deletedEntries > 50,
     );
     return _cacheBox!;
   }
@@ -205,4 +206,3 @@ class CacheManagerImpl implements CacheManager {
     }
   }
 }
-

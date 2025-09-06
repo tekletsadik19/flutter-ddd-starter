@@ -7,7 +7,7 @@ import 'package:equatable/equatable.dart';
 abstract class UseCase<Type, Params extends UseCaseParams> {
   /// Execute the use case
   Future<Either<Failure, Type>> call(Params params);
-  
+
   /// Use case identifier for logging and monitoring
   String get useCaseName => runtimeType.toString();
 }
@@ -16,7 +16,7 @@ abstract class UseCase<Type, Params extends UseCaseParams> {
 abstract class NoParamsUseCase<Type> extends UseCase<Type, NoParams> {
   /// Execute the use case without parameters
   Future<Either<Failure, Type>> execute();
-  
+
   @override
   Future<Either<Failure, Type>> call(NoParams params) => execute();
 }
@@ -33,4 +33,3 @@ class NoParams extends UseCaseParams {
   @override
   List<Object?> get props => [];
 }
-

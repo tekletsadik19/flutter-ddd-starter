@@ -7,9 +7,11 @@ import 'package:injectable/injectable.dart';
 
 /// Domain service for counter business logic
 @singleton
-class CounterDomainService extends BaseDomainService with DomainServiceValidation {
+class CounterDomainService extends BaseDomainService
+    with DomainServiceValidation {
   @override
   String get serviceName => 'CounterDomainService';
+
   /// Validate if counter can be incremented
   Either<ValidationFailure, CounterEntity> validateIncrement(
     CounterEntity counter,
@@ -76,4 +78,3 @@ class CounterStatistics {
   final int minValue;
   final double averageValue;
 }
-

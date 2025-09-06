@@ -72,7 +72,7 @@ class SecureBoxConfig {
 @singleton
 class HiveEncryptionManager {
   static const String _defaultPassword = 'shemanit_secure_key_2024';
-  
+
   late final HiveCipher _defaultCipher;
   late final HiveCipher _cacheCipher;
   late final HiveCipher _secureCipher;
@@ -81,7 +81,8 @@ class HiveEncryptionManager {
   void initialize() {
     _defaultCipher = EncryptionService.createCipher(_defaultPassword);
     _cacheCipher = EncryptionService.createCipher('${_defaultPassword}_cache');
-    _secureCipher = EncryptionService.createCipher('${_defaultPassword}_secure');
+    _secureCipher =
+        EncryptionService.createCipher('${_defaultPassword}_secure');
     Logger.debug('Hive encryption manager initialized');
   }
 
@@ -95,7 +96,8 @@ class HiveEncryptionManager {
   HiveCipher get defaultCipher => _defaultCipher;
 
   /// Create secure box configuration
-  SecureBoxConfig createSecureBoxConfig(String boxName, {bool isSecure = false}) {
+  SecureBoxConfig createSecureBoxConfig(String boxName,
+      {bool isSecure = false}) {
     return SecureBoxConfig(
       name: boxName,
       cipher: isSecure ? secureCipher : cacheCipher,

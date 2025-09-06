@@ -30,4 +30,3 @@ class AppConstants {
   static const bool enableCaching = true;
   static const bool enableAnalytics = true;
 }
-

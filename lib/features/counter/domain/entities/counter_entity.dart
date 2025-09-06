@@ -57,4 +57,3 @@ class CounterEntity extends BaseEntity {
         'createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
-

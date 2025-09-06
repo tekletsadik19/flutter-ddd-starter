@@ -128,4 +128,3 @@ class CounterRepositoryImpl implements CounterRepository {
     );
   }
 }
-

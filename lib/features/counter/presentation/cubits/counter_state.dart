@@ -14,4 +14,3 @@ class CounterState with _$CounterState {
   /// Error state
   const factory CounterState.error(String message) = CounterError;
 }
-

@@ -112,7 +112,8 @@ class _DevPanelContent extends StatefulWidget {
   State<_DevPanelContent> createState() => _DevPanelContentState();
 }
 
-class _DevPanelContentState extends State<_DevPanelContent> with SingleTickerProviderStateMixin {
+class _DevPanelContentState extends State<_DevPanelContent>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -178,7 +179,7 @@ class _InfoTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final config = AppConfig.instance;
-    
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -186,21 +187,31 @@ class _InfoTab extends StatelessWidget {
           _buildInfoRow('Name', config.fullAppName),
           _buildInfoRow('Environment', config.environment.name),
           _buildInfoRow('Platform', defaultTargetPlatform.name),
-          _buildInfoRow('Mode', kDebugMode ? 'Debug' : kProfileMode ? 'Profile' : 'Release'),
+          _buildInfoRow(
+              'Mode',
+              kDebugMode
+                  ? 'Debug'
+                  : kProfileMode
+                      ? 'Profile'
+                      : 'Release'),
         ]),
         const SizedBox(height: 16),
         _buildInfoCard('API Configuration', [
           _buildInfoRow('Base URL', config.apiConfig.baseUrl),
-          _buildInfoRow('Timeout', '${config.apiConfig.connectTimeout.inSeconds}s'),
+          _buildInfoRow(
+              'Timeout', '${config.apiConfig.connectTimeout.inSeconds}s'),
           _buildInfoRow('Logging', config.apiConfig.enableLogging.toString()),
-          _buildInfoRow('Mock Data', config.apiConfig.enableMockData.toString()),
+          _buildInfoRow(
+              'Mock Data', config.apiConfig.enableMockData.toString()),
         ]),
         const SizedBox(height: 16),
         _buildInfoCard('Database Configuration', [
           _buildInfoRow('Name', config.databaseConfig.name),
           _buildInfoRow('Version', config.databaseConfig.version.toString()),
-          _buildInfoRow('Encryption', config.databaseConfig.enableEncryption.toString()),
-          _buildInfoRow('Cache Size', config.databaseConfig.cacheSize.toString()),
+          _buildInfoRow(
+              'Encryption', config.databaseConfig.enableEncryption.toString()),
+          _buildInfoRow(
+              'Cache Size', config.databaseConfig.cacheSize.toString()),
         ]),
       ],
     );
@@ -273,7 +284,7 @@ class _PerformanceTabState extends State<_PerformanceTab> {
   @override
   Widget build(BuildContext context) {
     final metrics = PerformanceMonitor.getMetrics();
-    
+
     return Column(
       children: [
         Padding(
@@ -430,7 +441,9 @@ Database: ${config.databaseConfig.name}
           'Copy Performance Metrics',
           () {
             final metrics = PerformanceMonitor.getMetrics();
-            final info = metrics.map((m) => '${m.name}: ${m.duration.inMilliseconds}ms').join('\n');
+            final info = metrics
+                .map((m) => '${m.name}: ${m.duration.inMilliseconds}ms')
+                .join('\n');
             DebugUtils.debugCopy(info);
           },
         ),

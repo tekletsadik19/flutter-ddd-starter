@@ -10,4 +10,3 @@ abstract class BaseEntity extends Equatable {
   @override
   List<Object?> get props => [id];
 }
-

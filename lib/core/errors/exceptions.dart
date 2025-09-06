@@ -44,4 +44,3 @@ class AuthorizationException extends AppException {
 class NotFoundException extends AppException {
   const NotFoundException({super.message});
 }
-

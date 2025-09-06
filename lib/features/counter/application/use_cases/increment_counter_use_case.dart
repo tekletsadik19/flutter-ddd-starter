@@ -67,4 +67,3 @@ class IncrementCounterUseCase implements UseCase<CounterEntity, NoParams> {
     }
   }
 }
-

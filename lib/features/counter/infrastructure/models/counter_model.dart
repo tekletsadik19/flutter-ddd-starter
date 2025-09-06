@@ -39,4 +39,3 @@ class CounterModel with _$CounterModel {
     );
   }
 }
-

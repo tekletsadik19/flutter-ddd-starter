@@ -30,18 +30,20 @@ class SecureStorageImpl implements SecureStorage {
 
   final HiveEncryptionManager _encryptionManager;
   static const String _secureBoxName = 'secure_box';
-  
+
   Box<String>? _secureBox;
 
   /// Get or open the secure box with enhanced encryption
   Future<Box<String>> get secureBox async {
     if (_secureBox?.isOpen == true) return _secureBox!;
-    
-    final config = _encryptionManager.createSecureBoxConfig(_secureBoxName, isSecure: true);
+
+    final config = _encryptionManager.createSecureBoxConfig(_secureBoxName,
+        isSecure: true);
     _secureBox = await Hive.openBox<String>(
       config.name,
       encryptionCipher: config.cipher,
-      compactionStrategy: config.compactionStrategy ?? (entries, deletedEntries) => deletedEntries > 50,
+      compactionStrategy: config.compactionStrategy ??
+          (entries, deletedEntries) => deletedEntries > 50,
     );
     return _secureBox!;
   }
@@ -50,14 +52,14 @@ class SecureStorageImpl implements SecureStorage {
   Future<void> store(String key, String value) async {
     try {
       final box = await secureBox;
-      
+
       // Additional SHA-256 hashing for integrity verification
       final valueWithHash = {
         'data': value,
         'hash': EncryptionService.hashData(value),
         'timestamp': DateTime.now().toIso8601String(),
       };
-      
+
       final jsonString = json.encode(valueWithHash);
       await box.put(key, jsonString);
       Logger.debug('Secure data stored for key: $key');
@@ -77,12 +79,13 @@ class SecureStorageImpl implements SecureStorage {
       final jsonMap = json.decode(jsonString) as Map<String, dynamic>;
       final data = jsonMap['data'] as String;
       final expectedHash = jsonMap['hash'] as String;
-      
+
       // Verify data integrity using SHA-256
       if (!EncryptionService.verifyDataIntegrity(data, expectedHash)) {
         Logger.error('Data integrity check failed for key: $key');
         await delete(key); // Remove corrupted data
-        throw const CacheException(message: 'Data integrity verification failed');
+        throw const CacheException(
+            message: 'Data integrity verification failed');
       }
 
       Logger.debug('Secure data retrieved for key: $key');
@@ -128,4 +131,3 @@ class SecureStorageImpl implements SecureStorage {
     }
   }
 }
-

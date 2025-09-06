@@ -27,7 +27,7 @@ class AppConfig {
   final PerformanceConfig performanceConfig;
 
   static AppConfig? _instance;
-  
+
   /// Get current app configuration
   static AppConfig get instance {
     assert(_instance != null, 'AppConfig must be initialized first');

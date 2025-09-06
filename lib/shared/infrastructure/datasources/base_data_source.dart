@@ -5,19 +5,19 @@ import 'package:shemanit/core/errors/exceptions.dart';
 abstract class BaseDataSource<T, ID> {
   /// Get entity by ID
   Future<T> getById(ID id);
-  
+
   /// Get all entities with optional filters
   Future<List<T>> getAll({Map<String, dynamic>? filters});
-  
+
   /// Create or update entity
   Future<void> save(T entity);
-  
+
   /// Delete entity by ID
   Future<void> delete(ID id);
-  
+
   /// Check if entity exists
   Future<bool> exists(ID id);
-  
+
   /// Clear all data
   Future<void> clear();
 }
@@ -26,13 +26,13 @@ abstract class BaseDataSource<T, ID> {
 abstract class BaseLocalDataSource<T, ID> extends BaseDataSource<T, ID> {
   /// Get cached entity by ID
   Future<T> getCached(ID id);
-  
+
   /// Cache entity
   Future<void> cache(T entity);
-  
+
   /// Clear cache
   Future<void> clearCache();
-  
+
   /// Check if data is cached and valid
   Future<bool> isCached(ID id);
 }
@@ -41,13 +41,13 @@ abstract class BaseLocalDataSource<T, ID> extends BaseDataSource<T, ID> {
 abstract class BaseRemoteDataSource<T, ID> extends BaseDataSource<T, ID> {
   /// Fetch entity from remote source
   Future<T> fetch(ID id);
-  
+
   /// Push entity to remote source
   Future<T> push(T entity);
-  
+
   /// Sync with remote source
   Future<List<T>> sync({DateTime? lastSync});
-  
+
   /// Check connectivity
   Future<bool> isConnected();
 }
@@ -60,7 +60,7 @@ mixin DataSourceValidation<T> {
       throw const ValidationException(message: 'Entity cannot be null');
     }
   }
-  
+
   /// Validate ID before operations
   void validateId<ID>(ID id) {
     if (id == null) {

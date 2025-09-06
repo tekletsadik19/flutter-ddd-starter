@@ -15,13 +15,13 @@ class DebugUtils {
   /// Initialize debug utilities
   static void initialize() {
     if (_initialized) return;
-    
+
     final config = AppConfig.instance;
-    
+
     if (config.debugConfig.enableDebugMode && kDebugMode) {
       _setupDebugFeatures();
     }
-    
+
     _initialized = true;
   }
 
@@ -29,15 +29,16 @@ class DebugUtils {
   static void _setupDebugFeatures() {
     // Enable debug painting for layout debugging
     // debugPaintSizeEnabled = true; // Uncomment to enable
-    
+
     // Log app lifecycle
     WidgetsBinding.instance.addObserver(_AppLifecycleObserver());
-    
+
     developer.log('🐛 Debug utilities initialized');
   }
 
   /// Log a debug message
-  static void logDebug(String message, {String? name, Object? error, StackTrace? stackTrace}) {
+  static void logDebug(String message,
+      {String? name, Object? error, StackTrace? stackTrace}) {
     if (kDebugMode) {
       developer.log(
         message,
@@ -73,7 +74,8 @@ class DebugUtils {
   }
 
   /// Log an error message
-  static void logError(String message, {String? name, Object? error, StackTrace? stackTrace}) {
+  static void logError(String message,
+      {String? name, Object? error, StackTrace? stackTrace}) {
     developer.log(
       message,
       name: name ?? 'ERROR',
@@ -246,9 +248,16 @@ class _DebugInfoPanelState extends State<_DebugInfoPanel> {
             if (_expanded) ...[
               const SizedBox(height: 8),
               _buildInfoRow('Env', AppConfig.instance.environment.name),
-              _buildInfoRow('Debug', AppConfig.instance.debugConfig.enableDebugMode.toString()),
+              _buildInfoRow('Debug',
+                  AppConfig.instance.debugConfig.enableDebugMode.toString()),
               _buildInfoRow('Platform', defaultTargetPlatform.name),
-              _buildInfoRow('Mode', kDebugMode ? 'Debug' : kProfileMode ? 'Profile' : 'Release'),
+              _buildInfoRow(
+                  'Mode',
+                  kDebugMode
+                      ? 'Debug'
+                      : kProfileMode
+                          ? 'Profile'
+                          : 'Release'),
             ],
           ],
         ),

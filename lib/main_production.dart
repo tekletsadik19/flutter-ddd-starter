@@ -6,7 +6,6 @@ import 'package:shemanit/core/constants/environment.dart';
 void main() {
   // Initialize production configuration
   AppConfig.initialize(Environment.production);
-  
+
   bootstrap(() => const App());
 }
-

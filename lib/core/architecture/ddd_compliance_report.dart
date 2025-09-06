@@ -1,5 +1,5 @@
 /// DDD Compliance Report for the Flutter Template
-/// 
+///
 /// This file documents the current DDD compliance status and architectural decisions
 library ddd_compliance_report;
 
@@ -127,16 +127,16 @@ Recommendations:
 class ArchitectureQualityMetrics {
   /// Measure of how well layers are separated
   static double layerCohesion = 0.95;
-  
+
   /// Measure of how loosely coupled components are
   static double looseCoupling = 0.90;
-  
+
   /// Measure of how well abstractions are defined
   static double abstractionLevel = 0.92;
-  
+
   /// Measure of how testable the code is
   static double testability = 0.88;
-  
+
   /// Measure of how maintainable the code is
   static double maintainability = 0.91;
 }

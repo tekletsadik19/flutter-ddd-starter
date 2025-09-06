@@ -627,4 +627,3 @@ abstract class CounterError implements CounterState {
   _$$CounterErrorImplCopyWith<_$CounterErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
-

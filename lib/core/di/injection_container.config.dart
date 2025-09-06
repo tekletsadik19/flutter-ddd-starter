@@ -40,7 +40,8 @@ import 'package:shemanit/shared/infrastructure/security/secure_storage.dart'
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
-import 'package:shemanit/shared/infrastructure/security/encryption_service.dart' as _i460;
+import 'package:shemanit/shared/infrastructure/security/encryption_service.dart'
+    as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -57,8 +58,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i361.Dio>(() => registerModule.dio);
     gh.singleton<_i839.CounterDomainService>(
         () => _i839.CounterDomainService());
-    gh.singleton<_i820.CounterLocalDataSource>(
-        () => _i820.CounterLocalDataSourceImpl(gh<_i460.HiveEncryptionManager>()));
+    gh.singleton<_i820.CounterLocalDataSource>(() =>
+        _i820.CounterLocalDataSourceImpl(gh<_i460.HiveEncryptionManager>()));
     gh.singleton<_i1040.CacheManager>(
         () => _i1040.CacheManagerImpl(gh<_i460.HiveEncryptionManager>()));
     gh.singleton<_i862.SecureStorage>(
@@ -94,4 +95,3 @@ extension GetItInjectableX on _i174.GetIt {
 }
 
 class _$RegisterModule extends _i382.RegisterModule {}
-

@@ -29,7 +29,7 @@ class AppBlocObserver extends BlocObserver {
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   // Ensure Flutter binding is initialized before accessing platform services
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   FlutterError.onError = (details) {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };
@@ -44,7 +44,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     DebugUtils.initialize();
     PerformanceMonitor.initialize();
     HotReloadUtils.initialize();
-    
+
     final config = AppConfig.instance;
     log('🚀 App initialized for ${config.environment.name} environment');
     log('🔧 Debug mode: ${config.debugConfig.enableDebugMode}');
@@ -53,4 +53,3 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   runApp(await builder());
 }
-

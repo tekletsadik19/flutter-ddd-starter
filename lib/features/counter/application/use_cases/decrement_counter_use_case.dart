@@ -61,4 +61,3 @@ class DecrementCounterUseCase implements UseCase<CounterEntity, NoParams> {
     }
   }
 }
-

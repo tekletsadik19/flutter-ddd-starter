@@ -13,12 +13,12 @@ final GetIt sl = GetIt.instance;
 Future<void> configureDependencies() async {
   // Initialize Hive
   await Hive.initFlutter();
-  
+
   // Initialize and register encryption manager
   final encryptionManager = HiveEncryptionManager();
   encryptionManager.initialize();
   sl.registerSingleton<HiveEncryptionManager>(encryptionManager);
-  
+
   // Initialize dependency injection
   sl.init();
 }
@@ -35,4 +35,3 @@ abstract class RegisterModule {
         ),
       );
 }
-

@@ -6,7 +6,6 @@ import 'package:shemanit/core/constants/environment.dart';
 void main() {
   // Initialize staging configuration
   AppConfig.initialize(Environment.staging);
-  
+
   bootstrap(() => const App());
 }
-

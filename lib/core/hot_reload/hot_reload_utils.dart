@@ -18,7 +18,7 @@ class HotReloadUtils {
     // Listen for hot reload events
     developer.registerExtension('ext.flutter.hotReload', _handleHotReload);
     developer.log('🔥 Hot reload utilities initialized');
-    
+
     _initialized = true;
   }
 
@@ -29,7 +29,7 @@ class HotReloadUtils {
   ) async {
     developer.log('🔥 Hot reload detected');
     HapticFeedback.lightImpact();
-    
+
     return developer.ServiceExtensionResponse.result('{"result":"success"}');
   }
 
@@ -53,7 +53,7 @@ class HotReloadUtils {
   /// Clear preserved state
   static void clearPreservedState([String? key]) {
     if (!kDebugMode) return;
-    
+
     if (key != null) {
       _preservedState.remove(key);
       developer.log('🔥 State cleared: $key');
@@ -144,7 +144,8 @@ class _HotReloadPreserverState extends State<HotReloadPreserver> {
     if (kDebugMode) {
       final restored = HotReloadUtils.restoreState<Map<String, dynamic>>(_key);
       if (restored != null) {
-        developer.log('🔥 Restored preserved widget: ${restored['widget_type']}');
+        developer
+            .log('🔥 Restored preserved widget: ${restored['widget_type']}');
       }
     }
 
@@ -161,13 +162,13 @@ abstract class HotReloadOptimizedStatefulWidget extends StatefulWidget {
 }
 
 /// State class optimized for hot reload
-abstract class HotReloadOptimizedState<T extends HotReloadOptimizedStatefulWidget>
-    extends State<T> with HotReloadPreservation<T> {
-  
+abstract class HotReloadOptimizedState<
+        T extends HotReloadOptimizedStatefulWidget> extends State<T>
+    with HotReloadPreservation<T> {
   @override
   void initState() {
     super.initState();
-    
+
     if (kDebugMode) {
       // Try to restore state from previous hot reload
       final restored = restoreState();
@@ -200,7 +201,8 @@ mixin FormStatePreservation<T extends StatefulWidget> on State<T> {
   TextEditingController getController(String key, [String initialValue = '']) {
     if (!_controllers.containsKey(key)) {
       final preserved = HotReloadUtils.restoreState<String>('form_$key');
-      _controllers[key] = TextEditingController(text: preserved ?? initialValue);
+      _controllers[key] =
+          TextEditingController(text: preserved ?? initialValue);
     }
     return _controllers[key]!;
   }
@@ -287,7 +289,7 @@ class _HotReloadIndicatorState extends State<HotReloadIndicator>
   void _showHotReloadIndicator() {
     setState(() => _showIndicator = true);
     _animationController.forward();
-    
+
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         _animationController.reverse().then((_) {
@@ -311,7 +313,8 @@ class _HotReloadIndicatorState extends State<HotReloadIndicator>
             child: FadeTransition(
               opacity: _animationController,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.orange.withOpacity(0.9),
                   borderRadius: BorderRadius.circular(16),

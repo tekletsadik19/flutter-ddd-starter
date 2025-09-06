@@ -42,4 +42,3 @@ class CounterView extends StatelessWidget {
     );
   }
 }
-
