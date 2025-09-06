@@ -1,12 +1,10 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../entities/security_status.dart';
+import '../aggregates/security_assessment.dart';
+import '../value_objects/device_fingerprint.dart';
 
 abstract class SecurityRepository {
-  Future<Either<Failure, SecurityStatus>> checkSecurityStatus();
-  Future<Either<Failure, bool>> isJailbroken();
-  Future<Either<Failure, bool>> isRooted();
-  Future<Either<Failure, bool>> isEmulator();
-  Future<Either<Failure, bool>> isDevelopmentModeEnabled();
-  Future<Either<Failure, bool>> isDebuggingEnabled();
+  Future<Either<Failure, SecurityAssessment>> performSecurityAssessment();
+  Future<Either<Failure, DeviceFingerprint>> getDeviceFingerprint();
+  Future<Either<Failure, void>> reportSecurityViolation(SecurityAssessment assessment);
 }

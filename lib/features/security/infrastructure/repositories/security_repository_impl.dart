@@ -1,71 +1,55 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../../domain/entities/security_status.dart';
+import '../../domain/aggregates/security_assessment.dart';
 import '../../domain/repositories/security_repository.dart';
-import '../datasources/security_datasource.dart';
+import '../../domain/services/security_assessment_service.dart';
+import '../../domain/value_objects/device_fingerprint.dart';
+import '../services/device_fingerprint_service.dart';
 
 class SecurityRepositoryImpl implements SecurityRepository {
-  const SecurityRepositoryImpl(this._dataSource);
+  const SecurityRepositoryImpl(
+    this._securityAssessmentService,
+    this._deviceFingerprintService,
+  );
 
-  final SecurityDataSource _dataSource;
+  final SecurityAssessmentService _securityAssessmentService;
+  final DeviceFingerprintService _deviceFingerprintService;
 
   @override
-  Future<Either<Failure, SecurityStatus>> checkSecurityStatus() async {
+  Future<Either<Failure, SecurityAssessment>> performSecurityAssessment() async {
     try {
-      final result = await _dataSource.checkSecurityStatus();
-      return Right(result.toDomain());
+      final deviceFingerprint = await _deviceFingerprintService.generateFingerprint();
+      final assessment = await _securityAssessmentService.assessDeviceSecurity(deviceFingerprint);
+      return Right(assessment);
     } catch (e) {
-      return Left(ServerFailure('Failed to check security status: $e'));
+      return Left(ServerFailure('Failed to perform security assessment: $e'));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> isJailbroken() async {
+  Future<Either<Failure, DeviceFingerprint>> getDeviceFingerprint() async {
     try {
-      final result = await _dataSource.isJailbroken();
-      return Right(result);
+      final fingerprint = await _deviceFingerprintService.generateFingerprint();
+      return Right(fingerprint);
     } catch (e) {
-      return Left(ServerFailure('Failed to check jailbreak status: $e'));
+      return Left(ServerFailure('Failed to generate device fingerprint: $e'));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> isRooted() async {
+  Future<Either<Failure, void>> reportSecurityViolation(SecurityAssessment assessment) async {
     try {
-      final result = await _dataSource.isRooted();
-      return Right(result);
+      // In a real implementation, this would send the security violation to a backend service
+      // For now, we'll just log it locally or store it for later reporting
+      
+      // TODO: Implement actual reporting mechanism
+      // - Send to security monitoring service
+      // - Log to analytics
+      // - Store for compliance reporting
+      
+      return const Right(null);
     } catch (e) {
-      return Left(ServerFailure('Failed to check root status: $e'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, bool>> isEmulator() async {
-    try {
-      final result = await _dataSource.isEmulator();
-      return Right(result);
-    } catch (e) {
-      return Left(ServerFailure('Failed to check emulator status: $e'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, bool>> isDevelopmentModeEnabled() async {
-    try {
-      final result = await _dataSource.isDevelopmentModeEnabled();
-      return Right(result);
-    } catch (e) {
-      return Left(ServerFailure('Failed to check development mode status: $e'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, bool>> isDebuggingEnabled() async {
-    try {
-      final result = await _dataSource.isDebuggingEnabled();
-      return Right(result);
-    } catch (e) {
-      return Left(ServerFailure('Failed to check debugging status: $e'));
+      return Left(ServerFailure('Failed to report security violation: $e'));
     }
   }
 }

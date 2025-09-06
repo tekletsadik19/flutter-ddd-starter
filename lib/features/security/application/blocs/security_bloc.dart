@@ -1,13 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../../shared/application/use_cases/base_use_case.dart';
 import '../../domain/entities/security_status.dart';
 import '../../domain/entities/app_version.dart';
 import '../../domain/usecases/check_security_status.dart';
 import '../../domain/usecases/check_for_updates.dart';
 
-part 'security_bloc.freezed.dart';
 part 'security_event.dart';
 part 'security_state.dart';
 

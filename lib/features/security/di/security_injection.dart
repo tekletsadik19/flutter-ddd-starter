@@ -7,12 +7,15 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../application/blocs/security_bloc.dart';
 import '../domain/repositories/app_update_repository.dart';
 import '../domain/repositories/security_repository.dart';
+import '../domain/services/app_update_service.dart';
+import '../domain/services/security_assessment_service.dart';
 import '../domain/usecases/check_for_updates.dart';
 import '../domain/usecases/check_security_status.dart';
-import '../infrastructure/datasources/app_update_datasource.dart';
-import '../infrastructure/datasources/security_datasource.dart';
 import '../infrastructure/repositories/app_update_repository_impl.dart';
 import '../infrastructure/repositories/security_repository_impl.dart';
+import '../infrastructure/services/app_version_service.dart';
+import '../infrastructure/services/device_fingerprint_service.dart';
+import '../infrastructure/services/platform_security_detection_service.dart';
 
 @module
 abstract class SecurityModule {
@@ -23,41 +26,62 @@ abstract class SecurityModule {
   @singleton
   DeviceInfoPlugin get deviceInfoPlugin => DeviceInfoPlugin();
 
-  // Data Sources
-  @LazySingleton(as: SecurityDataSource)
-  SecurityDataSourceImpl securityDataSource(DeviceInfoPlugin deviceInfo) =>
-      SecurityDataSourceImpl(deviceInfo);
+  // Infrastructure Services
+  @LazySingleton(as: ISecurityDetectionService)
+  PlatformSecurityDetectionService securityDetectionService(DeviceInfoPlugin deviceInfo) =>
+      PlatformSecurityDetectionService(deviceInfo);
 
-  @LazySingleton(as: AppUpdateDataSource)
-  AppUpdateDataSourceImpl appUpdateDataSource(Dio dio, PackageInfo packageInfo) =>
-      AppUpdateDataSourceImpl(dio, packageInfo);
+  @LazySingleton(as: IAppVersionRepository)
+  AppVersionService appVersionService(Dio dio, PackageInfo packageInfo) =>
+      AppVersionService(dio, packageInfo);
+
+  @lazySingleton
+  DeviceFingerprintService deviceFingerprintService(
+    DeviceInfoPlugin deviceInfo,
+    PackageInfo packageInfo,
+  ) =>
+      DeviceFingerprintService(deviceInfo, packageInfo);
+
+  // Domain Services
+  @lazySingleton
+  SecurityAssessmentService securityAssessmentService(
+    ISecurityDetectionService detectionService,
+  ) =>
+      SecurityAssessmentService(detectionService);
+
+  @lazySingleton
+  AppUpdateService appUpdateService(IAppVersionRepository versionRepository) =>
+      AppUpdateService(versionRepository);
 
   // Repositories
   @LazySingleton(as: SecurityRepository)
-  SecurityRepositoryImpl securityRepository(SecurityDataSource dataSource) =>
-      SecurityRepositoryImpl(dataSource);
+  SecurityRepositoryImpl securityRepository(
+    SecurityAssessmentService assessmentService,
+    DeviceFingerprintService fingerprintService,
+  ) =>
+      SecurityRepositoryImpl(assessmentService, fingerprintService);
 
   @LazySingleton(as: AppUpdateRepository)
-  AppUpdateRepositoryImpl appUpdateRepository(AppUpdateDataSource dataSource) =>
-      AppUpdateRepositoryImpl(dataSource);
+  AppUpdateRepositoryImpl appUpdateRepository(AppUpdateService updateService) =>
+      AppUpdateRepositoryImpl(updateService);
 
   // Use Cases
   @lazySingleton
-  CheckSecurityStatus checkSecurityStatus(SecurityRepository repository) =>
-      CheckSecurityStatus(repository);
+  PerformSecurityAssessment performSecurityAssessment(SecurityRepository repository) =>
+      PerformSecurityAssessment(repository);
 
   @lazySingleton
-  CheckForUpdates checkForUpdates(AppUpdateRepository repository) =>
-      CheckForUpdates(repository);
+  EvaluateUpdatePolicy evaluateUpdatePolicy(AppUpdateRepository repository) =>
+      EvaluateUpdatePolicy(repository);
 
   // BLoC
   @factory
   SecurityBloc securityBloc(
-    CheckSecurityStatus checkSecurityStatus,
-    CheckForUpdates checkForUpdates,
+    PerformSecurityAssessment performSecurityAssessment,
+    EvaluateUpdatePolicy evaluateUpdatePolicy,
   ) =>
       SecurityBloc(
-        checkSecurityStatus: checkSecurityStatus,
-        checkForUpdates: checkForUpdates,
+        performSecurityAssessment: performSecurityAssessment,
+        evaluateUpdatePolicy: evaluateUpdatePolicy,
       );
 }
