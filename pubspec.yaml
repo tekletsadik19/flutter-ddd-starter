@@ -34,7 +34,7 @@ dependencies:
   responsive_framework: ^1.5.1
   jailbreak_root_detection: ^1.0.0
   flutter_svg: ^2.0.9
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.3.1
   url_launcher: ^6.2.2
 
 dev_dependencies:

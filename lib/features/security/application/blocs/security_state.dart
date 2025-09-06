@@ -6,14 +6,14 @@ abstract class SecurityState extends Equatable {
 
 class SecurityInitial extends SecurityState {
   const SecurityInitial();
-  
+
   @override
   List<Object?> get props => [];
 }
 
 class SecurityLoading extends SecurityState {
   const SecurityLoading();
-  
+
   @override
   List<Object?> get props => [];
 }
@@ -48,31 +48,31 @@ class SecurityLoaded extends SecurityState {
       updateError: updateError ?? this.updateError,
     );
   }
-  
+
   @override
   List<Object?> get props => [
-    securityAssessment,
-    updatePolicy,
-    warningDismissed,
-    isCheckingUpdates,
-    updateError,
-  ];
+        securityAssessment,
+        updatePolicy,
+        warningDismissed,
+        isCheckingUpdates,
+        updateError,
+      ];
 }
 
 class SecurityError extends SecurityState {
   const SecurityError(this.message);
-  
+
   final String message;
-  
+
   @override
   List<Object?> get props => [message];
 }
 
 class SecurityCriticalFailure extends SecurityState {
   const SecurityCriticalFailure(this.message);
-  
+
   final String message;
-  
+
   @override
   List<Object?> get props => [message];
 }

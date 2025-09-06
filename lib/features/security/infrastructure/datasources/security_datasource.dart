@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
-import '../models/security_status_model.dart';
-import '../../domain/entities/security_status.dart';
+import 'package:shemanit/features/security/infrastructure/models/security_status_model.dart';
+import 'package:shemanit/features/security/domain/entities/security_status.dart';
 
 abstract class SecurityDataSource {
   Future<SecurityStatusModel> checkSecurityStatus();
@@ -28,11 +28,11 @@ class SecurityDataSourceImpl implements SecurityDataSource {
       isDebuggingEnabled(),
     ]);
 
-    final isJailbrokenResult = results[0] as bool;
-    final isRootedResult = results[1] as bool;
-    final isEmulatorResult = results[2] as bool;
-    final isDevelopmentModeEnabledResult = results[3] as bool;
-    final isDebuggingEnabledResult = results[4] as bool;
+    final isJailbrokenResult = results[0];
+    final isRootedResult = results[1];
+    final isEmulatorResult = results[2];
+    final isDevelopmentModeEnabledResult = results[3];
+    final isDebuggingEnabledResult = results[4];
 
     final threats = <String>[];
     var threatLevel = SecurityThreatLevelModel.none;
@@ -82,24 +82,24 @@ class SecurityDataSourceImpl implements SecurityDataSource {
   @override
   Future<bool> isJailbroken() async {
     if (!Platform.isIOS) return false;
-    
+
     try {
       return await JailbreakRootDetection.isJailBroken ?? false;
     } catch (e) {
       // Fallback detection methods for iOS
-      return await _fallbackJailbreakDetection();
+      return _fallbackJailbreakDetection();
     }
   }
 
   @override
   Future<bool> isRooted() async {
     if (!Platform.isAndroid) return false;
-    
+
     try {
       return await JailbreakRootDetection.isRooted ?? false;
     } catch (e) {
       // Fallback detection methods for Android
-      return await _fallbackRootDetection();
+      return _fallbackRootDetection();
     }
   }
 
@@ -109,7 +109,7 @@ class SecurityDataSourceImpl implements SecurityDataSource {
       return await JailbreakRootDetection.isOnEmulator ?? false;
     } catch (e) {
       // Fallback emulator detection
-      return await _fallbackEmulatorDetection();
+      return _fallbackEmulatorDetection();
     }
   }
 
@@ -228,7 +228,7 @@ class SecurityDataSourceImpl implements SecurityDataSource {
     try {
       if (Platform.isAndroid) {
         final androidInfo = await _deviceInfo.androidInfo;
-        
+
         // Check for common emulator characteristics
         final emulatorIndicators = [
           androidInfo.brand.toLowerCase().contains('generic'),
@@ -246,7 +246,7 @@ class SecurityDataSourceImpl implements SecurityDataSource {
         return emulatorIndicators.any((indicator) => indicator);
       } else if (Platform.isIOS) {
         final iosInfo = await _deviceInfo.iosInfo;
-        
+
         // Check for iOS simulator
         return iosInfo.isPhysicalDevice == false;
       }
@@ -254,7 +254,7 @@ class SecurityDataSourceImpl implements SecurityDataSource {
       // If we can't determine, assume it's not an emulator
       return false;
     }
-    
+
     return false;
   }
 }

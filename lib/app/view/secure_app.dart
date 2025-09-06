@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shemanit/core/di/injection_container.dart';
 import 'package:shemanit/features/security/security_feature.dart';
-import 'app.dart';
+import 'package:shemanit/app/view/app.dart';
 
 class SecureApp extends StatefulWidget {
   const SecureApp({super.key});

@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
-import '../value_objects/security_threat.dart';
-import '../value_objects/threat_level.dart';
-import '../value_objects/device_fingerprint.dart';
+import 'package:shemanit/features/security/domain/value_objects/security_threat.dart';
+import 'package:shemanit/features/security/domain/value_objects/threat_level.dart';
+import 'package:shemanit/features/security/domain/value_objects/device_fingerprint.dart';
 
 abstract class SecurityDomainEvent extends Equatable {
   const SecurityDomainEvent({required this.occurredAt});
-  
+
   final DateTime occurredAt;
-  
+
   @override
   List<Object?> get props => [occurredAt];
 }
@@ -16,8 +16,8 @@ class SecurityThreatDetected extends SecurityDomainEvent {
   const SecurityThreatDetected({
     required this.threat,
     required this.deviceFingerprint,
-    required DateTime occurredAt,
-  }) : super(occurredAt: occurredAt);
+    required super.occurredAt,
+  });
 
   final SecurityThreat threat;
   final DeviceFingerprint deviceFingerprint;
@@ -31,8 +31,8 @@ class SecurityAssessmentCompleted extends SecurityDomainEvent {
     required this.overallThreatLevel,
     required this.detectedThreats,
     required this.deviceFingerprint,
-    required DateTime occurredAt,
-  }) : super(occurredAt: occurredAt);
+    required super.occurredAt,
+  });
 
   final ThreatLevel overallThreatLevel;
   final List<SecurityThreat> detectedThreats;
@@ -40,11 +40,11 @@ class SecurityAssessmentCompleted extends SecurityDomainEvent {
 
   @override
   List<Object?> get props => [
-    ...super.props,
-    overallThreatLevel,
-    detectedThreats,
-    deviceFingerprint,
-  ];
+        ...super.props,
+        overallThreatLevel,
+        detectedThreats,
+        deviceFingerprint,
+      ];
 }
 
 class AppAccessBlocked extends SecurityDomainEvent {
@@ -52,8 +52,8 @@ class AppAccessBlocked extends SecurityDomainEvent {
     required this.reason,
     required this.threatLevel,
     required this.deviceFingerprint,
-    required DateTime occurredAt,
-  }) : super(occurredAt: occurredAt);
+    required super.occurredAt,
+  });
 
   final String reason;
   final ThreatLevel threatLevel;
@@ -61,11 +61,11 @@ class AppAccessBlocked extends SecurityDomainEvent {
 
   @override
   List<Object?> get props => [
-    ...super.props,
-    reason,
-    threatLevel,
-    deviceFingerprint,
-  ];
+        ...super.props,
+        reason,
+        threatLevel,
+        deviceFingerprint,
+      ];
 }
 
 class ForceUpdateRequired extends SecurityDomainEvent {
@@ -73,8 +73,8 @@ class ForceUpdateRequired extends SecurityDomainEvent {
     required this.currentVersion,
     required this.requiredVersion,
     required this.reason,
-    required DateTime occurredAt,
-  }) : super(occurredAt: occurredAt);
+    required super.occurredAt,
+  });
 
   final String currentVersion;
   final String requiredVersion;
@@ -82,9 +82,9 @@ class ForceUpdateRequired extends SecurityDomainEvent {
 
   @override
   List<Object?> get props => [
-    ...super.props,
-    currentVersion,
-    requiredVersion,
-    reason,
-  ];
+        ...super.props,
+        currentVersion,
+        requiredVersion,
+        reason,
+      ];
 }

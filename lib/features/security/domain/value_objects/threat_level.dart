@@ -1,6 +1,13 @@
 import 'package:equatable/equatable.dart';
 
 class ThreatLevel extends Equatable {
+
+  factory ThreatLevel.fromString(String value) {
+    return values.firstWhere(
+      (level) => level.value == value.toLowerCase(),
+      orElse: () => none,
+    );
+  }
   const ThreatLevel._(this.value, this.severity);
 
   final String value;
@@ -13,13 +20,6 @@ class ThreatLevel extends Equatable {
   static const ThreatLevel critical = ThreatLevel._('critical', 4);
 
   static const List<ThreatLevel> values = [none, low, medium, high, critical];
-
-  factory ThreatLevel.fromString(String value) {
-    return values.firstWhere(
-      (level) => level.value == value.toLowerCase(),
-      orElse: () => none,
-    );
-  }
 
   bool get isSecure => this == none;
   bool get requiresAction => severity >= medium.severity;

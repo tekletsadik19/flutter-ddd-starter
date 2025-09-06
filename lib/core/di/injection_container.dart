@@ -5,7 +5,6 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shemanit/core/di/injection_container.config.dart';
 import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
-import '../../features/security/di/security_injection.dart';
 
 /// Service locator instance
 final GetIt sl = GetIt.instance;
@@ -21,7 +20,7 @@ Future<void> configureDependencies() async {
 
   // Initialize dependency injection
   sl.init();
-  
+
   // Initialize encryption manager after DI setup
   final encryptionManager = sl<HiveEncryptionManager>();
   encryptionManager.initialize();

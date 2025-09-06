@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../shared/application/use_cases/base_use_case.dart';
-import '../../domain/entities/security_status.dart';
-import '../../domain/entities/app_version.dart';
-import '../../domain/usecases/check_security_status.dart';
-import '../../domain/usecases/check_for_updates.dart';
+import 'package:shemanit/shared/application/use_cases/base_use_case.dart';
+import 'package:shemanit/features/security/domain/entities/security_status.dart';
+import 'package:shemanit/features/security/domain/entities/app_version.dart';
+import 'package:shemanit/features/security/domain/usecases/check_security_status.dart';
+import 'package:shemanit/features/security/domain/usecases/check_for_updates.dart';
 
 part 'security_event.dart';
 part 'security_state.dart';
@@ -73,7 +73,6 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
         currentState.copyWith(
           isCheckingUpdates: false,
           updatePolicy: updatePolicy,
-          updateError: null,
         ),
       ),
     );

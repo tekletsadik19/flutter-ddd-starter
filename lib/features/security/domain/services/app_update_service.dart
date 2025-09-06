@@ -1,5 +1,5 @@
-import '../aggregates/app_update_policy.dart';
-import '../value_objects/app_version.dart';
+import 'package:shemanit/features/security/domain/aggregates/app_update_policy.dart';
+import 'package:shemanit/features/security/domain/value_objects/app_version.dart';
 
 abstract class IAppVersionRepository {
   Future<AppVersion> getCurrentVersion();
@@ -17,7 +17,8 @@ class AppUpdateService {
   Future<AppUpdatePolicy> evaluateUpdatePolicy() async {
     final currentVersion = await _versionRepository.getCurrentVersion();
     final latestVersion = await _versionRepository.getLatestVersion();
-    final minimumSupportedVersion = await _versionRepository.getMinimumSupportedVersion();
+    final minimumSupportedVersion =
+        await _versionRepository.getMinimumSupportedVersion();
     final releaseNotes = await _versionRepository.getReleaseNotes();
     final downloadUrl = await _versionRepository.getDownloadUrl();
 
@@ -47,9 +48,9 @@ class AppUpdateService {
   /// Business rule: Determines if user can postpone update
   bool canPostponeUpdate(AppUpdatePolicy policy) {
     if (policy.updateRequirement == null) return true;
-    
+
     final requirement = policy.updateRequirement!;
-    
+
     // Critical updates cannot be postponed
     if (requirement.priority == UpdatePriority.critical) {
       return false;

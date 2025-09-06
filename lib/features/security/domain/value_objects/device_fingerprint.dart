@@ -22,7 +22,7 @@ class DeviceFingerprint extends Equatable {
   final String? buildFingerprint;
 
   bool get isEmulator => !isPhysicalDevice;
-  
+
   bool get isAndroid => platform.toLowerCase() == 'android';
   bool get isIOS => platform.toLowerCase() == 'ios';
 
@@ -36,13 +36,13 @@ class DeviceFingerprint extends Equatable {
 
   @override
   List<Object?> get props => [
-    deviceId,
-    platform,
-    osVersion,
-    appVersion,
-    isPhysicalDevice,
-    manufacturer,
-    model,
-    buildFingerprint,
-  ];
+        deviceId,
+        platform,
+        osVersion,
+        appVersion,
+        isPhysicalDevice,
+        manufacturer,
+        model,
+        buildFingerprint,
+      ];
 }

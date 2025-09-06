@@ -1,12 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class AppVersion extends Equatable {
-  const AppVersion._(this.major, this.minor, this.patch, this.build);
-
-  final int major;
-  final int minor;
-  final int patch;
-  final String? build;
 
   factory AppVersion.parse(String version) {
     final parts = version.split('.');
@@ -16,7 +10,7 @@ class AppVersion extends Equatable {
 
     final major = int.tryParse(parts[0]);
     final minor = int.tryParse(parts[1]);
-    
+
     if (major == null || minor == null) {
       throw ArgumentError('Invalid version format: $version');
     }
@@ -27,9 +21,16 @@ class AppVersion extends Equatable {
     return AppVersion._(major, minor, patch, build);
   }
 
-  factory AppVersion.create(int major, int minor, [int patch = 0, String? build]) {
+  factory AppVersion.create(int major, int minor,
+      [int patch = 0, String? build,]) {
     return AppVersion._(major, minor, patch, build);
   }
+  const AppVersion._(this.major, this.minor, this.patch, this.build);
+
+  final int major;
+  final int minor;
+  final int patch;
+  final String? build;
 
   bool isNewerThan(AppVersion other) {
     if (major != other.major) return major > other.major;
@@ -39,13 +40,11 @@ class AppVersion extends Equatable {
   }
 
   bool isOlderThan(AppVersion other) => other.isNewerThan(this);
-  
-  bool isEqualTo(AppVersion other) => 
-      major == other.major && 
-      minor == other.minor && 
-      patch == other.patch;
 
-  bool isCompatibleWith(AppVersion minimumVersion) => 
+  bool isEqualTo(AppVersion other) =>
+      major == other.major && minor == other.minor && patch == other.patch;
+
+  bool isCompatibleWith(AppVersion minimumVersion) =>
       !isOlderThan(minimumVersion);
 
   @override

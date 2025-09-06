@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../application/blocs/security_bloc.dart';
-import '../widgets/security_warning_dialog.dart';
+import 'package:shemanit/features/security/application/blocs/security_bloc.dart';
+import 'package:shemanit/features/security/presentation/widgets/security_warning_dialog.dart';
 
 class SecurityCheckPage extends StatefulWidget {
   const SecurityCheckPage({
@@ -36,7 +36,7 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ));
+    ),);
 
     _rotationAnimation = Tween<double>(
       begin: 0,
@@ -44,7 +44,7 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.linear,
-    ));
+    ),);
 
     _animationController.repeat(reverse: true);
 
@@ -63,7 +63,7 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: Container(
+      body: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -79,7 +79,8 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
             listener: (context, state) {
               state.whenOrNull(
                 loaded: (securityStatus, appVersion, warningDismissed, _, __) {
-                  if (!securityStatus.threatLevel.isSecure || appVersion.mustUpdate) {
+                  if (!securityStatus.threatLevel.isSecure ||
+                      appVersion.mustUpdate) {
                     if (!warningDismissed) {
                       _showSecurityDialog(context, securityStatus, appVersion);
                     }
@@ -120,10 +121,12 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                               width: 120,
                               height: 120,
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(0.1),
+                                color:
+                                    theme.colorScheme.primary.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(60),
                                 border: Border.all(
-                                  color: theme.colorScheme.primary.withOpacity(0.3),
+                                  color: theme.colorScheme.primary
+                                      .withOpacity(0.3),
                                   width: 2,
                                 ),
                               ),
@@ -156,7 +159,8 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                       state.when(
                         initial: () => 'Initializing security check...',
                         loading: () => 'Checking device security...',
-                        loaded: (_, __, ___, ____, _____) => 'Security check complete',
+                        loaded: (_, __, ___, ____, _____) =>
+                            'Security check complete',
                         error: (message) => 'Security check failed',
                       ),
                       style: theme.textTheme.bodyLarge?.copyWith(
@@ -179,11 +183,13 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                           ),
                         ],
                       ),
-                      loaded: (securityStatus, appVersion, warningDismissed, _, __) {
-                        if (securityStatus.threatLevel.isSecure && !appVersion.mustUpdate) {
+                      loaded: (securityStatus, appVersion, warningDismissed, _,
+                          __,) {
+                        if (securityStatus.threatLevel.isSecure &&
+                            !appVersion.mustUpdate) {
                           return Column(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.check_circle,
                                 color: Colors.green,
                                 size: 48,
@@ -201,7 +207,7 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                         } else {
                           return Column(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.warning,
                                 color: Colors.orange,
                                 size: 48,
@@ -259,8 +265,11 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
         appVersion: appVersion,
         onDismiss: () {
           Navigator.of(context).pop();
-          if (!securityStatus.threatLevel.shouldBlockApp && !appVersion.mustUpdate) {
-            context.read<SecurityBloc>().add(const SecurityEvent.dismissWarning());
+          if (!securityStatus.threatLevel.shouldBlockApp &&
+              !appVersion.mustUpdate) {
+            context
+                .read<SecurityBloc>()
+                .add(const SecurityEvent.dismissWarning());
             widget.onSecurityCheckComplete();
           }
         },

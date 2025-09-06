@@ -1,4 +1,4 @@
-import '../../domain/entities/security_status.dart';
+import 'package:shemanit/features/security/domain/entities/security_status.dart';
 
 class SecurityStatusModel {
   const SecurityStatusModel({
@@ -10,14 +10,6 @@ class SecurityStatusModel {
     required this.threatLevel,
     required this.detectedThreats,
   });
-
-  final bool isJailbroken;
-  final bool isRooted;
-  final bool isEmulator;
-  final bool isDevelopmentModeEnabled;
-  final bool isDebuggingEnabled;
-  final SecurityThreatLevelModel threatLevel;
-  final List<String> detectedThreats;
 
   factory SecurityStatusModel.fromJson(Map<String, dynamic> json) {
     return SecurityStatusModel(
@@ -33,6 +25,14 @@ class SecurityStatusModel {
       detectedThreats: List<String>.from(json['detectedThreats'] as List),
     );
   }
+
+  final bool isJailbroken;
+  final bool isRooted;
+  final bool isEmulator;
+  final bool isDevelopmentModeEnabled;
+  final bool isDebuggingEnabled;
+  final SecurityThreatLevelModel threatLevel;
+  final List<String> detectedThreats;
 }
 
 enum SecurityThreatLevelModel {

@@ -389,7 +389,10 @@ class AppTextField extends HookWidget {
   }
 
   InputDecoration _buildInputDecoration(
-      BuildContext context, ThemeData theme, ValueNotifier<String?> errorText,) {
+    BuildContext context,
+    ThemeData theme,
+    ValueNotifier<String?> errorText,
+  ) {
     final baseDecoration = decoration ?? const InputDecoration();
 
     return baseDecoration.copyWith(
@@ -482,8 +485,11 @@ class AppTextField extends HookWidget {
     };
   }
 
-  Widget _wrapWithLabelsAndAccessibility(BuildContext context, Widget textField,
-      ValueNotifier<String?> errorText,) {
+  Widget _wrapWithLabelsAndAccessibility(
+    BuildContext context,
+    Widget textField,
+    ValueNotifier<String?> errorText,
+  ) {
     final theme = Theme.of(context);
 
     var result = textField;

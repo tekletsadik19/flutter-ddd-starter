@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../domain/entities/security_status.dart';
-import '../../domain/entities/app_version.dart';
+import 'package:shemanit/features/security/domain/entities/security_status.dart';
+import 'package:shemanit/features/security/domain/entities/app_version.dart';
 
 class SecurityWarningDialog extends StatelessWidget {
   const SecurityWarningDialog({
@@ -73,7 +73,8 @@ class SecurityWarningDialog extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
+            color:
+                _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: SvgPicture.asset(
@@ -123,7 +124,6 @@ class SecurityWarningDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Colors.orange.withOpacity(0.3),
-          width: 1,
         ),
       ),
       child: Column(
@@ -131,7 +131,7 @@ class SecurityWarningDialog extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.system_update,
                 color: Colors.orange,
                 size: 20,
@@ -164,7 +164,7 @@ class SecurityWarningDialog extends StatelessWidget {
           if (appVersion.releaseNotes.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
-              'What\'s new:',
+              "What's new:",
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -203,7 +203,6 @@ class SecurityWarningDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _getWarningColor(securityStatus.threatLevel).withOpacity(0.3),
-          width: 1,
         ),
       ),
       child: Column(
@@ -264,7 +263,7 @@ class SecurityWarningDialog extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(

@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/failures.dart';
-import '../../../../shared/application/use_cases/base_use_case.dart';
-import '../aggregates/app_update_policy.dart';
-import '../repositories/app_update_repository.dart';
+import 'package:shemanit/core/errors/failures.dart';
+import 'package:shemanit/shared/application/use_cases/base_use_case.dart';
+import 'package:shemanit/features/security/domain/aggregates/app_update_policy.dart';
+import 'package:shemanit/features/security/domain/repositories/app_update_repository.dart';
 
 class EvaluateUpdatePolicy extends NoParamsUseCase<AppUpdatePolicy> {
   const EvaluateUpdatePolicy(this._repository);
@@ -11,6 +11,6 @@ class EvaluateUpdatePolicy extends NoParamsUseCase<AppUpdatePolicy> {
 
   @override
   Future<Either<Failure, AppUpdatePolicy>> execute() async {
-    return await _repository.getUpdatePolicy();
+    return _repository.getUpdatePolicy();
   }
 }

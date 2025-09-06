@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import '../../domain/services/app_update_service.dart';
-import '../../domain/value_objects/app_version.dart';
+import 'package:shemanit/features/security/domain/services/app_update_service.dart';
+import 'package:shemanit/features/security/domain/value_objects/app_version.dart';
 
 class AppVersionService implements IAppVersionRepository {
   const AppVersionService(this._dio, this._packageInfo);
@@ -72,7 +72,7 @@ class AppVersionService implements IAppVersionRepository {
   Future<Map<String, dynamic>> _fetchVersionInfoFromAPI() async {
     try {
       final response = await _dio.get('/api/app/version-info');
-      
+
       if (response.statusCode == 200) {
         return response.data as Map<String, dynamic>;
       } else {
