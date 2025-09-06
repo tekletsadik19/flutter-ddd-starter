@@ -18,13 +18,12 @@ Future<void> configureDependencies() async {
   // Initialize Hive
   await Hive.initFlutter();
 
-  // Initialize and register encryption manager
-  final encryptionManager = HiveEncryptionManager();
-  encryptionManager.initialize();
-  sl.registerSingleton<HiveEncryptionManager>(encryptionManager);
-
   // Initialize dependency injection
   sl.init();
+  
+  // Initialize encryption manager after DI setup
+  final encryptionManager = sl<HiveEncryptionManager>();
+  encryptionManager.initialize();
 }
 
 /// Register external dependencies that can't use @injectable
