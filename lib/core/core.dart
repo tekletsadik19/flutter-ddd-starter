@@ -1,4 +1,6 @@
 // Core exports
+export 'architecture/ddd_compliance_report.dart';
+export 'architecture/layer_boundaries.dart';
 export 'constants/app_constants.dart';
 export 'constants/environment.dart';
 export 'di/injection_container.dart';

@@ -4,11 +4,13 @@ import 'package:hive/hive.dart';
 import 'package:shemanit/core/errors/exceptions.dart';
 import 'package:shemanit/core/utils/logger.dart';
 import 'package:shemanit/features/counter/infrastructure/models/counter_model.dart';
+import 'package:shemanit/shared/infrastructure/datasources/base_data_source.dart';
 import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
 import 'package:injectable/injectable.dart';
 
 /// Local data source for counter persistence
-abstract class CounterLocalDataSource {
+/// Extends BaseLocalDataSource to enforce consistent patterns
+abstract class CounterLocalDataSource extends BaseLocalDataSource<CounterModel, String> {
   /// Get cached counter
   Future<CounterModel> getCachedCounter();
 
@@ -20,13 +22,10 @@ abstract class CounterLocalDataSource {
 
   /// Add counter to history
   Future<void> addToHistory(CounterModel counter);
-
-  /// Clear all cached data
-  Future<void> clearCache();
 }
 
 @Singleton(as: CounterLocalDataSource)
-class CounterLocalDataSourceImpl implements CounterLocalDataSource {
+class CounterLocalDataSourceImpl implements CounterLocalDataSource with DataSourceValidation<CounterModel> {
   CounterLocalDataSourceImpl(this._encryptionManager);
 
   final HiveEncryptionManager _encryptionManager;
@@ -142,5 +141,63 @@ class CounterLocalDataSourceImpl implements CounterLocalDataSource {
       Logger.error('Error clearing counter cache', e);
       throw const CacheException(message: 'Failed to clear counter cache');
     }
+  }
+
+  // Base data source method implementations
+  @override
+  Future<CounterModel> getById(String id) async {
+    validateId(id);
+    return getCachedCounter();
+  }
+
+  @override
+  Future<List<CounterModel>> getAll({Map<String, dynamic>? filters}) async {
+    return getCachedCounterHistory();
+  }
+
+  @override
+  Future<void> save(CounterModel entity) async {
+    validateEntity(entity);
+    await cacheCounter(entity);
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    validateId(id);
+    await clearCache();
+  }
+
+  @override
+  Future<bool> exists(String id) async {
+    validateId(id);
+    try {
+      await getCachedCounter();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<void> clear() async {
+    await clearCache();
+  }
+
+  @override
+  Future<CounterModel> getCached(String id) async {
+    validateId(id);
+    return getCachedCounter();
+  }
+
+  @override
+  Future<void> cache(CounterModel entity) async {
+    validateEntity(entity);
+    await cacheCounter(entity);
+  }
+
+  @override
+  Future<bool> isCached(String id) async {
+    validateId(id);
+    return exists(id);
   }
 }

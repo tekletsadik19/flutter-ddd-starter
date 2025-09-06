@@ -2,11 +2,14 @@ import 'package:dartz/dartz.dart';
 import 'package:shemanit/core/errors/failures.dart';
 import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
 import 'package:shemanit/features/counter/domain/value_objects/counter_value.dart';
+import 'package:shemanit/shared/domain/services/base_domain_service.dart';
 import 'package:injectable/injectable.dart';
 
 /// Domain service for counter business logic
 @singleton
-class CounterDomainService {
+class CounterDomainService extends BaseDomainService with DomainServiceValidation {
+  @override
+  String get serviceName => 'CounterDomainService';
   /// Validate if counter can be incremented
   Either<ValidationFailure, CounterEntity> validateIncrement(
     CounterEntity counter,

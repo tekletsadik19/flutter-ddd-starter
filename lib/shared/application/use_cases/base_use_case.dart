@@ -3,15 +3,22 @@ import 'package:shemanit/core/errors/failures.dart';
 import 'package:equatable/equatable.dart';
 
 /// Base class for all use cases
-abstract class UseCase<Type, Params> {
+/// Enforces the single responsibility principle and provides consistent error handling
+abstract class UseCase<Type, Params extends UseCaseParams> {
   /// Execute the use case
   Future<Either<Failure, Type>> call(Params params);
+  
+  /// Use case identifier for logging and monitoring
+  String get useCaseName => runtimeType.toString();
 }
 
 /// Base class for use cases that don't require parameters
-abstract class NoParamsUseCase<Type> {
-  /// Execute the use case
-  Future<Either<Failure, Type>> call();
+abstract class NoParamsUseCase<Type> extends UseCase<Type, NoParams> {
+  /// Execute the use case without parameters
+  Future<Either<Failure, Type>> execute();
+  
+  @override
+  Future<Either<Failure, Type>> call(NoParams params) => execute();
 }
 
 /// Base class for use case parameters
