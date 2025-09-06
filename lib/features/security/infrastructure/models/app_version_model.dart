@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:shemanit/features/security/domain/entities/app_version.dart';
+import 'package:shemanit/features/security/domain/value_objects/app_version.dart';
 
 part 'app_version_model.freezed.dart';
 part 'app_version_model.g.dart';
@@ -23,30 +23,24 @@ class AppVersionModel with _$AppVersionModel {
 
 extension AppVersionModelExtension on AppVersionModel {
   AppVersion toDomain() {
-    return AppVersion(
-      currentVersion: currentVersion,
-      latestVersion: latestVersion,
-      minimumSupportedVersion: minimumSupportedVersion,
-      forceUpdate: forceUpdate,
-      recommendUpdate: recommendUpdate,
-      updateMessage: updateMessage,
-      downloadUrl: downloadUrl,
-      releaseNotes: releaseNotes,
-    );
+    return AppVersion.parse(currentVersion);
   }
 }
 
 extension AppVersionExtension on AppVersion {
   AppVersionModel toModel() {
     return AppVersionModel(
-      currentVersion: currentVersion,
-      latestVersion: latestVersion,
-      minimumSupportedVersion: minimumSupportedVersion,
-      forceUpdate: forceUpdate,
-      recommendUpdate: recommendUpdate,
-      updateMessage: updateMessage,
-      downloadUrl: downloadUrl,
-      releaseNotes: releaseNotes,
+      currentVersion: toString(),
+      latestVersion:
+          toString(), // This would need to be provided from external source
+      minimumSupportedVersion:
+          toString(), // This would need to be provided from external source
+      forceUpdate: false, // This would need to be determined by business logic
+      recommendUpdate:
+          false, // This would need to be determined by business logic
+      updateMessage: null,
+      downloadUrl: null,
+      releaseNotes: const [],
     );
   }
 }

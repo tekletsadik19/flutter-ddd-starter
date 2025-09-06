@@ -5,7 +5,6 @@ import 'package:shemanit/features/security/domain/value_objects/device_fingerpri
 import 'package:shemanit/features/security/domain/events/security_event.dart';
 
 class SecurityAssessment extends Equatable {
-
   factory SecurityAssessment.create({
     required DeviceFingerprint deviceFingerprint,
     required List<SecurityThreat> detectedThreats,
@@ -18,29 +17,35 @@ class SecurityAssessment extends Equatable {
 
     // Generate events for each detected threat
     for (final threat in detectedThreats) {
-      events.add(SecurityThreatDetected(
-        threat: threat,
-        deviceFingerprint: deviceFingerprint,
-        occurredAt: assessmentTime,
-      ),);
+      events.add(
+        SecurityThreatDetected(
+          threat: threat,
+          deviceFingerprint: deviceFingerprint,
+          occurredAt: assessmentTime,
+        ),
+      );
     }
 
     // Generate assessment completion event
-    events.add(SecurityAssessmentCompleted(
-      overallThreatLevel: overallThreatLevel,
-      detectedThreats: detectedThreats,
-      deviceFingerprint: deviceFingerprint,
-      occurredAt: assessmentTime,
-    ),);
+    events.add(
+      SecurityAssessmentCompleted(
+        overallThreatLevel: overallThreatLevel,
+        detectedThreats: detectedThreats,
+        deviceFingerprint: deviceFingerprint,
+        occurredAt: assessmentTime,
+      ),
+    );
 
     // Generate access blocked event if necessary
     if (!isAccessAllowed) {
-      events.add(AppAccessBlocked(
-        reason: _buildBlockingReason(detectedThreats),
-        threatLevel: overallThreatLevel,
-        deviceFingerprint: deviceFingerprint,
-        occurredAt: assessmentTime,
-      ),);
+      events.add(
+        AppAccessBlocked(
+          reason: _buildBlockingReason(detectedThreats),
+          threatLevel: overallThreatLevel,
+          deviceFingerprint: deviceFingerprint,
+          occurredAt: assessmentTime,
+        ),
+      );
     }
 
     return SecurityAssessment._(
@@ -94,7 +99,8 @@ class SecurityAssessment extends Equatable {
   }
 
   static ThreatLevel _calculateOverallThreatLevel(
-      List<SecurityThreat> threats,) {
+    List<SecurityThreat> threats,
+  ) {
     if (threats.isEmpty) return ThreatLevel.none;
 
     final maxSeverity =

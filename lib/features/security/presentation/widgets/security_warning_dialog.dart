@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shemanit/features/security/domain/entities/security_status.dart';
-import 'package:shemanit/features/security/domain/entities/app_version.dart';
+import 'package:shemanit/features/security/domain/value_objects/app_version.dart';
 
 class SecurityWarningDialog extends StatelessWidget {
   const SecurityWarningDialog({
@@ -237,7 +237,7 @@ class SecurityWarningDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...securityStatus.detectedThreats.map(
+          ...securityStatus.assessment.detectedThreats.map(
             (threat) => Padding(
               padding: const EdgeInsets.only(left: 8, bottom: 4),
               child: Row(

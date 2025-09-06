@@ -32,7 +32,6 @@ class UpdateRequirement extends Equatable {
 }
 
 class AppUpdatePolicy extends Equatable {
-
   factory AppUpdatePolicy.evaluate({
     required AppVersion currentVersion,
     required AppVersion latestVersion,
@@ -51,12 +50,14 @@ class AppUpdatePolicy extends Equatable {
         deadline: DateTime.now().add(const Duration(days: 7)),
       );
 
-      events.add(ForceUpdateRequired(
-        currentVersion: currentVersion.toString(),
-        requiredVersion: latestVersion.toString(),
-        reason: requirement.reason,
-        occurredAt: DateTime.now(),
-      ),);
+      events.add(
+        ForceUpdateRequired(
+          currentVersion: currentVersion.toString(),
+          requiredVersion: latestVersion.toString(),
+          reason: requirement.reason,
+          occurredAt: DateTime.now(),
+        ),
+      );
     }
     // Check if there are security updates
     else if (_hasSecurityUpdates(releaseNotes)) {
@@ -66,12 +67,14 @@ class AppUpdatePolicy extends Equatable {
         deadline: DateTime.now().add(const Duration(days: 14)),
       );
 
-      events.add(ForceUpdateRequired(
-        currentVersion: currentVersion.toString(),
-        requiredVersion: latestVersion.toString(),
-        reason: requirement.reason,
-        occurredAt: DateTime.now(),
-      ),);
+      events.add(
+        ForceUpdateRequired(
+          currentVersion: currentVersion.toString(),
+          requiredVersion: latestVersion.toString(),
+          reason: requirement.reason,
+          occurredAt: DateTime.now(),
+        ),
+      );
     }
     // Check if update is available
     else if (currentVersion.isOlderThan(latestVersion)) {
@@ -131,8 +134,10 @@ class AppUpdatePolicy extends Equatable {
       'breach',
     ];
 
-    return releaseNotes.any((note) => securityKeywords
-        .any((keyword) => note.toLowerCase().contains(keyword)),);
+    return releaseNotes.any(
+      (note) => securityKeywords
+          .any((keyword) => note.toLowerCase().contains(keyword)),
+    );
   }
 
   AppUpdatePolicy clearEvents() {

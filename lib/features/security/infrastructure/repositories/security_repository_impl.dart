@@ -26,7 +26,7 @@ class SecurityRepositoryImpl implements SecurityRepository {
       return Right(assessment);
     } catch (e) {
       // For security failures, we fail secure - treat as critical security violation
-      return Left(ServerFailure('CRITICAL SECURITY FAILURE: $e'));
+      return Left(ServerFailure(message: 'CRITICAL SECURITY FAILURE: $e'));
     }
   }
 
@@ -36,13 +36,15 @@ class SecurityRepositoryImpl implements SecurityRepository {
       final fingerprint = await _deviceFingerprintService.generateFingerprint();
       return Right(fingerprint);
     } catch (e) {
-      return Left(ServerFailure('Failed to generate device fingerprint: $e'));
+      return Left(
+          ServerFailure(message: 'Failed to generate device fingerprint: $e'));
     }
   }
 
   @override
   Future<Either<Failure, void>> reportSecurityViolation(
-      SecurityAssessment assessment,) async {
+    SecurityAssessment assessment,
+  ) async {
     try {
       // In a real implementation, this would send the security violation to a backend service
       // For now, we'll just log it locally or store it for later reporting
@@ -54,7 +56,8 @@ class SecurityRepositoryImpl implements SecurityRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure('Failed to report security violation: $e'));
+      return Left(
+          ServerFailure(message: 'Failed to report security violation: $e'));
     }
   }
 }

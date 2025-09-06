@@ -1,6 +1,5 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -28,9 +27,8 @@ abstract class SecurityModule {
 
   // Infrastructure Services
   @LazySingleton(as: ISecurityDetectionService)
-  PlatformSecurityDetectionService securityDetectionService(
-          DeviceInfoPlugin deviceInfo,) =>
-      PlatformSecurityDetectionService(deviceInfo);
+  PlatformSecurityDetectionService securityDetectionService() =>
+      const PlatformSecurityDetectionService();
 
   @LazySingleton(as: IAppVersionRepository)
   AppVersionService appVersionService(Dio dio, PackageInfo packageInfo) =>
@@ -66,18 +64,17 @@ abstract class SecurityModule {
   AppUpdateRepositoryImpl appUpdateRepository(AppUpdateService updateService) =>
       AppUpdateRepositoryImpl(updateService);
 
-  // Use Cases
   @lazySingleton
   PerformSecurityAssessment performSecurityAssessment(
-          SecurityRepository repository,) =>
+    SecurityRepository repository,
+  ) =>
       PerformSecurityAssessment(repository);
 
   @lazySingleton
   EvaluateUpdatePolicy evaluateUpdatePolicy(AppUpdateRepository repository) =>
       EvaluateUpdatePolicy(repository);
 
-  // BLoC
-  @factory
+  @factoryMethod
   SecurityBloc securityBloc(
     PerformSecurityAssessment performSecurityAssessment,
     EvaluateUpdatePolicy evaluateUpdatePolicy,

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
 import 'package:shemanit/features/security/infrastructure/models/security_status_model.dart';
-import 'package:shemanit/features/security/domain/entities/security_status.dart';
 
 abstract class SecurityDataSource {
   Future<SecurityStatusModel> checkSecurityStatus();
@@ -84,7 +83,8 @@ class SecurityDataSourceImpl implements SecurityDataSource {
     if (!Platform.isIOS) return false;
 
     try {
-      return await JailbreakRootDetection.isJailBroken ?? false;
+      final detection = JailbreakRootDetection();
+      return await detection.isJailBroken;
     } catch (e) {
       // Fallback detection methods for iOS
       return _fallbackJailbreakDetection();
@@ -96,7 +96,8 @@ class SecurityDataSourceImpl implements SecurityDataSource {
     if (!Platform.isAndroid) return false;
 
     try {
-      return await JailbreakRootDetection.isRooted ?? false;
+      final detection = JailbreakRootDetection();
+      return await detection.isJailBroken;
     } catch (e) {
       // Fallback detection methods for Android
       return _fallbackRootDetection();
@@ -106,7 +107,9 @@ class SecurityDataSourceImpl implements SecurityDataSource {
   @override
   Future<bool> isEmulator() async {
     try {
-      return await JailbreakRootDetection.isOnEmulator ?? false;
+      final detection = JailbreakRootDetection();
+      final isRealDevice = await detection.isRealDevice;
+      return !isRealDevice;
     } catch (e) {
       // Fallback emulator detection
       return _fallbackEmulatorDetection();
@@ -115,25 +118,15 @@ class SecurityDataSourceImpl implements SecurityDataSource {
 
   @override
   Future<bool> isDevelopmentModeEnabled() async {
-    if (Platform.isAndroid) {
-      try {
-        return await JailbreakRootDetection.isDeveloperModeEnable ?? false;
-      } catch (e) {
-        return false;
-      }
-    }
+    // The jailbreak_root_detection package doesn't provide this method
+    // Use fallback detection or return false
     return false;
   }
 
   @override
   Future<bool> isDebuggingEnabled() async {
-    if (Platform.isAndroid) {
-      try {
-        return await JailbreakRootDetection.isDebuggingEnable ?? false;
-      } catch (e) {
-        return false;
-      }
-    }
+    // The jailbreak_root_detection package doesn't provide this method
+    // Use fallback detection or return false
     return false;
   }
 

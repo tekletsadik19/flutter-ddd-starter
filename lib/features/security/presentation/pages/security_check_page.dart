@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shemanit/features/security/application/blocs/security_bloc.dart';
+import 'package:shemanit/features/security/domain/aggregates/security_assessment.dart';
+import 'package:shemanit/features/security/domain/aggregates/app_update_policy.dart';
+import 'package:shemanit/features/security/domain/entities/security_status.dart';
 import 'package:shemanit/features/security/presentation/widgets/security_warning_dialog.dart';
 
 class SecurityCheckPage extends StatefulWidget {
@@ -33,18 +36,22 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     _rotationAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.linear,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.linear,
+      ),
+    );
 
     _animationController.repeat(reverse: true);
 
@@ -78,11 +85,13 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
           child: BlocConsumer<SecurityBloc, SecurityState>(
             listener: (context, state) {
               state.whenOrNull(
-                loaded: (securityStatus, appVersion, warningDismissed, _, __) {
-                  if (!securityStatus.threatLevel.isSecure ||
-                      appVersion.mustUpdate) {
+                loaded: (securityAssessment, updatePolicy, warningDismissed, _,
+                    __) {
+                  if (!securityAssessment.overallThreatLevel.isSecure ||
+                      updatePolicy.mustUpdate) {
                     if (!warningDismissed) {
-                      _showSecurityDialog(context, securityStatus, appVersion);
+                      _showSecurityDialog(
+                          context, securityAssessment, updatePolicy);
                     }
                   } else {
                     // Security check passed, continue to app
@@ -162,6 +171,8 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                         loaded: (_, __, ___, ____, _____) =>
                             'Security check complete',
                         error: (message) => 'Security check failed',
+                        criticalFailure: (message) =>
+                            'Critical security failure',
                       ),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
@@ -183,10 +194,15 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                           ),
                         ],
                       ),
-                      loaded: (securityStatus, appVersion, warningDismissed, _,
-                          __,) {
-                        if (securityStatus.threatLevel.isSecure &&
-                            !appVersion.mustUpdate) {
+                      loaded: (
+                        securityAssessment,
+                        updatePolicy,
+                        warningDismissed,
+                        _,
+                        __,
+                      ) {
+                        if (securityAssessment.overallThreatLevel.isSecure &&
+                            !updatePolicy.mustUpdate) {
                           return Column(
                             children: [
                               const Icon(
@@ -241,6 +257,31 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                           ),
                         ],
                       ),
+                      criticalFailure: (message) => Column(
+                        children: [
+                          Icon(
+                            Icons.security,
+                            color: theme.colorScheme.error,
+                            size: 48,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Critical Security Failure',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: theme.colorScheme.error,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            message,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.error,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -254,19 +295,25 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
 
   void _showSecurityDialog(
     BuildContext context,
-    securityStatus,
-    appVersion,
+    SecurityAssessment securityAssessment,
+    AppUpdatePolicy updatePolicy,
   ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => SecurityWarningDialog(
-        securityStatus: securityStatus,
-        appVersion: appVersion,
+        securityStatus: SecurityStatus(
+          assessment: securityAssessment,
+          isSecure: securityAssessment.overallThreatLevel.isSecure,
+          requiresAction: securityAssessment.hasThreats,
+          shouldBlockApp: !securityAssessment.isAccessAllowed,
+          lastChecked: securityAssessment.assessmentTime,
+        ),
+        appVersion: updatePolicy.currentVersion,
         onDismiss: () {
           Navigator.of(context).pop();
-          if (!securityStatus.threatLevel.shouldBlockApp &&
-              !appVersion.mustUpdate) {
+          if (!securityAssessment.overallThreatLevel.shouldBlockApp &&
+              !updatePolicy.mustUpdate) {
             context
                 .read<SecurityBloc>()
                 .add(const SecurityEvent.dismissWarning());

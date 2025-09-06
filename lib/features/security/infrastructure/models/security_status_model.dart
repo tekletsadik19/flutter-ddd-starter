@@ -1,4 +1,8 @@
 import 'package:shemanit/features/security/domain/entities/security_status.dart';
+import 'package:shemanit/features/security/domain/value_objects/security_threat_level.dart';
+import 'package:shemanit/features/security/domain/aggregates/security_assessment.dart';
+import 'package:shemanit/features/security/domain/value_objects/security_threat.dart';
+import 'package:shemanit/features/security/domain/value_objects/device_fingerprint.dart';
 
 class SecurityStatusModel {
   const SecurityStatusModel({
@@ -45,14 +49,47 @@ enum SecurityThreatLevelModel {
 
 extension SecurityStatusModelExtension on SecurityStatusModel {
   SecurityStatus toDomain() {
+    // Create threats based on detected issues
+    final threats = <SecurityThreat>[];
+
+    if (isJailbroken) {
+      threats.add(SecurityThreat.jailbreak());
+    }
+    if (isRooted) {
+      threats.add(SecurityThreat.root());
+    }
+    if (isEmulator) {
+      threats.add(SecurityThreat.emulator());
+    }
+    if (isDevelopmentModeEnabled) {
+      threats.add(SecurityThreat.developmentMode());
+    }
+    if (isDebuggingEnabled) {
+      threats.add(SecurityThreat.debugging());
+    }
+
+    // Create device fingerprint (simplified)
+    const deviceFingerprint = DeviceFingerprint(
+      deviceId: 'unknown',
+      platform: 'unknown',
+      osVersion: 'unknown',
+      appVersion: 'unknown',
+      isPhysicalDevice: true,
+      model: 'unknown',
+    );
+
+    // Create security assessment
+    final assessment = SecurityAssessment.create(
+      deviceFingerprint: deviceFingerprint,
+      detectedThreats: threats,
+    );
+
     return SecurityStatus(
-      isJailbroken: isJailbroken,
-      isRooted: isRooted,
-      isEmulator: isEmulator,
-      isDevelopmentModeEnabled: isDevelopmentModeEnabled,
-      isDebuggingEnabled: isDebuggingEnabled,
-      threatLevel: threatLevel.toDomain(),
-      detectedThreats: detectedThreats,
+      assessment: assessment,
+      isSecure: !isJailbroken && !isRooted && !isEmulator,
+      requiresAction: threats.isNotEmpty,
+      shouldBlockApp: isJailbroken || isRooted,
+      lastChecked: DateTime.now(),
     );
   }
 }

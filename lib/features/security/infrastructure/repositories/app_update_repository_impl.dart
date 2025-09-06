@@ -17,7 +17,8 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
       final policy = await _appUpdateService.evaluateUpdatePolicy();
       return Right(policy);
     } catch (e) {
-      return Left(ServerFailure('Failed to evaluate update policy: $e'));
+      return Left(
+          ServerFailure(message: 'Failed to evaluate update policy: $e'));
     }
   }
 
@@ -27,7 +28,8 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
       final policy = await _appUpdateService.evaluateUpdatePolicy();
       return Right(policy.currentVersion);
     } catch (e) {
-      return Left(ServerFailure('Failed to get current app version: $e'));
+      return Left(
+          ServerFailure(message: 'Failed to get current app version: $e'));
     }
   }
 
@@ -39,10 +41,11 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
         return const Right(null);
       } else {
-        return Left(ServerFailure('Cannot launch update URL: $downloadUrl'));
+        return Left(
+            ServerFailure(message: 'Cannot launch update URL: $downloadUrl'));
       }
     } catch (e) {
-      return Left(ServerFailure('Failed to initiate update: $e'));
+      return Left(ServerFailure(message: 'Failed to initiate update: $e'));
     }
   }
 }

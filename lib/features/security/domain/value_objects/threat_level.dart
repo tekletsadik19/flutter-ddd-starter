@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ThreatLevel extends Equatable {
-
   factory ThreatLevel.fromString(String value) {
     return values.firstWhere(
       (level) => level.value == value.toLowerCase(),
@@ -38,6 +37,8 @@ class ThreatLevel extends Equatable {
         return 'High Risk';
       case critical:
         return 'Critical Risk';
+      default:
+        return 'Unknown Risk';
     }
   }
 

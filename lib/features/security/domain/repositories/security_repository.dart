@@ -7,5 +7,6 @@ abstract class SecurityRepository {
   Future<Either<Failure, SecurityAssessment>> performSecurityAssessment();
   Future<Either<Failure, DeviceFingerprint>> getDeviceFingerprint();
   Future<Either<Failure, void>> reportSecurityViolation(
-      SecurityAssessment assessment,);
+    SecurityAssessment assessment,
+  );
 }

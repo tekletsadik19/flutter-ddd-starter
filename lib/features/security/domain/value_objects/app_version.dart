@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class AppVersion extends Equatable {
-
   factory AppVersion.parse(String version) {
     final parts = version.split('.');
     if (parts.length < 2) {
@@ -21,8 +20,12 @@ class AppVersion extends Equatable {
     return AppVersion._(major, minor, patch, build);
   }
 
-  factory AppVersion.create(int major, int minor,
-      [int patch = 0, String? build,]) {
+  factory AppVersion.create(
+    int major,
+    int minor, [
+    int patch = 0,
+    String? build,
+  ]) {
     return AppVersion._(major, minor, patch, build);
   }
   const AppVersion._(this.major, this.minor, this.patch, this.build);

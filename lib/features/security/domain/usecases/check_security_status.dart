@@ -5,7 +5,7 @@ import 'package:shemanit/features/security/domain/aggregates/security_assessment
 import 'package:shemanit/features/security/domain/repositories/security_repository.dart';
 
 class PerformSecurityAssessment extends NoParamsUseCase<SecurityAssessment> {
-  const PerformSecurityAssessment(this._repository);
+  PerformSecurityAssessment(this._repository);
 
   final SecurityRepository _repository;
 

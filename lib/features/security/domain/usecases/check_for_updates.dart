@@ -5,7 +5,7 @@ import 'package:shemanit/features/security/domain/aggregates/app_update_policy.d
 import 'package:shemanit/features/security/domain/repositories/app_update_repository.dart';
 
 class EvaluateUpdatePolicy extends NoParamsUseCase<AppUpdatePolicy> {
-  const EvaluateUpdatePolicy(this._repository);
+  EvaluateUpdatePolicy(this._repository);
 
   final AppUpdateRepository _repository;
 

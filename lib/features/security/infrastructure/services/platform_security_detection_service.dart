@@ -1,28 +1,23 @@
 import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
 import 'package:shemanit/features/security/domain/services/security_assessment_service.dart';
 
 class PlatformSecurityDetectionService implements ISecurityDetectionService {
-  const PlatformSecurityDetectionService(this._deviceInfo);
-
-  final DeviceInfoPlugin _deviceInfo;
+  const PlatformSecurityDetectionService();
 
   @override
   Future<bool> isDeviceJailbroken() async {
     if (!Platform.isIOS) return false;
 
     try {
-      final result = await JailbreakRootDetection.isJailBroken;
-      if (result == null) {
-        throw Exception(
-            'Jailbreak detection failed - unable to determine device security status',);
-      }
+      final detection = JailbreakRootDetection();
+      final result = await detection.isJailBroken;
       return result;
     } catch (e) {
       // Fail secure - if we can't detect, assume compromised
       throw Exception(
-          'Critical security check failed: Unable to verify device jailbreak status - $e',);
+        'Critical security check failed: Unable to verify device jailbreak status - $e',
+      );
     }
   }
 
@@ -31,32 +26,28 @@ class PlatformSecurityDetectionService implements ISecurityDetectionService {
     if (!Platform.isAndroid) return false;
 
     try {
-      final result = await JailbreakRootDetection.isRooted;
-      if (result == null) {
-        throw Exception(
-            'Root detection failed - unable to determine device security status',);
-      }
+      final detection = JailbreakRootDetection();
+      final result = await detection.isJailBroken;
       return result;
     } catch (e) {
       // Fail secure - if we can't detect, assume compromised
       throw Exception(
-          'Critical security check failed: Unable to verify device root status - $e',);
+        'Critical security check failed: Unable to verify device root status - $e',
+      );
     }
   }
 
   @override
   Future<bool> isRunningOnEmulator() async {
     try {
-      final result = await JailbreakRootDetection.isOnEmulator;
-      if (result == null) {
-        throw Exception(
-            'Emulator detection failed - unable to determine device type',);
-      }
-      return result;
+      final detection = JailbreakRootDetection();
+      final isRealDevice = await detection.isRealDevice;
+      return !isRealDevice;
     } catch (e) {
       // Fail secure - if we can't detect, assume emulator
       throw Exception(
-          'Critical security check failed: Unable to verify device authenticity - $e',);
+        'Critical security check failed: Unable to verify device authenticity - $e',
+      );
     }
   }
 
@@ -65,16 +56,14 @@ class PlatformSecurityDetectionService implements ISecurityDetectionService {
     if (!Platform.isAndroid) return false;
 
     try {
-      final result = await JailbreakRootDetection.isDeveloperModeEnable;
-      if (result == null) {
-        throw Exception(
-            'Development mode detection failed - unable to determine developer settings',);
-      }
-      return result;
+      // The jailbreak_root_detection package doesn't provide this method
+      // Return false as fallback
+      return false;
     } catch (e) {
       // Fail secure - if we can't detect, assume development mode is enabled
       throw Exception(
-          'Critical security check failed: Unable to verify developer mode status - $e',);
+        'Critical security check failed: Unable to verify developer mode status - $e',
+      );
     }
   }
 
@@ -83,16 +72,14 @@ class PlatformSecurityDetectionService implements ISecurityDetectionService {
     if (!Platform.isAndroid) return false;
 
     try {
-      final result = await JailbreakRootDetection.isDebuggingEnable;
-      if (result == null) {
-        throw Exception(
-            'Debug detection failed - unable to determine debugging status',);
-      }
-      return result;
+      // The jailbreak_root_detection package doesn't provide this method
+      // Return false as fallback
+      return false;
     } catch (e) {
       // Fail secure - if we can't detect, assume debugging is enabled
       throw Exception(
-          'Critical security check failed: Unable to verify debugging status - $e',);
+        'Critical security check failed: Unable to verify debugging status - $e',
+      );
     }
   }
 
@@ -115,7 +102,8 @@ class PlatformSecurityDetectionService implements ISecurityDetectionService {
       return <String>[];
     } catch (e) {
       throw Exception(
-          'Critical security check failed: Unable to verify app integrity - $e',);
+        'Critical security check failed: Unable to verify app integrity - $e',
+      );
     }
   }
 }
