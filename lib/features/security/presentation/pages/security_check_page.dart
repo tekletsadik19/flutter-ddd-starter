@@ -76,8 +76,8 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              theme.colorScheme.primary.withOpacity(0.1),
-              theme.colorScheme.secondary.withOpacity(0.1),
+              theme.colorScheme.primary.withValues(alpha: 0.1),
+              theme.colorScheme.secondary.withValues(alpha: 0.1),
             ],
           ),
         ),
@@ -131,11 +131,11 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
                               height: 120,
                               decoration: BoxDecoration(
                                 color:
-                                    theme.colorScheme.primary.withOpacity(0.1),
+                                    theme.colorScheme.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(60),
                                 border: Border.all(
                                   color: theme.colorScheme.primary
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                                   width: 2,
                                 ),
                               ),
@@ -298,7 +298,7 @@ class _SecurityCheckPageState extends State<SecurityCheckPage>
     SecurityAssessment securityAssessment,
     AppUpdatePolicy updatePolicy,
   ) {
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => SecurityWarningDialog(

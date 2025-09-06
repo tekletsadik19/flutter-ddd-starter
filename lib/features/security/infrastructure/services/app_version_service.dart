@@ -1,12 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shemanit/features/security/domain/services/app_update_service.dart';
 import 'package:shemanit/features/security/domain/value_objects/app_version.dart';
 
 class AppVersionService implements IAppVersionRepository {
-  const AppVersionService(this._dio, this._packageInfo);
+  const AppVersionService(this._packageInfo);
 
-  final Dio _dio;
   final PackageInfo _packageInfo;
 
   @override
@@ -68,20 +66,4 @@ class AppVersionService implements IAppVersionRepository {
     }
   }
 
-  // Method for future API integration
-  Future<Map<String, dynamic>> _fetchVersionInfoFromAPI() async {
-    try {
-      final response = await _dio.get('/api/app/version-info');
-
-      if (response.statusCode == 200) {
-        return response.data as Map<String, dynamic>;
-      } else {
-        throw Exception('Failed to fetch version info: ${response.statusCode}');
-      }
-    } on DioException catch (e) {
-      throw Exception('Network error: ${e.message}');
-    } catch (e) {
-      throw Exception('Unexpected error: $e');
-    }
-  }
 }

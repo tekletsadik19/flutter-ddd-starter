@@ -49,7 +49,7 @@ class SecurityRepositoryImpl implements SecurityRepository {
       // In a real implementation, this would send the security violation to a backend service
       // For now, we'll just log it locally or store it for later reporting
 
-      // TODO: Implement actual reporting mechanism
+      // TODO(security): Implement actual reporting mechanism
       // - Send to security monitoring service
       // - Log to analytics
       // - Store for compliance reporting

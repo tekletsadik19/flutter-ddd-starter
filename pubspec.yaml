@@ -10,13 +10,16 @@ dependencies:
   bloc: ^8.1.4
   crypto: ^3.0.3
   dartz: ^0.10.1
+  device_info_plus: ^9.1.0
   dio: ^5.9.0
   equatable: ^2.0.7
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
+  flutter_hooks: ^0.20.5
   flutter_localizations:
     sdk: flutter
+  flutter_svg: ^2.0.9
   freezed: ^2.5.7
   freezed_annotation: ^2.4.4
   get_it: ^8.2.0
@@ -25,16 +28,13 @@ dependencies:
   hive_flutter: ^1.1.0
   injectable: ^2.5.1
   intl: ^0.20.2
+  jailbreak_root_detection: ^1.0.0
   json_annotation: ^4.9.0
   json_serializable: ^6.9.0
+  package_info_plus: ^8.3.1
+  responsive_framework: ^1.5.1
   retrofit: ^4.5.0
   shared_preferences: ^2.2.2
-  device_info_plus: ^9.1.0
-  flutter_hooks: ^0.20.5
-  responsive_framework: ^1.5.1
-  jailbreak_root_detection: ^1.0.0
-  flutter_svg: ^2.0.9
-  package_info_plus: ^8.3.1
   url_launcher: ^6.2.2
 
 dev_dependencies:

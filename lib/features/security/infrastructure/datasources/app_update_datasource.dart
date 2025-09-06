@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shemanit/features/security/infrastructure/models/app_version_model.dart';
 
@@ -9,9 +8,8 @@ abstract class AppUpdateDataSource {
 }
 
 class AppUpdateDataSourceImpl implements AppUpdateDataSource {
-  const AppUpdateDataSourceImpl(this._dio, this._packageInfo);
+  const AppUpdateDataSourceImpl(this._packageInfo);
 
-  final Dio _dio;
   final PackageInfo _packageInfo;
 
   @override
@@ -71,24 +69,4 @@ class AppUpdateDataSourceImpl implements AppUpdateDataSource {
     throw UnimplementedError('Download functionality not implemented yet');
   }
 
-  // Method to call actual API when ready
-  Future<AppVersionModel> _checkForUpdatesFromAPI() async {
-    try {
-      final response = await _dio.get('/api/app/version');
-
-      if (response.statusCode == 200) {
-        final data = response.data as Map<String, dynamic>;
-        return AppVersionModel.fromJson({
-          ...data,
-          'currentVersion': _packageInfo.version,
-        });
-      } else {
-        throw Exception('Failed to fetch version info: ${response.statusCode}');
-      }
-    } on DioException catch (e) {
-      throw Exception('Network error: ${e.message}');
-    } catch (e) {
-      throw Exception('Unexpected error: $e');
-    }
-  }
 }

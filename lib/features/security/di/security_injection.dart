@@ -1,5 +1,4 @@
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -31,8 +30,8 @@ abstract class SecurityModule {
       const PlatformSecurityDetectionService();
 
   @LazySingleton(as: IAppVersionRepository)
-  AppVersionService appVersionService(Dio dio, PackageInfo packageInfo) =>
-      AppVersionService(dio, packageInfo);
+  AppVersionService appVersionService(PackageInfo packageInfo) =>
+      AppVersionService(packageInfo);
 
   @lazySingleton
   DeviceFingerprintService deviceFingerprintService(

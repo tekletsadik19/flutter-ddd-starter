@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:shemanit/features/security/domain/entities/security_status.dart';
 import 'package:shemanit/features/security/domain/value_objects/app_version.dart';
 import 'package:shemanit/features/security/domain/value_objects/threat_level.dart';
@@ -23,9 +22,8 @@ class SecurityWarningDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shouldShowSecurityWarning = !securityStatus.threatLevel.isSecure;
-    const shouldShowUpdateWarning = false; // App version checking logic would go here
 
-    if (!shouldShowSecurityWarning && !shouldShowUpdateWarning) {
+    if (!shouldShowSecurityWarning) {
       return const SizedBox.shrink();
     }
 
@@ -41,7 +39,7 @@ class SecurityWarningDialog extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
+              _getWarningColor(securityStatus.threatLevel).withValues(alpha: 0.1),
               Colors.white,
             ],
           ),
@@ -51,11 +49,7 @@ class SecurityWarningDialog extends StatelessWidget {
           children: [
             _buildHeader(context),
             const SizedBox(height: 20),
-            if (shouldShowUpdateWarning) ...[
-              _buildUpdateWarning(context),
-              if (shouldShowSecurityWarning) const SizedBox(height: 16),
-            ],
-            if (shouldShowSecurityWarning) _buildSecurityWarning(context),
+            _buildSecurityWarning(context),
             const SizedBox(height: 24),
             _buildActions(context),
           ],
@@ -66,7 +60,6 @@ class SecurityWarningDialog extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
-    const mustUpdate = false; // App version checking logic would go here
 
     return Row(
       children: [
@@ -74,7 +67,7 @@ class SecurityWarningDialog extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color:
-                _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
+                _getWarningColor(securityStatus.threatLevel).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: SvgPicture.asset(
@@ -93,16 +86,14 @@ class SecurityWarningDialog extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                mustUpdate ? 'Update Required' : 'Security Warning',
+                'Security Warning',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: _getWarningColor(securityStatus.threatLevel),
                 ),
               ),
               Text(
-                mustUpdate
-                    ? 'App update is required to continue'
-                    : 'Security risk detected',
+                'Security risk detected',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -114,77 +105,6 @@ class SecurityWarningDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildUpdateWarning(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.orange.withOpacity(0.3),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.system_update,
-                color: Colors.orange,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Update Available',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange.shade700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'App update information would be displayed here.',
-            style: theme.textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Current: $appVersion\n'
-            'Latest: (would be fetched from server)',
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontFamily: 'monospace',
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "What's new:",
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Padding(
-            padding: EdgeInsets.only(left: 8, bottom: 2),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('• '),
-                Expanded(
-                  child: Text(
-                    'Release notes would be displayed here',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildSecurityWarning(BuildContext context) {
     final theme = Theme.of(context);
@@ -192,10 +112,10 @@ class SecurityWarningDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
+        color: _getWarningColor(securityStatus.threatLevel).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getWarningColor(securityStatus.threatLevel).withOpacity(0.3),
+          color: _getWarningColor(securityStatus.threatLevel).withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -256,7 +176,7 @@ class SecurityWarningDialog extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -286,50 +206,35 @@ class SecurityWarningDialog extends StatelessWidget {
   Widget _buildActions(BuildContext context) {
     final theme = Theme.of(context);
     final shouldBlockApp = securityStatus.threatLevel.shouldBlockApp;
-    const mustUpdate = false; // App version checking logic would go here
 
     return Row(
       children: [
-        if (!shouldBlockApp && !mustUpdate) ...[
+        if (!shouldBlockApp) ...[
           TextButton(
             onPressed: onDismiss,
             child: const Text('Dismiss'),
           ),
           const SizedBox(width: 12),
         ],
-        if (mustUpdate) ...[
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => _launchUpdateUrl('https://example.com/update'),
-              icon: const Icon(Icons.download),
-              label: const Text('Update Now'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-              ),
-            ),
+        if (onRetry != null)
+          TextButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Retry'),
           ),
-        ] else ...[
-          if (onRetry != null)
-            TextButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: shouldBlockApp ? null : onDismiss,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: shouldBlockApp
+                  ? theme.colorScheme.error
+                  : theme.colorScheme.primary,
+              foregroundColor: Colors.white,
             ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: shouldBlockApp ? null : onDismiss,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: shouldBlockApp
-                    ? theme.colorScheme.error
-                    : theme.colorScheme.primary,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(shouldBlockApp ? 'Exit App' : 'Continue'),
-            ),
+            child: Text(shouldBlockApp ? 'Exit App' : 'Continue'),
           ),
-        ],
+        ),
       ],
     );
   }
@@ -384,10 +289,4 @@ class SecurityWarningDialog extends StatelessWidget {
     return securityStatus.primaryRecommendation;
   }
 
-  Future<void> _launchUpdateUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
 }
