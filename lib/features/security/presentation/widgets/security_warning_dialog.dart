@@ -1,0 +1,397 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../domain/entities/security_status.dart';
+import '../../domain/entities/app_version.dart';
+
+class SecurityWarningDialog extends StatelessWidget {
+  const SecurityWarningDialog({
+    required this.securityStatus,
+    required this.appVersion,
+    this.onDismiss,
+    this.onRetry,
+    super.key,
+  });
+
+  final SecurityStatus securityStatus;
+  final AppVersion appVersion;
+  final VoidCallback? onDismiss;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final shouldShowSecurityWarning = !securityStatus.threatLevel.isSecure;
+    final shouldShowUpdateWarning = appVersion.mustUpdate;
+
+    if (!shouldShowSecurityWarning && !shouldShowUpdateWarning) {
+      return const SizedBox.shrink();
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(context),
+            const SizedBox(height: 20),
+            if (shouldShowUpdateWarning) ...[
+              _buildUpdateWarning(context),
+              if (shouldShowSecurityWarning) const SizedBox(height: 16),
+            ],
+            if (shouldShowSecurityWarning) _buildSecurityWarning(context),
+            const SizedBox(height: 24),
+            _buildActions(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final isHighThreat = securityStatus.threatLevel.shouldBlockApp;
+    final mustUpdate = appVersion.mustUpdate;
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: SvgPicture.asset(
+            _getWarningIcon(),
+            width: 32,
+            height: 32,
+            colorFilter: ColorFilter.mode(
+              _getWarningColor(securityStatus.threatLevel),
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                mustUpdate ? 'Update Required' : 'Security Warning',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: _getWarningColor(securityStatus.threatLevel),
+                ),
+              ),
+              Text(
+                mustUpdate
+                    ? 'App update is required to continue'
+                    : 'Security risk detected',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUpdateWarning(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.orange.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.system_update,
+                color: Colors.orange,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Update Available',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange.shade700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (appVersion.updateMessage != null) ...[
+            Text(
+              appVersion.updateMessage!,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 8),
+          ],
+          Text(
+            'Current: ${appVersion.currentVersion}\n'
+            'Latest: ${appVersion.latestVersion}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontFamily: 'monospace',
+            ),
+          ),
+          if (appVersion.releaseNotes.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(
+              'What\'s new:',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            ...appVersion.releaseNotes.take(3).map(
+                  (note) => Padding(
+                    padding: const EdgeInsets.only(left: 8, bottom: 2),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('• ', style: theme.textTheme.bodySmall),
+                        Expanded(
+                          child: Text(
+                            note,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSecurityWarning(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _getWarningColor(securityStatus.threatLevel).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _getWarningColor(securityStatus.threatLevel).withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(
+                _getSecurityIcon(),
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(
+                  _getWarningColor(securityStatus.threatLevel),
+                  BlendMode.srcIn,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                securityStatus.threatLevel.displayName,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: _getWarningColor(securityStatus.threatLevel),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'The following security issues were detected:',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ...securityStatus.detectedThreats.map(
+            (threat) => Padding(
+              padding: const EdgeInsets.only(left: 8, bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 16,
+                    color: _getWarningColor(securityStatus.threatLevel),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      threat,
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _getSecurityRecommendation(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActions(BuildContext context) {
+    final theme = Theme.of(context);
+    final shouldBlockApp = securityStatus.threatLevel.shouldBlockApp;
+    final mustUpdate = appVersion.mustUpdate;
+
+    return Row(
+      children: [
+        if (!shouldBlockApp && !mustUpdate) ...[
+          TextButton(
+            onPressed: onDismiss,
+            child: const Text('Dismiss'),
+          ),
+          const SizedBox(width: 12),
+        ],
+        if (mustUpdate && appVersion.downloadUrl != null) ...[
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: () => _launchUpdateUrl(appVersion.downloadUrl!),
+              icon: const Icon(Icons.download),
+              label: const Text('Update Now'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+        ] else ...[
+          if (onRetry != null)
+            TextButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: shouldBlockApp ? null : onDismiss,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: shouldBlockApp
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(shouldBlockApp ? 'Exit App' : 'Continue'),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Color _getWarningColor(SecurityThreatLevel level) {
+    switch (level) {
+      case SecurityThreatLevel.none:
+        return Colors.green;
+      case SecurityThreatLevel.low:
+        return Colors.yellow.shade700;
+      case SecurityThreatLevel.medium:
+        return Colors.orange;
+      case SecurityThreatLevel.high:
+        return Colors.red.shade600;
+      case SecurityThreatLevel.critical:
+        return Colors.red.shade800;
+    }
+  }
+
+  String _getWarningIcon() {
+    if (securityStatus.threatLevel.shouldBlockApp) {
+      return 'assets/svg/security_warning.svg';
+    } else if (securityStatus.threatLevel.requiresAction) {
+      return 'assets/svg/shield_alert.svg';
+    }
+    return 'assets/svg/shield_alert.svg';
+  }
+
+  String _getSecurityIcon() {
+    if (securityStatus.isJailbroken || securityStatus.isRooted) {
+      return 'assets/svg/root_jailbreak.svg';
+    } else if (securityStatus.isEmulator) {
+      return 'assets/svg/emulator_warning.svg';
+    } else if (securityStatus.isDevelopmentModeEnabled) {
+      return 'assets/svg/developer_mode.svg';
+    }
+    return 'assets/svg/security_warning.svg';
+  }
+
+  String _getSecurityRecommendation() {
+    if (securityStatus.isJailbroken || securityStatus.isRooted) {
+      return 'For your security, please use this app on a non-jailbroken/rooted device.';
+    } else if (securityStatus.isEmulator) {
+      return 'Please use this app on a physical device for the best security.';
+    } else if (securityStatus.isDevelopmentModeEnabled) {
+      return 'Please disable Developer Options in your device settings.';
+    }
+    return 'Please address the security issues to continue safely.';
+  }
+
+  Future<void> _launchUpdateUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+}

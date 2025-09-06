@@ -1,0 +1,48 @@
+import 'package:dartz/dartz.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/errors/failures.dart';
+import '../../domain/aggregates/app_update_policy.dart';
+import '../../domain/repositories/app_update_repository.dart';
+import '../../domain/services/app_update_service.dart';
+import '../../domain/value_objects/app_version.dart';
+
+class AppUpdateRepositoryImpl implements AppUpdateRepository {
+  const AppUpdateRepositoryImpl(this._appUpdateService);
+
+  final AppUpdateService _appUpdateService;
+
+  @override
+  Future<Either<Failure, AppUpdatePolicy>> getUpdatePolicy() async {
+    try {
+      final policy = await _appUpdateService.evaluateUpdatePolicy();
+      return Right(policy);
+    } catch (e) {
+      return Left(ServerFailure('Failed to evaluate update policy: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AppVersion>> getCurrentAppVersion() async {
+    try {
+      final policy = await _appUpdateService.evaluateUpdatePolicy();
+      return Right(policy.currentVersion);
+    } catch (e) {
+      return Left(ServerFailure('Failed to get current app version: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> initiateUpdate(String downloadUrl) async {
+    try {
+      final uri = Uri.parse(downloadUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return const Right(null);
+      } else {
+        return Left(ServerFailure('Cannot launch update URL: $downloadUrl'));
+      }
+    } catch (e) {
+      return Left(ServerFailure('Failed to initiate update: $e'));
+    }
+  }
+}

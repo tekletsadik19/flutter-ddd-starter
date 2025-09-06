@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shemanit/core/di/injection_container.config.dart';
 import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
+import '../../features/security/di/security_injection.dart';
 
 /// Service locator instance
 final GetIt sl = GetIt.instance;
