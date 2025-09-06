@@ -43,12 +43,13 @@ import 'package:shemanit/core/theme/theme_cubit.dart';
 }
 
 /// Hook for responsive design values
-T useResponsive<T>({
+T useResponsive<T>(
+  BuildContext context, {
   required T mobile,
   T? tablet,
   T? desktop,
 }) {
-  final mediaQuery = useMediaQuery();
+  final mediaQuery = MediaQuery.of(context);
 
   return useMemoized(
     () {
@@ -117,7 +118,8 @@ EdgeInsets useSafeAreaInsets() {
   bool isLandscape,
   bool isPortrait
 }) useScreenSize() {
-  final mediaQuery = useMediaQuery();
+  final context = useContext();
+  final mediaQuery = MediaQuery.of(context);
 
   return useMemoized(
     () {
@@ -172,7 +174,8 @@ Color useDynamicColor(Color baseColor, {double lightnessFactor = 0.1}) {
   double textScaleFactor,
   bool reduceMotion,
 }) useAccessibility() {
-  final mediaQuery = useMediaQuery();
+  final context = useContext();
+  final mediaQuery = MediaQuery.of(context);
 
   return useMemoized(
       () => (

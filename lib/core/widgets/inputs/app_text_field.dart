@@ -262,47 +262,47 @@ class AppTextField extends HookWidget {
     final Widget textField = CupertinoTextField(
       controller: effectiveController,
       focusNode: effectiveFocusNode,
-      keyboardType: widget.keyboardType,
-      textInputAction: widget.textInputAction,
-      textCapitalization: widget.textCapitalization,
-      style: widget.style,
-      textAlign: widget.textAlign,
-      autofocus: widget.autofocus,
-      readOnly: widget.readOnly,
-      showCursor: widget.showCursor,
-      obscureText: widget.obscureText,
-      autocorrect: widget.autocorrect,
-      enableSuggestions: widget.enableSuggestions,
-      maxLines: widget.maxLines,
-      minLines: widget.minLines,
-      expands: widget.expands,
-      maxLength: widget.maxLength,
-      maxLengthEnforcement: widget.maxLengthEnforcement,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      textCapitalization: textCapitalization,
+      style: style,
+      textAlign: textAlign,
+      autofocus: autofocus,
+      readOnly: readOnly,
+      showCursor: showCursor,
+      obscureText: obscureText,
+      autocorrect: autocorrect,
+      enableSuggestions: enableSuggestions,
+      maxLines: maxLines,
+      minLines: minLines,
+      expands: expands,
+      maxLength: maxLength,
+      maxLengthEnforcement: maxLengthEnforcement,
       onChanged: _handleChanged,
-      onEditingComplete: widget.onEditingComplete,
-      onSubmitted: widget.onSubmitted,
-      inputFormatters: widget.inputFormatters,
-      enabled: widget.enabled,
-      cursorWidth: widget.cursorWidth,
-      cursorHeight: widget.cursorHeight,
-      cursorRadius: widget.cursorRadius,
-      cursorColor: widget.cursorColor,
-      keyboardAppearance: widget.keyboardAppearance,
-      scrollPadding: widget.scrollPadding,
-      dragStartBehavior: widget.dragStartBehavior,
-      enableInteractiveSelection: widget.enableInteractiveSelection,
-      selectionControls: widget.selectionControls,
-      onTap: widget.onTap,
-      scrollController: widget.scrollController,
-      scrollPhysics: widget.scrollPhysics,
-      autofillHints: widget.autofillHints,
-      clipBehavior: widget.clipBehavior,
-      restorationId: widget.restorationId,
-      scribbleEnabled: widget.scribbleEnabled,
-      enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
-      placeholder: widget.hint,
-      prefix: widget.prefixIcon,
-      suffix: widget.suffixIcon,
+      onEditingComplete: onEditingComplete,
+      onSubmitted: onSubmitted,
+      inputFormatters: inputFormatters,
+      enabled: enabled,
+      cursorWidth: cursorWidth,
+      cursorHeight: cursorHeight,
+      cursorRadius: cursorRadius,
+      cursorColor: cursorColor,
+      keyboardAppearance: keyboardAppearance,
+      scrollPadding: scrollPadding,
+      dragStartBehavior: dragStartBehavior,
+      enableInteractiveSelection: enableInteractiveSelection,
+      selectionControls: selectionControls,
+      onTap: onTap,
+      scrollController: scrollController,
+      scrollPhysics: scrollPhysics,
+      autofillHints: autofillHints,
+      clipBehavior: clipBehavior,
+      restorationId: restorationId,
+      scribbleEnabled: scribbleEnabled,
+      enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
+      placeholder: hint,
+      prefix: prefixIcon,
+      suffix: suffixIcon,
       padding: ResponsiveUtils.responsiveValue(
         context: context,
         mobile: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -311,7 +311,7 @@ class AppTextField extends HookWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: ResponsiveUtils.responsiveBorderRadius(context),
-        border: _errorText != null
+        border: errorText.value != null
             ? Border.all(color: theme.colorScheme.error)
             : Border.all(color: theme.colorScheme.outline),
       ),
@@ -325,78 +325,78 @@ class AppTextField extends HookWidget {
     final decoration = _buildInputDecoration(context, theme);
 
     final Widget textField = TextField(
-      controller: widget.controller,
-      focusNode: _focusNode,
+      controller: controller,
+      focusNode: effectiveFocusNode,
       decoration: decoration,
-      keyboardType: widget.keyboardType,
-      textInputAction: widget.textInputAction,
-      textCapitalization: widget.textCapitalization,
-      style: widget.style,
-      strutStyle: widget.strutStyle,
-      textDirection: widget.textDirection,
-      textAlign: widget.textAlign,
-      textAlignVertical: widget.textAlignVertical,
-      autofocus: widget.autofocus,
-      readOnly: widget.readOnly,
-      showCursor: widget.showCursor,
-      obscureText: widget.obscureText,
-      autocorrect: widget.autocorrect,
-      enableSuggestions: widget.enableSuggestions,
-      maxLines: widget.maxLines,
-      minLines: widget.minLines,
-      expands: widget.expands,
-      maxLength: widget.maxLength,
-      maxLengthEnforcement: widget.maxLengthEnforcement,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      textCapitalization: textCapitalization,
+      style: style,
+      strutStyle: strutStyle,
+      textDirection: textDirection,
+      textAlign: textAlign,
+      textAlignVertical: textAlignVertical,
+      autofocus: autofocus,
+      readOnly: readOnly,
+      showCursor: showCursor,
+      obscureText: obscureText,
+      autocorrect: autocorrect,
+      enableSuggestions: enableSuggestions,
+      maxLines: maxLines,
+      minLines: minLines,
+      expands: expands,
+      maxLength: maxLength,
+      maxLengthEnforcement: maxLengthEnforcement,
       onChanged: _handleChanged,
-      onEditingComplete: widget.onEditingComplete,
-      onSubmitted: widget.onSubmitted,
-      onAppPrivateCommand: widget.onAppPrivateCommand,
-      inputFormatters: widget.inputFormatters,
-      enabled: widget.enabled,
-      cursorWidth: widget.cursorWidth,
-      cursorHeight: widget.cursorHeight,
-      cursorRadius: widget.cursorRadius,
-      cursorColor: widget.cursorColor,
-      selectionHeightStyle: widget.selectionHeightStyle,
-      selectionWidthStyle: widget.selectionWidthStyle,
-      keyboardAppearance: widget.keyboardAppearance,
-      scrollPadding: widget.scrollPadding,
-      dragStartBehavior: widget.dragStartBehavior,
-      enableInteractiveSelection: widget.enableInteractiveSelection,
-      selectionControls: widget.selectionControls,
-      onTap: widget.onTap,
-      onTapOutside: widget.onTapOutside,
-      mouseCursor: widget.mouseCursor,
-      buildCounter: widget.buildCounter,
-      scrollController: widget.scrollController,
-      scrollPhysics: widget.scrollPhysics,
-      autofillHints: widget.autofillHints,
-      clipBehavior: widget.clipBehavior,
-      restorationId: widget.restorationId,
-      scribbleEnabled: widget.scribbleEnabled,
-      enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
-      contextMenuBuilder: widget.contextMenuBuilder,
-      canRequestFocus: widget.canRequestFocus,
-      spellCheckConfiguration: widget.spellCheckConfiguration,
-      magnifierConfiguration: widget.magnifierConfiguration,
+      onEditingComplete: onEditingComplete,
+      onSubmitted: onSubmitted,
+      onAppPrivateCommand: onAppPrivateCommand,
+      inputFormatters: inputFormatters,
+      enabled: enabled,
+      cursorWidth: cursorWidth,
+      cursorHeight: cursorHeight,
+      cursorRadius: cursorRadius,
+      cursorColor: cursorColor,
+      selectionHeightStyle: selectionHeightStyle,
+      selectionWidthStyle: selectionWidthStyle,
+      keyboardAppearance: keyboardAppearance,
+      scrollPadding: scrollPadding,
+      dragStartBehavior: dragStartBehavior,
+      enableInteractiveSelection: enableInteractiveSelection,
+      selectionControls: selectionControls,
+      onTap: onTap,
+      onTapOutside: onTapOutside,
+      mouseCursor: mouseCursor,
+      buildCounter: buildCounter,
+      scrollController: scrollController,
+      scrollPhysics: scrollPhysics,
+      autofillHints: autofillHints,
+      clipBehavior: clipBehavior,
+      restorationId: restorationId,
+      scribbleEnabled: scribbleEnabled,
+      enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
+      contextMenuBuilder: contextMenuBuilder,
+      canRequestFocus: canRequestFocus,
+      spellCheckConfiguration: spellCheckConfiguration,
+      magnifierConfiguration: magnifierConfiguration,
     );
 
     return _wrapWithLabelsAndAccessibility(context, textField);
   }
 
   InputDecoration _buildInputDecoration(BuildContext context, ThemeData theme) {
-    final baseDecoration = widget.decoration ?? const InputDecoration();
+    final baseDecoration = decoration ?? const InputDecoration();
 
     return baseDecoration.copyWith(
-      labelText: widget.label,
-      hintText: widget.hint,
-      helperText: widget.helper,
-      errorText: _errorText ?? widget.error,
-      prefixIcon: widget.prefixIcon,
-      suffixIcon: widget.suffixIcon,
-      prefix: widget.prefix,
-      suffix: widget.suffix,
-      filled: widget.variant == AppTextFieldVariant.filled,
+      labelText: label,
+      hintText: hint,
+      helperText: helper,
+      errorText: errorText.value ?? error,
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      prefix: prefix,
+      suffix: suffix,
+      filled: variant == AppTextFieldVariant.filled,
       border: _getBorder(context, theme),
       enabledBorder: _getBorder(context, theme),
       focusedBorder: _getFocusedBorder(context, theme),
@@ -408,7 +408,7 @@ class AppTextField extends HookWidget {
   InputBorder _getBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
 
-    return switch (widget.variant) {
+    return switch (variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.outline),
         ),
@@ -426,7 +426,7 @@ class AppTextField extends HookWidget {
   InputBorder _getFocusedBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
 
-    return switch (widget.variant) {
+    return switch (variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
         ),
@@ -444,7 +444,7 @@ class AppTextField extends HookWidget {
   InputBorder _getErrorBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
 
-    return switch (widget.variant) {
+    return switch (variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.error),
         ),
@@ -462,7 +462,7 @@ class AppTextField extends HookWidget {
   InputBorder _getFocusedErrorBorder(BuildContext context, ThemeData theme) {
     final borderRadius = ResponsiveUtils.responsiveBorderRadius(context);
 
-    return switch (widget.variant) {
+    return switch (variant) {
       AppTextFieldVariant.standard => UnderlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.error, width: 2),
         ),
@@ -484,16 +484,16 @@ class AppTextField extends HookWidget {
     var result = textField;
 
     // Add semantic label for accessibility
-    if (widget.semanticLabel != null) {
+    if (semanticLabel != null) {
       result = Semantics(
-        label: widget.semanticLabel,
+        label: semanticLabel,
         textField: true,
         child: result,
       );
     }
 
     // Add label for Cupertino text field (Material handles this automatically)
-    if (Platform.isIOS && widget.label != null) {
+    if (Platform.isIOS && label != null) {
       result = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -501,12 +501,12 @@ class AppTextField extends HookWidget {
           Row(
             children: [
               Text(
-                widget.label!,
+                label!,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-              if (widget.isRequired)
+              if (isRequired)
                 Text(
                   ' *',
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -517,19 +517,19 @@ class AppTextField extends HookWidget {
           ),
           const SizedBox(height: 8),
           result,
-          if (_errorText != null) ...[
+          if (errorText.value != null) ...[
             const SizedBox(height: 8),
             Text(
-              _errorText!,
+              errorText.value!,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.error,
               ),
             ),
           ],
-          if (widget.helper != null && _errorText == null) ...[
+          if (helper != null && errorText.value == null) ...[
             const SizedBox(height: 8),
             Text(
-              widget.helper!,
+              helper!,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -544,13 +544,11 @@ class AppTextField extends HookWidget {
 
   void _handleChanged(String value) {
     // Validate if validator is provided
-    if (widget.validator != null) {
-      setState(() {
-        _errorText = widget.validator!(value);
-      });
+    if (validator != null) {
+      errorText.value = validator!(value);
     }
 
     // Call the original onChanged callback
-    widget.onChanged?.call(value);
+    onChanged?.call(value);
   }
 }

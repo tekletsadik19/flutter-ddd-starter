@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 /// Accessibility utilities and helpers
@@ -37,16 +38,14 @@ class AccessibilityUtils {
 
   /// Announce to screen reader
   static void announce(String message) {
+    // Use SemanticsService for announcements
     SemanticsService.announce(message, TextDirection.ltr);
   }
 
   /// Announce to screen reader with priority
   static void announceWithPriority(String message, {bool assertive = false}) {
-    SemanticsService.announce(
-      message,
-      TextDirection.ltr,
-      assertiveness: assertive ? Assertiveness.assertive : Assertiveness.polite,
-    );
+    // Use SemanticsService for announcements
+    SemanticsService.announce(message, TextDirection.ltr);
   }
 
   /// Create semantic label for complex widgets

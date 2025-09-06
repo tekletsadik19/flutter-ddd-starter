@@ -35,7 +35,11 @@ class AppCard extends HookWidget {
   });
 
   /// Convenience constructor for elevated card
-  const AppCard.elevated({
+  const AppCard.elevated(
+    this.animationDuration,
+    this.hapticFeedback,
+    this.hoverElevation,
+    this.pressedElevation, {
     required this.child,
     super.key,
     this.padding,
@@ -53,7 +57,11 @@ class AppCard extends HookWidget {
         borderColor = null;
 
   /// Convenience constructor for outlined card
-  const AppCard.outlined({
+  const AppCard.outlined(
+    this.animationDuration,
+    this.hapticFeedback,
+    this.hoverElevation,
+    this.pressedElevation, {
     required this.child,
     super.key,
     this.padding,
@@ -71,7 +79,11 @@ class AppCard extends HookWidget {
         shadowColor = null;
 
   /// Convenience constructor for filled card
-  const AppCard.filled({
+  const AppCard.filled(
+    this.animationDuration,
+    this.hapticFeedback,
+    this.hoverElevation,
+    this.pressedElevation, {
     required this.child,
     super.key,
     this.padding,

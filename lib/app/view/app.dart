@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 import 'package:shemanit/core/di/injection_container.dart';
 import 'package:shemanit/core/theme/app_theme.dart';
@@ -25,15 +26,23 @@ class App extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             home: const CounterPage(),
             debugShowCheckedModeBanner: false,
-            // Accessibility settings
+            // Responsive and accessibility settings
             builder: (context, child) {
-              return MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  // Ensure text scale factor is within reasonable bounds
-                  textScaler: TextScaler.linear(
-                      MediaQuery.of(context).textScaleFactor.clamp(0.8, 2.0)),
+              return ResponsiveBreakpoints.builder(
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    // Ensure text scale factor is within reasonable bounds
+                    textScaler: TextScaler.linear(
+                        MediaQuery.of(context).textScaleFactor.clamp(0.8, 2.0)),
+                  ),
+                  child: child!,
                 ),
-                child: child!,
+                breakpoints: [
+                  const Breakpoint(start: 0, end: 450, name: MOBILE),
+                  const Breakpoint(start: 451, end: 800, name: TABLET),
+                  const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+                  const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+                ],
               );
             },
           );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 /// Responsive design utilities for creating adaptive layouts
 class ResponsiveUtils {
@@ -39,18 +40,17 @@ class ResponsiveUtils {
 
   /// Check if device is mobile
   static bool isMobile(BuildContext context) {
-    return MediaQuery.of(context).size.width < tabletBreakpoint;
+    return ResponsiveBreakpoints.of(context).smallerThan(TABLET);
   }
 
   /// Check if device is tablet
   static bool isTablet(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    return width >= tabletBreakpoint && width < desktopBreakpoint;
+    return ResponsiveBreakpoints.of(context).between(TABLET, DESKTOP);
   }
 
   /// Check if device is desktop
   static bool isDesktop(BuildContext context) {
-    return MediaQuery.of(context).size.width >= desktopBreakpoint;
+    return ResponsiveBreakpoints.of(context).largerThan(TABLET);
   }
 
   /// Check if device is web platform
@@ -67,16 +67,19 @@ class ResponsiveUtils {
     T? desktop,
     T? largeDesktop,
   }) {
-    final deviceType = getDeviceType(MediaQuery.of(context).size.width);
-
-    return switch (deviceType) {
-      DeviceType.mobile => mobile,
-      DeviceType.mobileLarge => mobileLarge ?? mobile,
-      DeviceType.tablet => tablet ?? mobileLarge ?? mobile,
-      DeviceType.desktop => desktop ?? tablet ?? mobileLarge ?? mobile,
-      DeviceType.largeDesktop =>
-        largeDesktop ?? desktop ?? tablet ?? mobileLarge ?? mobile,
-    };
+    final breakpoints = ResponsiveBreakpoints.of(context);
+    
+    if (breakpoints.largerThan(DESKTOP) && largeDesktop != null) {
+      return largeDesktop;
+    } else if (breakpoints.largerThan(TABLET) && desktop != null) {
+      return desktop;
+    } else if (breakpoints.between(TABLET, DESKTOP) && tablet != null) {
+      return tablet;
+    } else if (breakpoints.between(MOBILE, TABLET) && mobileLarge != null) {
+      return mobileLarge;
+    } else {
+      return mobile;
+    }
   }
 
   /// Get responsive padding
