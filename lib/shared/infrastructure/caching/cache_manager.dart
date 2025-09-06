@@ -77,7 +77,7 @@ class CacheManagerImpl implements CacheManager {
     _cacheBox = await Hive.openBox<String>(
       config.name,
       encryptionCipher: config.cipher,
-      compactionStrategy: config.compactionStrategy,
+      compactionStrategy: config.compactionStrategy ?? (entries, deletedEntries) => deletedEntries > 50,
     );
     return _cacheBox!;
   }

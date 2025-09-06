@@ -41,7 +41,7 @@ class SecureStorageImpl implements SecureStorage {
     _secureBox = await Hive.openBox<String>(
       config.name,
       encryptionCipher: config.cipher,
-      compactionStrategy: config.compactionStrategy,
+      compactionStrategy: config.compactionStrategy ?? (entries, deletedEntries) => deletedEntries > 50,
     );
     return _secureBox!;
   }

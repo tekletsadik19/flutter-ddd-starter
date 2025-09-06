@@ -1,4 +1,4 @@
-import 'package:ddd_flutter_app/features/counter/domain/entities/counter_entity.dart';
+import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
