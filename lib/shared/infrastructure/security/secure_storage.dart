@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shemanit/core/errors/exceptions.dart';
 import 'package:shemanit/core/utils/logger.dart';
 import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
-import 'package:injectable/injectable.dart';
 
 /// Secure storage interface
 abstract class SecureStorage {
@@ -38,7 +38,7 @@ class SecureStorageImpl implements SecureStorage {
     if (_secureBox?.isOpen == true) return _secureBox!;
 
     final config = _encryptionManager.createSecureBoxConfig(_secureBoxName,
-        isSecure: true);
+        isSecure: true,);
     _secureBox = await Hive.openBox<String>(
       config.name,
       encryptionCipher: config.cipher,
@@ -85,7 +85,7 @@ class SecureStorageImpl implements SecureStorage {
         Logger.error('Data integrity check failed for key: $key');
         await delete(key); // Remove corrupted data
         throw const CacheException(
-            message: 'Data integrity verification failed');
+            message: 'Data integrity verification failed',);
       }
 
       Logger.debug('Secure data retrieved for key: $key');

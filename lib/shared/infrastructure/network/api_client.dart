@@ -1,7 +1,7 @@
-import 'package:shemanit/core/errors/exceptions.dart';
-import 'package:shemanit/core/utils/logger.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shemanit/core/errors/exceptions.dart';
+import 'package:shemanit/core/utils/logger.dart';
 
 /// HTTP client wrapper for API calls
 @singleton
@@ -50,7 +50,7 @@ class ApiClient {
   /// POST request
   Future<Response<T>> post<T>(
     String path, {
-    dynamic data,
+    data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
@@ -71,7 +71,7 @@ class ApiClient {
   /// PUT request
   Future<Response<T>> put<T>(
     String path, {
-    dynamic data,
+    data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {

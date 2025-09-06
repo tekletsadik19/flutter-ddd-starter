@@ -14,8 +14,7 @@ class AppErrorWidget extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -52,7 +51,6 @@ class AppErrorWidget extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 /// Loading widget
@@ -65,8 +63,7 @@ class AppLoadingWidget extends StatelessWidget {
   final String message;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -79,7 +76,6 @@ class AppLoadingWidget extends StatelessWidget {
         ],
       ),
     );
-  }
 }
 
 /// Empty state widget
@@ -98,8 +94,7 @@ class AppEmptyWidget extends StatelessWidget {
   final String? actionLabel;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -127,5 +122,4 @@ class AppEmptyWidget extends StatelessWidget {
         ),
       ),
     );
-  }
 }

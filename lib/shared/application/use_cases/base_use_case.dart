@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:shemanit/core/errors/failures.dart';
 import 'package:equatable/equatable.dart';
+import 'package:shemanit/core/errors/failures.dart';
 
 /// Base class for all use cases
 /// Enforces the single responsibility principle and provides consistent error handling

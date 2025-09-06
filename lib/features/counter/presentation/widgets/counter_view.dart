@@ -9,10 +9,8 @@ class CounterBody extends StatelessWidget {
   const CounterBody({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<CounterCubit, CounterState>(
-      builder: (context, state) {
-        return state.when(
+  Widget build(BuildContext context) => BlocBuilder<CounterCubit, CounterState>(
+      builder: (context, state) => state.when(
           initial: () => const Center(
             child: Text('Initializing...'),
           ),
@@ -63,10 +61,8 @@ class CounterBody extends StatelessWidget {
               ],
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 
   Color? _getCounterColor(int value) {
     if (value > 0) return Colors.green;
@@ -82,8 +78,7 @@ class CounterStats extends StatelessWidget {
   final CounterEntity counter;
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
+  Widget build(BuildContext context) => Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -105,13 +100,10 @@ class CounterStats extends StatelessWidget {
         ),
       ),
     );
-  }
 
-  String _formatDateTime(DateTime dateTime) {
-    return '${dateTime.day}/${dateTime.month}/${dateTime.year} '
+  String _formatDateTime(DateTime dateTime) => '${dateTime.day}/${dateTime.month}/${dateTime.year} '
         '${dateTime.hour.toString().padLeft(2, '0')}:'
         '${dateTime.minute.toString().padLeft(2, '0')}';
-  }
 }
 
 /// Floating action buttons for counter operations
@@ -119,8 +111,7 @@ class CounterFloatingActionButtons extends StatelessWidget {
   const CounterFloatingActionButtons({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<CounterCubit, CounterState>(
+  Widget build(BuildContext context) => BlocBuilder<CounterCubit, CounterState>(
       builder: (context, state) {
         final isLoading = state is CounterLoading;
 
@@ -147,5 +138,4 @@ class CounterFloatingActionButtons extends StatelessWidget {
         );
       },
     );
-  }
 }

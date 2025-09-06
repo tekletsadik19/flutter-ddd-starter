@@ -1,56 +1,9 @@
 import 'package:shemanit/core/constants/environment.dart';
 
 /// Application configuration based on flavors/environments
-class AppConfig {
-  const AppConfig._({
-    required this.appName,
-    required this.appSuffix,
-    required this.environment,
-    required this.apiConfig,
-    required this.databaseConfig,
-    required this.loggingConfig,
-    required this.analyticsConfig,
-    required this.debugConfig,
-    required this.securityConfig,
-    required this.performanceConfig,
-  });
-
-  final String appName;
-  final String appSuffix;
-  final Environment environment;
-  final ApiConfig apiConfig;
-  final DatabaseConfig databaseConfig;
-  final LoggingConfig loggingConfig;
-  final AnalyticsConfig analyticsConfig;
-  final DebugConfig debugConfig;
-  final SecurityConfig securityConfig;
-  final PerformanceConfig performanceConfig;
-
-  static AppConfig? _instance;
-
-  /// Get current app configuration
-  static AppConfig get instance {
-    assert(_instance != null, 'AppConfig must be initialized first');
-    return _instance!;
-  }
-
-  /// Initialize app configuration for specific environment
-  static void initialize(Environment environment) {
-    switch (environment) {
-      case Environment.development:
-        _instance = _developmentConfig;
-        break;
-      case Environment.staging:
-        _instance = _stagingConfig;
-        break;
-      case Environment.production:
-        _instance = _productionConfig;
-        break;
-    }
-  }
-
+enum AppConfig {
   /// Development configuration
-  static const AppConfig _developmentConfig = AppConfig._(
+  _developmentConfig._(
     appName: 'Shemanit Dev',
     appSuffix: '.dev',
     environment: Environment.development,
@@ -79,7 +32,7 @@ class AppConfig {
     analyticsConfig: AnalyticsConfig(
       enableAnalytics: false,
       enableCrashlytics: false,
-      sampleRate: 1.0,
+      sampleRate: 1,
     ),
     debugConfig: DebugConfig(
       enableDebugMode: true,
@@ -100,10 +53,10 @@ class AppConfig {
       imageCacheSize: 100,
       enablePreloading: true,
     ),
-  );
+  ),
 
   /// Staging configuration
-  static const AppConfig _stagingConfig = AppConfig._(
+  _stagingConfig._(
     appName: 'Shemanit Staging',
     appSuffix: '.staging',
     environment: Environment.staging,
@@ -153,10 +106,10 @@ class AppConfig {
       imageCacheSize: 200,
       enablePreloading: true,
     ),
-  );
+  ),
 
   /// Production configuration
-  static const AppConfig _productionConfig = AppConfig._(
+  _productionConfig._(
     appName: 'Shemanit',
     appSuffix: '',
     environment: Environment.production,
@@ -207,6 +160,50 @@ class AppConfig {
       enablePreloading: false,
     ),
   );
+
+  const AppConfig._({
+    required this.appName,
+    required this.appSuffix,
+    required this.environment,
+    required this.apiConfig,
+    required this.databaseConfig,
+    required this.loggingConfig,
+    required this.analyticsConfig,
+    required this.debugConfig,
+    required this.securityConfig,
+    required this.performanceConfig,
+  });
+
+  final String appName;
+  final String appSuffix;
+  final Environment environment;
+  final ApiConfig apiConfig;
+  final DatabaseConfig databaseConfig;
+  final LoggingConfig loggingConfig;
+  final AnalyticsConfig analyticsConfig;
+  final DebugConfig debugConfig;
+  final SecurityConfig securityConfig;
+  final PerformanceConfig performanceConfig;
+
+  static AppConfig? _instance;
+
+  /// Get current app configuration
+  static AppConfig get instance {
+    assert(_instance != null, 'AppConfig must be initialized first');
+    return _instance!;
+  }
+
+  /// Initialize app configuration for specific environment
+  static void initialize(Environment environment) {
+    switch (environment) {
+      case Environment.development:
+        _instance = _developmentConfig;
+      case Environment.staging:
+        _instance = _stagingConfig;
+      case Environment.production:
+        _instance = _productionConfig;
+    }
+  }
 
   /// Get full app name with suffix
   String get fullAppName => appName + appSuffix;

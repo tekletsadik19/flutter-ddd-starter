@@ -5,9 +5,7 @@ abstract class AppException implements Exception {
   final String? message;
 
   @override
-  String toString() {
-    return '$runtimeType: ${message ?? 'Unknown error occurred'}';
-  }
+  String toString() => '$runtimeType: ${message ?? 'Unknown error occurred'}';
 }
 
 /// Server exception

@@ -38,7 +38,7 @@ class DebugUtils {
 
   /// Log a debug message
   static void logDebug(String message,
-      {String? name, Object? error, StackTrace? stackTrace}) {
+      {String? name, Object? error, StackTrace? stackTrace,}) {
     if (kDebugMode) {
       developer.log(
         message,
@@ -75,7 +75,7 @@ class DebugUtils {
 
   /// Log an error message
   static void logError(String message,
-      {String? name, Object? error, StackTrace? stackTrace}) {
+      {String? name, Object? error, StackTrace? stackTrace,}) {
     developer.log(
       message,
       name: name ?? 'ERROR',
@@ -213,8 +213,7 @@ class _DebugInfoPanelState extends State<_DebugInfoPanel> {
   bool _expanded = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
+  Widget build(BuildContext context) => Material(
       color: Colors.black.withOpacity(0.8),
       borderRadius: BorderRadius.circular(8),
       child: Container(
@@ -249,7 +248,7 @@ class _DebugInfoPanelState extends State<_DebugInfoPanel> {
               const SizedBox(height: 8),
               _buildInfoRow('Env', AppConfig.instance.environment.name),
               _buildInfoRow('Debug',
-                  AppConfig.instance.debugConfig.enableDebugMode.toString()),
+                  AppConfig.instance.debugConfig.enableDebugMode.toString(),),
               _buildInfoRow('Platform', defaultTargetPlatform.name),
               _buildInfoRow(
                   'Mode',
@@ -257,16 +256,14 @@ class _DebugInfoPanelState extends State<_DebugInfoPanel> {
                       ? 'Debug'
                       : kProfileMode
                           ? 'Profile'
-                          : 'Release'),
+                          : 'Release',),
             ],
           ],
         ),
       ),
     );
-  }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
+  Widget _buildInfoRow(String label, String value) => Padding(
       padding: const EdgeInsets.only(bottom: 2),
       child: Text(
         '$label: $value',
@@ -276,7 +273,6 @@ class _DebugInfoPanelState extends State<_DebugInfoPanel> {
         ),
       ),
     );
-  }
 }
 
 /// Debug menu bottom sheet
@@ -284,8 +280,7 @@ class _DebugMenuSheet extends StatelessWidget {
   const _DebugMenuSheet();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -350,15 +345,12 @@ Platform: ${defaultTargetPlatform.name}
         ],
       ),
     );
-  }
 
-  Widget _buildDebugButton(String title, VoidCallback onPressed) {
-    return Padding(
+  Widget _buildDebugButton(String title, VoidCallback onPressed) => Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(title),
       ),
     );
-  }
 }

@@ -1,8 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
 import 'package:shemanit/shared/infrastructure/caching/cache_manager.dart';
+import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
 import 'package:shemanit/shared/infrastructure/security/secure_storage.dart';
 
 void main() {
@@ -18,8 +19,8 @@ void main() {
       Hive.init(tempDir.path);
 
       // Initialize encryption manager
-      encryptionManager = HiveEncryptionManager();
-      encryptionManager.initialize();
+      encryptionManager = HiveEncryptionManager()
+      ..initialize();
     });
 
     tearDownAll(() async {
@@ -66,7 +67,7 @@ void main() {
         expect(hash, isNotEmpty);
         expect(EncryptionService.verifyDataIntegrity(testData, hash), isTrue);
         expect(EncryptionService.verifyDataIntegrity('modified_data', hash),
-            isFalse);
+            isFalse,);
       });
     });
 

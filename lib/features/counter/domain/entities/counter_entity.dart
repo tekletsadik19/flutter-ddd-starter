@@ -19,41 +19,33 @@ class CounterEntity extends BaseEntity {
   final DateTime? updatedAt;
 
   /// Create a new counter with incremented value
-  CounterEntity increment() {
-    return CounterEntity(
+  CounterEntity increment() => CounterEntity(
       id: id,
       value: value + 1,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
     );
-  }
 
   /// Create a new counter with decremented value
-  CounterEntity decrement() {
-    return CounterEntity(
+  CounterEntity decrement() => CounterEntity(
       id: id,
       value: value - 1,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
     );
-  }
 
   /// Reset counter to zero
-  CounterEntity reset() {
-    return CounterEntity(
+  CounterEntity reset() => CounterEntity(
       id: id,
       value: 0,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
     );
-  }
 
   @override
   List<Object?> get props => [id, value, createdAt, updatedAt];
 
   @override
-  String toString() {
-    return 'CounterEntity(id: $id, value: $value, '
+  String toString() => 'CounterEntity(id: $id, value: $value, '
         'createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
 }

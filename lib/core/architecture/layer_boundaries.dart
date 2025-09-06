@@ -21,9 +21,7 @@ mixin LayerBoundaryEnforcement {
   List<ArchitecturalLayer> get allowedDependencies;
 
   /// Validate that a dependency is allowed
-  bool isDependencyAllowed(ArchitecturalLayer dependencyLayer) {
-    return allowedDependencies.contains(dependencyLayer);
-  }
+  bool isDependencyAllowed(ArchitecturalLayer dependencyLayer) => allowedDependencies.contains(dependencyLayer);
 }
 
 /// Domain layer constraints

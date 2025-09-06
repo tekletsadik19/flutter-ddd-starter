@@ -59,18 +59,14 @@ extension ContextExtensions on BuildContext {
   }
 
   /// Navigate to route
-  Future<T?> pushNamed<T>(String routeName, {Object? arguments}) {
-    return Navigator.of(this).pushNamed<T>(routeName, arguments: arguments);
-  }
+  Future<T?> pushNamed<T>(String routeName, {Object? arguments}) => Navigator.of(this).pushNamed<T>(routeName, arguments: arguments);
 
   /// Replace current route
   Future<T?> pushReplacementNamed<T, TO>(String routeName,
-      {Object? arguments}) {
-    return Navigator.of(this).pushReplacementNamed<T, TO>(
+      {Object? arguments,}) => Navigator.of(this).pushReplacementNamed<T, TO>(
       routeName,
       arguments: arguments,
     );
-  }
 
   /// Pop current route
   void pop<T>([T? result]) {

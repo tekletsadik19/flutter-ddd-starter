@@ -1,10 +1,10 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
-import 'package:shemanit/features/counter/infrastructure/models/counter_model.dart';
-import 'package:shemanit/features/counter/presentation/cubits/counter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
+import 'package:shemanit/features/counter/infrastructure/models/counter_model.dart';
+import 'package:shemanit/features/counter/presentation/cubits/counter_cubit.dart';
 
 /// Test helper utilities
 class TestHelpers {
@@ -12,14 +12,12 @@ class TestHelpers {
   static Widget createTestWidget({
     required Widget child,
     CounterCubit? counterCubit,
-  }) {
-    return MaterialApp(
+  }) => MaterialApp(
       home: BlocProvider<CounterCubit>.value(
         value: counterCubit ?? MockCounterCubit(),
         child: child,
       ),
     );
-  }
 
   /// Pump and settle widget
   static Future<void> pumpAndSettle(
@@ -46,14 +44,12 @@ class TestDataFactory {
     int? value,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) {
-    return CounterEntity(
+  }) => CounterEntity(
       id: id ?? defaultCounterId,
       value: value ?? 0,
       createdAt: createdAt ?? DateTime(2024),
       updatedAt: updatedAt,
     );
-  }
 
   /// Create test counter model
   static CounterModel createCounterModel({
@@ -61,12 +57,10 @@ class TestDataFactory {
     int? value,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) {
-    return CounterModel(
+  }) => CounterModel(
       id: id ?? defaultCounterId,
       value: value ?? 0,
       createdAt: createdAt ?? DateTime(2024),
       updatedAt: updatedAt,
     );
-  }
 }

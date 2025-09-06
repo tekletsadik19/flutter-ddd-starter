@@ -1,6 +1,6 @@
+import 'package:injectable/injectable.dart';
 import 'package:shemanit/core/constants/app_constants.dart';
 import 'package:shemanit/core/utils/logger.dart';
-import 'package:injectable/injectable.dart';
 
 /// Analytics event data
 class AnalyticsEvent {

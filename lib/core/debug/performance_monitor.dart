@@ -65,7 +65,7 @@ class PerformanceMonitor {
 
   /// Measure execution time of a function
   static Future<T> measure<T>(
-      String name, Future<T> Function() function) async {
+      String name, Future<T> Function() function,) async {
     startTimer(name);
     try {
       final result = await function();
@@ -86,9 +86,7 @@ class PerformanceMonitor {
   }
 
   /// Get performance metrics
-  static List<PerformanceMetric> getMetrics() {
-    return List.unmodifiable(_metrics);
-  }
+  static List<PerformanceMetric> getMetrics() => List.unmodifiable(_metrics);
 
   /// Clear performance metrics
   static void clearMetrics() {
@@ -319,8 +317,7 @@ class _PerformanceInfoPanelState extends State<_PerformanceInfoPanel> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
+  Widget build(BuildContext context) => Material(
       color: Colors.green.withOpacity(0.8),
       borderRadius: BorderRadius.circular(8),
       child: Container(
@@ -356,5 +353,4 @@ class _PerformanceInfoPanelState extends State<_PerformanceInfoPanel> {
         ),
       ),
     );
-  }
 }

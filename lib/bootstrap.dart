@@ -3,12 +3,12 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shemanit/core/config/app_config.dart';
 import 'package:shemanit/core/debug/debug_utils.dart';
 import 'package:shemanit/core/debug/performance_monitor.dart';
-import 'package:shemanit/core/hot_reload/hot_reload_utils.dart';
 import 'package:shemanit/core/di/injection_container.dart';
-import 'package:flutter/widgets.dart';
+import 'package:shemanit/core/hot_reload/hot_reload_utils.dart';
 
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();

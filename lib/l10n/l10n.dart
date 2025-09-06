@@ -1,5 +1,5 @@
-import 'package:shemanit/l10n/arb/app_localizations.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shemanit/l10n/arb/app_localizations.dart';
 
 export 'package:shemanit/l10n/arb/app_localizations.dart';
 

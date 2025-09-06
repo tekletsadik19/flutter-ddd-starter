@@ -7,8 +7,7 @@ class App extends StatelessWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context) => MaterialApp(
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -19,5 +18,4 @@ class App extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       home: const CounterPage(),
     );
-  }
 }

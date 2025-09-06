@@ -21,7 +21,7 @@ class EncryptionService {
   static Uint8List generateSecureKey() {
     final random = Random.secure();
     final key = Uint8List(32); // 256-bit key
-    for (int i = 0; i < 32; i++) {
+    for (var i = 0; i < 32; i++) {
       key[i] = random.nextInt(256);
     }
     return key;
@@ -97,13 +97,9 @@ class HiveEncryptionManager {
 
   /// Create secure box configuration
   SecureBoxConfig createSecureBoxConfig(String boxName,
-      {bool isSecure = false}) {
-    return SecureBoxConfig(
+      {bool isSecure = false,}) => SecureBoxConfig(
       name: boxName,
       cipher: isSecure ? secureCipher : cacheCipher,
-      compactionStrategy: (entries, deletedEntries) {
-        return deletedEntries > 50;
-      },
+      compactionStrategy: (entries, deletedEntries) => deletedEntries > 50,
     );
-  }
 }

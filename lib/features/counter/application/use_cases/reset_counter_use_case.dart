@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shemanit/core/errors/failures.dart';
 import 'package:shemanit/core/utils/logger.dart';
 import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
 import 'package:shemanit/features/counter/domain/repositories/counter_repository.dart';
 import 'package:shemanit/shared/application/use_cases/base_use_case.dart';
-import 'package:injectable/injectable.dart';
 
 /// Parameters for reset counter use case
 class ResetCounterParams extends UseCaseParams {
@@ -30,7 +30,7 @@ class ResetCounterUseCase
   @override
   Future<Either<Failure, CounterEntity>> call(ResetCounterParams params) async {
     Logger.info(
-        'Executing ResetCounterUseCase for counter: ${params.counterId}');
+        'Executing ResetCounterUseCase for counter: ${params.counterId}',);
 
     try {
       final result = await _counterRepository.resetCounter(params.counterId);

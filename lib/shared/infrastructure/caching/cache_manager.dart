@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shemanit/core/constants/app_constants.dart';
 import 'package:shemanit/core/errors/exceptions.dart';
 import 'package:shemanit/core/utils/logger.dart';
 import 'package:shemanit/shared/infrastructure/security/encryption_service.dart';
-import 'package:injectable/injectable.dart';
 
 /// Cache entry with expiration
 class CacheEntry<T> {
@@ -16,13 +16,11 @@ class CacheEntry<T> {
   });
 
   /// Create from JSON
-  factory CacheEntry.fromJson(Map<String, dynamic> json) {
-    return CacheEntry<T>(
+  factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry<T>(
       data: json['data'] as T,
       timestamp: DateTime.parse(json['timestamp'] as String),
       ttl: Duration(milliseconds: json['ttl'] as int),
     );
-  }
 
   final T data;
   final DateTime timestamp;

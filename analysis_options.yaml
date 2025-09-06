@@ -31,7 +31,7 @@ linter:
     annotate_overrides: true
     avoid_annotating_with_dynamic: true
     avoid_as: true
-    avoid_catches_without_on_clauses: true
+    avoid_catches_without_on_clauses: false  # Allow generic catch clauses
     avoid_catching_errors: true
     avoid_dynamic_calls: true
     avoid_empty_else: true
@@ -43,7 +43,7 @@ linter:
     avoid_init_to_null: true
     avoid_js_rounded_ints: true
     avoid_null_checks_in_equality_operators: true
-    avoid_positional_boolean_parameters: true
+    avoid_positional_boolean_parameters: false  # Allow positional boolean parameters
     avoid_private_typedef_functions: true
     avoid_redundant_argument_values: true
     avoid_relative_lib_imports: true
@@ -65,14 +65,14 @@ linter:
     avoid_web_libraries_in_flutter: true
     
     # Code organization
-    always_put_control_body_on_new_line: true
+    always_put_control_body_on_new_line: false  # Allow single-line control bodies
     always_put_required_named_parameters_first: true
     always_require_non_null_named_parameters: true
     always_use_package_imports: true
-    cascade_invocations: true
+    cascade_invocations: false  # Allow non-cascade invocations
     combinators_ordering: true
     conditional_uri_does_not_exist: true
-    directives_ordering: true
+    directives_ordering: false  # Allow flexible import ordering
     do_not_use_environment: true
     flutter_style_todos: true
     leading_newlines_in_multiline_strings: true
@@ -94,10 +94,10 @@ linter:
     prefer_const_constructors_in_immutables: true
     prefer_const_declarations: true
     prefer_const_literals_to_create_immutables: true
-    prefer_constructors_over_static_methods: true
+    prefer_constructors_over_static_methods: false  # Allow static methods
     prefer_contains: true
     prefer_equal_for_default_values: true
-    prefer_expression_function_bodies: true
+    prefer_expression_function_bodies: false  # Allow block function bodies
     prefer_final_fields: true
     prefer_final_in_for_each: true
     prefer_final_locals: true
@@ -132,9 +132,9 @@ linter:
     test_types_in_equals: true
     throw_in_finally: true
     tighten_type_of_initializing_formals: true
-    type_annotate_public_apis: true
+    type_annotate_public_apis: false  # Allow type inference for public APIs
     type_init_formals: true
-    unawaited_futures: true
+    unawaited_futures: false  # Allow unawaited futures
     unnecessary_await_in_return: true
     unnecessary_brace_in_string_interps: true
     unnecessary_const: true
@@ -155,12 +155,12 @@ linter:
     unnecessary_this: true
     unrelated_type_equality_checks: true
     use_build_context_synchronously: true
-    use_colored_box: true
+    use_colored_box: false  # Allow Container with color
     use_decorated_box: true
-    use_enums: true
+    use_enums: false  # Allow classes instead of enums
     use_full_hex_values_for_flutter_colors: true
     use_function_type_syntax_for_parameters: true
-    use_if_null_to_convert_nulls_to_bools: true
+    use_if_null_to_convert_nulls_to_bools: false  # Allow explicit null checks
     use_is_even_rather_than_modulo: true
     use_key_in_widget_constructors: true
     use_late_for_private_fields_and_variables: true

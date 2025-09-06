@@ -31,12 +31,12 @@ class _DevPanelState extends State<DevPanel> with TickerProviderStateMixin {
       vsync: this,
     );
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
+      begin: const Offset(1, 0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ));
+    ),);
   }
 
   @override
@@ -129,15 +129,14 @@ class _DevPanelContentState extends State<_DevPanelContent>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
+  Widget build(BuildContext context) => Material(
       elevation: 8,
       child: Container(
         color: Colors.grey[900],
         child: SafeArea(
           child: Column(
             children: [
-              Container(
+              ColoredBox(
                 color: Colors.purple,
                 child: TabBar(
                   controller: _tabController,
@@ -169,7 +168,6 @@ class _DevPanelContentState extends State<_DevPanelContent>
         ),
       ),
     );
-  }
 }
 
 /// Info tab
@@ -193,32 +191,31 @@ class _InfoTab extends StatelessWidget {
                   ? 'Debug'
                   : kProfileMode
                       ? 'Profile'
-                      : 'Release'),
+                      : 'Release',),
         ]),
         const SizedBox(height: 16),
         _buildInfoCard('API Configuration', [
           _buildInfoRow('Base URL', config.apiConfig.baseUrl),
           _buildInfoRow(
-              'Timeout', '${config.apiConfig.connectTimeout.inSeconds}s'),
+              'Timeout', '${config.apiConfig.connectTimeout.inSeconds}s',),
           _buildInfoRow('Logging', config.apiConfig.enableLogging.toString()),
           _buildInfoRow(
-              'Mock Data', config.apiConfig.enableMockData.toString()),
+              'Mock Data', config.apiConfig.enableMockData.toString(),),
         ]),
         const SizedBox(height: 16),
         _buildInfoCard('Database Configuration', [
           _buildInfoRow('Name', config.databaseConfig.name),
           _buildInfoRow('Version', config.databaseConfig.version.toString()),
           _buildInfoRow(
-              'Encryption', config.databaseConfig.enableEncryption.toString()),
+              'Encryption', config.databaseConfig.enableEncryption.toString(),),
           _buildInfoRow(
-              'Cache Size', config.databaseConfig.cacheSize.toString()),
+              'Cache Size', config.databaseConfig.cacheSize.toString(),),
         ]),
       ],
     );
   }
 
-  Widget _buildInfoCard(String title, List<Widget> children) {
-    return Card(
+  Widget _buildInfoCard(String title, List<Widget> children) => Card(
       color: Colors.grey[800],
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -239,10 +236,8 @@ class _InfoTab extends StatelessWidget {
         ),
       ),
     );
-  }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
+  Widget _buildInfoRow(String label, String value) => Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +264,6 @@ class _InfoTab extends StatelessWidget {
         ],
       ),
     );
-  }
 }
 
 /// Performance tab
@@ -347,8 +341,7 @@ class _DebugTab extends StatelessWidget {
   const _DebugTab();
 
   @override
-  Widget build(BuildContext context) {
-    return ListView(
+  Widget build(BuildContext context) => ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _buildDebugButton(
@@ -357,19 +350,19 @@ class _DebugTab extends StatelessWidget {
         ),
         _buildDebugButton(
           'Print Render Tree',
-          () => DebugUtils.printRenderTree(),
+          DebugUtils.printRenderTree,
         ),
         _buildDebugButton(
           'Print Layer Tree',
-          () => DebugUtils.printLayerTree(),
+          DebugUtils.printLayerTree,
         ),
         _buildDebugButton(
           'Memory Usage',
-          () => DebugUtils.printMemoryUsage(),
+          DebugUtils.printMemoryUsage,
         ),
         _buildDebugButton(
           'Trigger Haptic',
-          () => DebugUtils.debugHaptic(),
+          DebugUtils.debugHaptic,
         ),
         const SizedBox(height: 16),
         const Text(
@@ -394,10 +387,8 @@ class _DebugTab extends StatelessWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildDebugButton(String title, VoidCallback onPressed) {
-    return Padding(
+  Widget _buildDebugButton(String title, VoidCallback onPressed) => Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: SizedBox(
         width: double.infinity,
@@ -410,7 +401,6 @@ class _DebugTab extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 /// Tools tab
@@ -418,8 +408,7 @@ class _ToolsTab extends StatelessWidget {
   const _ToolsTab();
 
   @override
-  Widget build(BuildContext context) {
-    return ListView(
+  Widget build(BuildContext context) => ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _buildToolButton(
@@ -468,16 +457,14 @@ Database: ${config.databaseConfig.name}
           'Simulate Slow Operation',
           () async {
             PerformanceMonitor.startTimer('slow_operation');
-            await Future.delayed(const Duration(milliseconds: 500));
+            await Future<void>.delayed(const Duration(milliseconds: 500));
             PerformanceMonitor.endTimer('slow_operation');
           },
         ),
       ],
     );
-  }
 
-  Widget _buildToolButton(String title, VoidCallback onPressed) {
-    return Padding(
+  Widget _buildToolButton(String title, VoidCallback onPressed) => Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: SizedBox(
         width: double.infinity,
@@ -490,5 +477,4 @@ Database: ${config.databaseConfig.name}
         ),
       ),
     );
-  }
 }

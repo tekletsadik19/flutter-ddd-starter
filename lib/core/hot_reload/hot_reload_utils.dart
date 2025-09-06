@@ -34,7 +34,7 @@ class HotReloadUtils {
   }
 
   /// Preserve state during hot reload
-  static void preserveState(String key, dynamic value) {
+  static void preserveState(String key, value) {
     if (!kDebugMode) return;
     _preservedState[key] = value;
     developer.log('🔥 State preserved: $key');
@@ -64,9 +64,7 @@ class HotReloadUtils {
   }
 
   /// Get all preserved state keys
-  static List<String> getPreservedStateKeys() {
-    return _preservedState.keys.toList();
-  }
+  static List<String> getPreservedStateKeys() => _preservedState.keys.toList();
 }
 
 /// Mixin for widgets that need to preserve state during hot reload
@@ -80,9 +78,7 @@ mixin HotReloadPreservation<T extends StatefulWidget> on State<T> {
   }
 
   /// Restore state after hot reload
-  Map<String, dynamic>? restoreState() {
-    return HotReloadUtils.restoreState<Map<String, dynamic>>(preservationKey);
-  }
+  Map<String, dynamic>? restoreState() => HotReloadUtils.restoreState<Map<String, dynamic>>(preservationKey);
 
   @override
   void dispose() {
@@ -180,12 +176,10 @@ abstract class HotReloadOptimizedState<
 
   /// Build method with hot reload optimization
   @override
-  Widget build(BuildContext context) {
-    return HotReloadPreserver(
+  Widget build(BuildContext context) => HotReloadPreserver(
       preservationKey: preservationKey,
       child: buildOptimized(context),
     );
-  }
 
   /// Override this instead of build() for hot reload optimization
   Widget buildOptimized(BuildContext context);
@@ -302,8 +296,7 @@ class _HotReloadIndicatorState extends State<HotReloadIndicator>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(
+  Widget build(BuildContext context) => Stack(
       children: [
         if (widget.child != null) widget.child!,
         if (_showIndicator && kDebugMode)
@@ -339,7 +332,6 @@ class _HotReloadIndicatorState extends State<HotReloadIndicator>
           ),
       ],
     );
-  }
 }
 
 /// Const widget wrapper to optimize hot reload
@@ -356,6 +348,4 @@ class ConstWidget extends StatelessWidget {
 }
 
 /// Helper to create const widgets easily
-Widget constWidget(Widget child) {
-  return ConstWidget(child: child);
-}
+Widget constWidget(Widget child) => ConstWidget(child: child);

@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shemanit/core/errors/failures.dart';
 import 'package:shemanit/features/counter/domain/entities/counter_entity.dart';
 import 'package:shemanit/features/counter/domain/value_objects/counter_value.dart';
 import 'package:shemanit/shared/domain/services/base_domain_service.dart';
-import 'package:injectable/injectable.dart';
 
 /// Domain service for counter business logic
 @singleton
@@ -35,9 +35,7 @@ class CounterDomainService extends BaseDomainService
   }
 
   /// Check if counter has reached a milestone
-  bool hasReachedMilestone(CounterEntity counter) {
-    return counter.value % 10 == 0 && counter.value > 0;
-  }
+  bool hasReachedMilestone(CounterEntity counter) => counter.value % 10 == 0 && counter.value > 0;
 
   /// Calculate counter statistics
   CounterStatistics calculateStatistics(List<CounterEntity> history) {

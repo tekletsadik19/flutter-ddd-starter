@@ -50,7 +50,7 @@ class Logger {
 
   /// Log critical error message
   static void critical(String message,
-      [Object? error, StackTrace? stackTrace]) {
+      [Object? error, StackTrace? stackTrace,]) {
     dev.log(
       message,
       name: _tag,
