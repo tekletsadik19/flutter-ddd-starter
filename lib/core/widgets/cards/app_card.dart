@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:shemanit/core/accessibility/accessibility_utils.dart';
 import 'package:shemanit/core/responsive/responsive_utils.dart';
 
 /// Enumeration for card variants
@@ -8,8 +11,8 @@ enum AppCardVariant {
   filled,
 }
 
-/// Reusable card widget with responsive design and accessibility
-class AppCard extends StatelessWidget {
+/// Reusable card widget with responsive design, accessibility, and hooks
+class AppCard extends HookWidget {
   const AppCard({
     required this.child,
     super.key,
@@ -26,6 +29,10 @@ class AppCard extends StatelessWidget {
     this.width,
     this.height,
     this.clipBehavior = Clip.antiAlias,
+    this.animationDuration = const Duration(milliseconds: 200),
+    this.hapticFeedback = true,
+    this.hoverElevation,
+    this.pressedElevation,
   });
 
   /// Convenience constructor for elevated card
@@ -96,22 +103,67 @@ class AppCard extends StatelessWidget {
   final double? width;
   final double? height;
   final Clip clipBehavior;
+  final Duration animationDuration;
+  final bool hapticFeedback;
+  final double? hoverElevation;
+  final double? pressedElevation;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final effectivePadding = padding ?? ResponsiveUtils.responsivePadding(context);
-    final effectiveBorderRadius = borderRadius ?? ResponsiveUtils.responsiveBorderRadius(context);
+    
+    // Hooks for interactive states
+    final isPressed = useState(false);
+    final isHovered = useState(false);
+    final isFocused = useState(false);
+    
+    // Animation controller for elevation changes
+    final animationController = useAnimationController(duration: animationDuration);
+    final elevationAnimation = useAnimation(
+      Tween<double>(
+        begin: _getEffectiveElevation(context),
+        end: _getInteractiveElevation(context, isPressed.value, isHovered.value),
+      ).animate(CurvedAnimation(
+        parent: animationController,
+        curve: Curves.easeInOut,
+      )),
+    );
+    
+    // Handle state changes
+    useEffect(() {
+      if (isPressed.value || isHovered.value) {
+        animationController.forward();
+      } else {
+        animationController.reverse();
+      }
+      return null;
+    }, [isPressed.value, isHovered.value]);
+    
+    // Memoized calculations
+    final effectivePadding = useMemoized(
+      () => padding ?? ResponsiveUtils.responsivePadding(context),
+      [padding],
+    );
+    
+    final effectiveBorderRadius = useMemoized(
+      () => borderRadius ?? ResponsiveUtils.responsiveBorderRadius(context),
+      [borderRadius],
+    );
+    
+    final cardShape = useMemoized(
+      () => _getCardShape(context, theme, effectiveBorderRadius),
+      [effectiveBorderRadius, theme, variant],
+    );
 
     Widget card = Container(
       width: width,
       height: height,
       margin: margin,
       child: Card(
-        elevation: _getEffectiveElevation(context),
+        elevation: elevationAnimation,
         color: _getEffectiveBackgroundColor(context, theme),
         shadowColor: shadowColor ?? theme.colorScheme.shadow,
-        shape: _getCardShape(context, theme, effectiveBorderRadius),
+        shape: cardShape,
         clipBehavior: clipBehavior,
         child: Padding(
           padding: effectivePadding,
@@ -122,18 +174,37 @@ class AppCard extends StatelessWidget {
 
     // Make card tappable if onTap is provided
     if (onTap != null) {
-      card = InkWell(
-        onTap: onTap,
-        borderRadius: effectiveBorderRadius,
-        child: card,
+      card = GestureDetector(
+        onTapDown: (_) {
+          isPressed.value = true;
+          if (hapticFeedback) {
+            HapticFeedback.lightImpact();
+          }
+        },
+        onTapUp: (_) => isPressed.value = false,
+        onTapCancel: () => isPressed.value = false,
+        child: Focus(
+          onFocusChange: (focused) => isFocused.value = focused,
+          child: MouseRegion(
+            onEnter: (_) => isHovered.value = true,
+            onExit: (_) => isHovered.value = false,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: effectiveBorderRadius,
+              child: card,
+            ),
+          ),
+        ),
       );
     }
 
     // Add semantic label for accessibility
-    if (semanticLabel != null) {
+    if (semanticLabel != null || onTap != null) {
       card = Semantics(
-        label: semanticLabel,
+        label: semanticLabel ?? 'Card',
         button: onTap != null,
+        focusable: onTap != null,
+        enabled: onTap != null,
         child: card,
       );
     }
@@ -147,6 +218,20 @@ class AppCard extends StatelessWidget {
       AppCardVariant.outlined => 0,
       AppCardVariant.filled => 0,
     };
+  }
+
+  double _getInteractiveElevation(BuildContext context, bool isPressed, bool isHovered) {
+    final baseElevation = _getEffectiveElevation(context) ?? 0;
+    
+    if (isPressed) {
+      return pressedElevation ?? (baseElevation * 0.5);
+    }
+    
+    if (isHovered) {
+      return hoverElevation ?? (baseElevation * 1.5);
+    }
+    
+    return baseElevation;
   }
 
   Color? _getEffectiveBackgroundColor(BuildContext context, ThemeData theme) {

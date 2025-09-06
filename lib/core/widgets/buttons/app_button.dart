@@ -1,6 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:shemanit/core/accessibility/accessibility_utils.dart';
 import 'package:shemanit/core/responsive/responsive_utils.dart';
 
 /// Enumeration for button variants
@@ -19,8 +23,8 @@ enum AppButtonSize {
   large,
 }
 
-/// Platform-adaptive button widget with accessibility support
-class AppButton extends StatelessWidget {
+/// Platform-adaptive button widget with accessibility support and hooks
+class AppButton extends HookWidget {
   const AppButton({
     required this.onPressed,
     required this.child,
@@ -33,6 +37,10 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.semanticLabel,
     this.tooltip,
+    this.debounceDelay = const Duration(milliseconds: 300),
+    this.hapticFeedback = true,
+    this.loadingText,
+    this.animationDuration,
   });
 
   /// Convenience constructor for primary button
@@ -47,6 +55,10 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.semanticLabel,
     this.tooltip,
+    this.debounceDelay = const Duration(milliseconds: 300),
+    this.hapticFeedback = true,
+    this.loadingText,
+    this.animationDuration,
   }) : variant = AppButtonVariant.primary;
 
   /// Convenience constructor for secondary button
@@ -61,6 +73,10 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.semanticLabel,
     this.tooltip,
+    this.debounceDelay = const Duration(milliseconds: 300),
+    this.hapticFeedback = true,
+    this.loadingText,
+    this.animationDuration,
   }) : variant = AppButtonVariant.secondary;
 
   /// Convenience constructor for outlined button
@@ -75,6 +91,10 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.semanticLabel,
     this.tooltip,
+    this.debounceDelay = const Duration(milliseconds: 300),
+    this.hapticFeedback = true,
+    this.loadingText,
+    this.animationDuration,
   }) : variant = AppButtonVariant.outlined;
 
   /// Convenience constructor for text button
@@ -89,6 +109,10 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.semanticLabel,
     this.tooltip,
+    this.debounceDelay = const Duration(milliseconds: 300),
+    this.hapticFeedback = true,
+    this.loadingText,
+    this.animationDuration,
   }) : variant = AppButtonVariant.text;
 
   /// Convenience constructor for destructive button
@@ -103,6 +127,10 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.semanticLabel,
     this.tooltip,
+    this.debounceDelay = const Duration(milliseconds: 300),
+    this.hapticFeedback = true,
+    this.loadingText,
+    this.animationDuration,
   }) : variant = AppButtonVariant.destructive;
 
   final VoidCallback? onPressed;
@@ -115,12 +143,60 @@ class AppButton extends StatelessWidget {
   final Widget? icon;
   final String? semanticLabel;
   final String? tooltip;
+  final Duration debounceDelay;
+  final bool hapticFeedback;
+  final String? loadingText;
+  final Duration? animationDuration;
 
   @override
   Widget build(BuildContext context) {
-    final isEffectivelyEnabled = isEnabled && !isLoading && onPressed != null;
+    // Hooks for state management
+    final isPressed = useState(false);
+    final isFocused = useState(false);
+    final isHovered = useState(false);
     
-    Widget button = _buildPlatformButton(context, isEffectivelyEnabled);
+    // Animation controller for loading state
+    final animationController = useAnimationController(
+      duration: animationDuration ?? const Duration(milliseconds: 200),
+    );
+    
+    // Debounced callback to prevent rapid taps
+    final debouncedCallback = useMemoized(() {
+      if (onPressed == null) return null;
+      
+      Timer? debounceTimer;
+      return () {
+        debounceTimer?.cancel();
+        debounceTimer = Timer(debounceDelay, () {
+          if (hapticFeedback) {
+            HapticFeedback.lightImpact();
+          }
+          onPressed!();
+        });
+      };
+    }, [onPressed, debounceDelay, hapticFeedback]);
+    
+    // Handle loading state animation
+    useEffect(() {
+      if (isLoading) {
+        animationController.repeat();
+      } else {
+        animationController.stop();
+      }
+      return null;
+    }, [isLoading]);
+    
+    final isEffectivelyEnabled = isEnabled && !isLoading && debouncedCallback != null;
+    
+    Widget button = _buildPlatformButton(
+      context, 
+      isEffectivelyEnabled, 
+      debouncedCallback,
+      isPressed,
+      isFocused,
+      isHovered,
+      animationController,
+    );
 
     if (fullWidth) {
       button = SizedBox(width: double.infinity, child: button);
@@ -142,30 +218,61 @@ class AppButton extends StatelessWidget {
         enabled: isEffectivelyEnabled,
         child: button,
       );
+    } else {
+      final autoLabel = AccessibilityUtils.createButtonLabel(
+        label: _extractTextFromWidget(child),
+        isEnabled: isEffectivelyEnabled,
+        isLoading: isLoading,
+      );
+      button = Semantics(
+        label: autoLabel,
+        button: true,
+        enabled: isEffectivelyEnabled,
+        child: button,
+      );
     }
 
     return button;
   }
 
-  Widget _buildPlatformButton(BuildContext context, bool isEffectivelyEnabled) {
+  Widget _buildPlatformButton(
+    BuildContext context, 
+    bool isEffectivelyEnabled,
+    VoidCallback? debouncedCallback,
+    ValueNotifier<bool> isPressed,
+    ValueNotifier<bool> isFocused,
+    ValueNotifier<bool> isHovered,
+    AnimationController animationController,
+  ) {
     // Use Cupertino buttons on iOS for native feel
     if (Platform.isIOS) {
-      return _buildCupertinoButton(context, isEffectivelyEnabled);
+      return _buildCupertinoButton(context, debouncedCallback, animationController);
     }
     
     // Use Material buttons on Android and other platforms
-    return _buildMaterialButton(context, isEffectivelyEnabled);
+    return _buildMaterialButton(
+      context, 
+      debouncedCallback, 
+      isPressed, 
+      isFocused, 
+      isHovered,
+      animationController,
+    );
   }
 
-  Widget _buildCupertinoButton(BuildContext context, bool isEffectivelyEnabled) {
+  Widget _buildCupertinoButton(
+    BuildContext context, 
+    VoidCallback? debouncedCallback,
+    AnimationController animationController,
+  ) {
     final theme = Theme.of(context);
-    final buttonChild = _buildButtonChild(context);
+    final buttonChild = _buildButtonChild(context, animationController);
     final padding = _getButtonPadding(context);
 
     switch (variant) {
       case AppButtonVariant.primary:
         return CupertinoButton.filled(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+          onPressed: debouncedCallback,
           padding: padding,
           child: buttonChild,
         );
@@ -173,7 +280,7 @@ class AppButton extends StatelessWidget {
       case AppButtonVariant.secondary:
       case AppButtonVariant.outlined:
         return CupertinoButton(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+          onPressed: debouncedCallback,
           padding: padding,
           color: theme.colorScheme.surfaceVariant,
           child: buttonChild,
@@ -181,38 +288,43 @@ class AppButton extends StatelessWidget {
       
       case AppButtonVariant.text:
         return CupertinoButton(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+          onPressed: debouncedCallback,
           padding: padding,
           child: buttonChild,
         );
       
       case AppButtonVariant.destructive:
         return CupertinoButton.filled(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+          onPressed: debouncedCallback,
           padding: padding,
           child: buttonChild,
         );
     }
   }
 
-  Widget _buildMaterialButton(BuildContext context, bool isEffectivelyEnabled) {
-    final buttonChild = _buildButtonChild(context);
+  Widget _buildMaterialButton(
+    BuildContext context, 
+    VoidCallback? debouncedCallback,
+    ValueNotifier<bool> isPressed,
+    ValueNotifier<bool> isFocused,
+    ValueNotifier<bool> isHovered,
+    AnimationController animationController,
+  ) {
+    final buttonChild = _buildButtonChild(context, animationController);
     final theme = Theme.of(context);
 
-    switch (variant) {
-      case AppButtonVariant.primary:
-        return ElevatedButton(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+    Widget button = switch (variant) {
+      AppButtonVariant.primary => ElevatedButton(
+          onPressed: debouncedCallback,
           style: ElevatedButton.styleFrom(
             padding: _getButtonPadding(context),
             minimumSize: _getMinimumSize(context),
           ),
           child: buttonChild,
-        );
+        ),
       
-      case AppButtonVariant.secondary:
-        return ElevatedButton(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+      AppButtonVariant.secondary => ElevatedButton(
+          onPressed: debouncedCallback,
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.surfaceVariant,
             foregroundColor: theme.colorScheme.onSurfaceVariant,
@@ -220,31 +332,28 @@ class AppButton extends StatelessWidget {
             minimumSize: _getMinimumSize(context),
           ),
           child: buttonChild,
-        );
+        ),
       
-      case AppButtonVariant.outlined:
-        return OutlinedButton(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+      AppButtonVariant.outlined => OutlinedButton(
+          onPressed: debouncedCallback,
           style: OutlinedButton.styleFrom(
             padding: _getButtonPadding(context),
             minimumSize: _getMinimumSize(context),
           ),
           child: buttonChild,
-        );
+        ),
       
-      case AppButtonVariant.text:
-        return TextButton(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+      AppButtonVariant.text => TextButton(
+          onPressed: debouncedCallback,
           style: TextButton.styleFrom(
             padding: _getButtonPadding(context),
             minimumSize: _getMinimumSize(context),
           ),
           child: buttonChild,
-        );
+        ),
       
-      case AppButtonVariant.destructive:
-        return ElevatedButton(
-          onPressed: isEffectivelyEnabled ? onPressed : null,
+      AppButtonVariant.destructive => ElevatedButton(
+          onPressed: debouncedCallback,
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.error,
             foregroundColor: theme.colorScheme.onError,
@@ -252,13 +361,28 @@ class AppButton extends StatelessWidget {
             minimumSize: _getMinimumSize(context),
           ),
           child: buttonChild,
-        );
-    }
+        ),
+    };
+
+    // Add interaction handlers for enhanced feedback
+    return GestureDetector(
+      onTapDown: (_) => isPressed.value = true,
+      onTapUp: (_) => isPressed.value = false,
+      onTapCancel: () => isPressed.value = false,
+      child: Focus(
+        onFocusChange: (focused) => isFocused.value = focused,
+        child: MouseRegion(
+          onEnter: (_) => isHovered.value = true,
+          onExit: (_) => isHovered.value = false,
+          child: button,
+        ),
+      ),
+    );
   }
 
-  Widget _buildButtonChild(BuildContext context) {
+  Widget _buildButtonChild(BuildContext context, AnimationController animationController) {
     if (isLoading) {
-      return _buildLoadingIndicator(context);
+      return _buildLoadingIndicator(context, animationController);
     }
 
     if (icon != null) {
@@ -275,27 +399,46 @@ class AppButton extends StatelessWidget {
     return child;
   }
 
-  Widget _buildLoadingIndicator(BuildContext context) {
+  Widget _buildLoadingIndicator(BuildContext context, AnimationController animationController) {
     final theme = Theme.of(context);
     final size = _getLoadingIndicatorSize();
 
-    if (Platform.isIOS) {
-      return CupertinoActivityIndicator(
-        radius: size / 2,
-        color: theme.colorScheme.onPrimary,
+    Widget indicator = Platform.isIOS
+        ? CupertinoActivityIndicator(
+            radius: size / 2,
+            color: theme.colorScheme.onPrimary,
+          )
+        : SizedBox(
+            width: size,
+            height: size,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                theme.colorScheme.onPrimary,
+              ),
+            ),
+          );
+
+    // Add loading text if provided
+    if (loadingText != null) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          indicator,
+          const SizedBox(width: 8),
+          Text(loadingText!),
+        ],
       );
     }
 
-    return SizedBox(
-      width: size,
-      height: size,
-      child: CircularProgressIndicator(
-        strokeWidth: 2,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          theme.colorScheme.onPrimary,
-        ),
-      ),
-    );
+    return indicator;
+  }
+
+  String _extractTextFromWidget(Widget widget) {
+    if (widget is Text) {
+      return widget.data ?? widget.textSpan?.toPlainText() ?? 'Button';
+    }
+    return 'Button';
   }
 
   EdgeInsets _getButtonPadding(BuildContext context) {

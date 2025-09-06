@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:shemanit/core/accessibility/accessibility_utils.dart';
 import 'package:shemanit/core/responsive/responsive_utils.dart';
 
 /// Enumeration for text field variants
@@ -11,8 +14,8 @@ enum AppTextFieldVariant {
   filled,
 }
 
-/// Platform-adaptive text field with accessibility support
-class AppTextField extends StatefulWidget {
+/// Platform-adaptive text field with accessibility support and hooks
+class AppTextField extends HookWidget {
   const AppTextField({
     super.key,
     this.controller,
@@ -81,6 +84,9 @@ class AppTextField extends StatefulWidget {
     this.semanticLabel,
     this.isRequired = false,
     this.validator,
+    this.debounceDelay = const Duration(milliseconds: 300),
+    this.animationDuration = const Duration(milliseconds: 200),
+    this.autoValidate = true,
   });
 
   // Standard TextField properties
@@ -152,46 +158,98 @@ class AppTextField extends StatefulWidget {
   final String? semanticLabel;
   final bool isRequired;
   final String? Function(String?)? validator;
-
-  @override
-  State<AppTextField> createState() => _AppTextFieldState();
-}
-
-class _AppTextFieldState extends State<AppTextField> {
-  late FocusNode _focusNode;
-  String? _errorText;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode = widget.focusNode ?? FocusNode();
-  }
-
-  @override
-  void dispose() {
-    if (widget.focusNode == null) {
-      _focusNode.dispose();
-    }
-    super.dispose();
-  }
+  final Duration debounceDelay;
+  final Duration animationDuration;
+  final bool autoValidate;
 
   @override
   Widget build(BuildContext context) {
+    // Hooks for state management
+    final effectiveController = controller ?? useTextEditingController();
+    final effectiveFocusNode = focusNode ?? useFocusNode();
+    final errorText = useState<String?>(error);
+    final isFocused = useState(false);
+    
+    // Debounced validation
+    final debouncedValue = useMemoized(() {
+      final notifier = ValueNotifier(effectiveController.text);
+      Timer? debounceTimer;
+      
+      void listener() {
+        debounceTimer?.cancel();
+        debounceTimer = Timer(debounceDelay, () {
+          notifier.value = effectiveController.text;
+        });
+      }
+      
+      effectiveController.addListener(listener);
+      return notifier;
+    }, [effectiveController, debounceDelay]);
+    
+    final debouncedText = useListenable(debouncedValue).value;
+    
+    // Auto-validation with debouncing
+    useEffect(() {
+      if (autoValidate && validator != null) {
+        final validationError = validator!(debouncedText);
+        errorText.value = validationError;
+      }
+      return null;
+    }, [debouncedText, validator, autoValidate]);
+    
+    // Handle text changes
+    final handleChanged = useCallback((String value) {
+      if (!autoValidate && validator != null) {
+        final validationError = validator!(value);
+        errorText.value = validationError;
+      }
+      onChanged?.call(value);
+    }, [validator, autoValidate, onChanged]);
+    
+    // Focus state management
+    useEffect(() {
+      void focusListener() {
+        isFocused.value = effectiveFocusNode.hasFocus;
+      }
+      
+      effectiveFocusNode.addListener(focusListener);
+      return () => effectiveFocusNode.removeListener(focusListener);
+    }, [effectiveFocusNode]);
+
     // Use platform-specific text field on iOS
-    if (Platform.isIOS && widget.variant == AppTextFieldVariant.standard) {
-      return _buildCupertinoTextField(context);
+    if (Platform.isIOS && variant == AppTextFieldVariant.standard) {
+      return _buildCupertinoTextField(
+        context, 
+        effectiveController, 
+        effectiveFocusNode,
+        errorText.value,
+        handleChanged,
+      );
     }
     
     // Use Material text field for all other cases
-    return _buildMaterialTextField(context);
+    return _buildMaterialTextField(
+      context, 
+      effectiveController, 
+      effectiveFocusNode,
+      errorText.value,
+      handleChanged,
+      isFocused.value,
+    );
   }
 
-  Widget _buildCupertinoTextField(BuildContext context) {
+  Widget _buildCupertinoTextField(
+    BuildContext context,
+    TextEditingController effectiveController,
+    FocusNode effectiveFocusNode,
+    String? currentErrorText,
+    ValueChanged<String> handleChanged,
+  ) {
     final theme = Theme.of(context);
     
     Widget textField = CupertinoTextField(
-      controller: widget.controller,
-      focusNode: _focusNode,
+      controller: effectiveController,
+      focusNode: effectiveFocusNode,
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       textCapitalization: widget.textCapitalization,
